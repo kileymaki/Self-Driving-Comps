@@ -6,19 +6,27 @@
 
 #IncludeRegexTransform: 
 
-/Users/selfcar/Desktop/Self-Driving-Comps/laser_car.cc
-boost/bind.hpp
--
-gazebo/gazebo.hh
--
+/Users/selfcar/Desktop/Self-Driving-Comps/VehiclePlugin.cc
 gazebo/physics/physics.hh
+/Users/selfcar/Desktop/Self-Driving-Comps/gazebo/physics/physics.hh
+gazebo/transport/transport.hh
+/Users/selfcar/Desktop/Self-Driving-Comps/gazebo/transport/transport.hh
+VehiclePlugin.hh
+/Users/selfcar/Desktop/Self-Driving-Comps/VehiclePlugin.hh
+
+/Users/selfcar/Desktop/Self-Driving-Comps/VehiclePlugin.hh
+string
 -
-gazebo/sensors/sensors.hh
+vector
 -
-gazebo/common/common.hh
--
-stdio.h
--
+gazebo/common/Plugin.hh
+/Users/selfcar/Desktop/Self-Driving-Comps/gazebo/common/Plugin.hh
+gazebo/physics/physics.hh
+/Users/selfcar/Desktop/Self-Driving-Comps/gazebo/physics/physics.hh
+gazebo/transport/transport.hh
+/Users/selfcar/Desktop/Self-Driving-Comps/gazebo/transport/transport.hh
+gazebo/util/system.hh
+/Users/selfcar/Desktop/Self-Driving-Comps/gazebo/util/system.hh
 laser_car.hh
 /Users/selfcar/Desktop/Self-Driving-Comps/laser_car.hh
 

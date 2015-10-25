@@ -57,38 +57,38 @@ include CMakeFiles/laser_car.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/laser_car.dir/flags.make
 
-CMakeFiles/laser_car.dir/laser_car.cpp.o: CMakeFiles/laser_car.dir/flags.make
-CMakeFiles/laser_car.dir/laser_car.cpp.o: ../laser_car.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/selfcar/Desktop/Self-Driving-Comps/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/laser_car.dir/laser_car.cpp.o"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/laser_car.dir/laser_car.cpp.o -c /Users/selfcar/Desktop/Self-Driving-Comps/laser_car.cpp
+CMakeFiles/laser_car.dir/laser_car.cc.o: CMakeFiles/laser_car.dir/flags.make
+CMakeFiles/laser_car.dir/laser_car.cc.o: ../laser_car.cc
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/selfcar/Desktop/Self-Driving-Comps/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/laser_car.dir/laser_car.cc.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/laser_car.dir/laser_car.cc.o -c /Users/selfcar/Desktop/Self-Driving-Comps/laser_car.cc
 
-CMakeFiles/laser_car.dir/laser_car.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/laser_car.dir/laser_car.cpp.i"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /Users/selfcar/Desktop/Self-Driving-Comps/laser_car.cpp > CMakeFiles/laser_car.dir/laser_car.cpp.i
+CMakeFiles/laser_car.dir/laser_car.cc.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/laser_car.dir/laser_car.cc.i"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /Users/selfcar/Desktop/Self-Driving-Comps/laser_car.cc > CMakeFiles/laser_car.dir/laser_car.cc.i
 
-CMakeFiles/laser_car.dir/laser_car.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/laser_car.dir/laser_car.cpp.s"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /Users/selfcar/Desktop/Self-Driving-Comps/laser_car.cpp -o CMakeFiles/laser_car.dir/laser_car.cpp.s
+CMakeFiles/laser_car.dir/laser_car.cc.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/laser_car.dir/laser_car.cc.s"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /Users/selfcar/Desktop/Self-Driving-Comps/laser_car.cc -o CMakeFiles/laser_car.dir/laser_car.cc.s
 
-CMakeFiles/laser_car.dir/laser_car.cpp.o.requires:
+CMakeFiles/laser_car.dir/laser_car.cc.o.requires:
 
-.PHONY : CMakeFiles/laser_car.dir/laser_car.cpp.o.requires
+.PHONY : CMakeFiles/laser_car.dir/laser_car.cc.o.requires
 
-CMakeFiles/laser_car.dir/laser_car.cpp.o.provides: CMakeFiles/laser_car.dir/laser_car.cpp.o.requires
-	$(MAKE) -f CMakeFiles/laser_car.dir/build.make CMakeFiles/laser_car.dir/laser_car.cpp.o.provides.build
-.PHONY : CMakeFiles/laser_car.dir/laser_car.cpp.o.provides
+CMakeFiles/laser_car.dir/laser_car.cc.o.provides: CMakeFiles/laser_car.dir/laser_car.cc.o.requires
+	$(MAKE) -f CMakeFiles/laser_car.dir/build.make CMakeFiles/laser_car.dir/laser_car.cc.o.provides.build
+.PHONY : CMakeFiles/laser_car.dir/laser_car.cc.o.provides
 
-CMakeFiles/laser_car.dir/laser_car.cpp.o.provides.build: CMakeFiles/laser_car.dir/laser_car.cpp.o
+CMakeFiles/laser_car.dir/laser_car.cc.o.provides.build: CMakeFiles/laser_car.dir/laser_car.cc.o
 
 
 # Object files for target laser_car
 laser_car_OBJECTS = \
-"CMakeFiles/laser_car.dir/laser_car.cpp.o"
+"CMakeFiles/laser_car.dir/laser_car.cc.o"
 
 # External object files for target laser_car
 laser_car_EXTERNAL_OBJECTS =
 
-liblaser_car.dylib: CMakeFiles/laser_car.dir/laser_car.cpp.o
+liblaser_car.dylib: CMakeFiles/laser_car.dir/laser_car.cc.o
 liblaser_car.dylib: CMakeFiles/laser_car.dir/build.make
 liblaser_car.dylib: /usr/local/lib/libgazebo.dylib
 liblaser_car.dylib: /usr/local/lib/libgazebo_client.dylib
@@ -133,7 +133,7 @@ CMakeFiles/laser_car.dir/build: liblaser_car.dylib
 
 .PHONY : CMakeFiles/laser_car.dir/build
 
-CMakeFiles/laser_car.dir/requires: CMakeFiles/laser_car.dir/laser_car.cpp.o.requires
+CMakeFiles/laser_car.dir/requires: CMakeFiles/laser_car.dir/laser_car.cc.o.requires
 
 .PHONY : CMakeFiles/laser_car.dir/requires
 

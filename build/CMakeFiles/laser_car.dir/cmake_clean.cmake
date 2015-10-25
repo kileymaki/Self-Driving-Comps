@@ -1,5 +1,5 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/laser_car.dir/laser_car.cpp.o"
+  "CMakeFiles/laser_car.dir/laser_car.cc.o"
   "liblaser_car.pdb"
   "liblaser_car.dylib"
 )

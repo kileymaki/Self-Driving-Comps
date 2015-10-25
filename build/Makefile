@@ -111,17 +111,17 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named hello_world
+# Target rules for targets named VehiclePlugin
 
 # Build rule for target.
-hello_world: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 hello_world
-.PHONY : hello_world
+VehiclePlugin: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 VehiclePlugin
+.PHONY : VehiclePlugin
 
 # fast build rule for target.
-hello_world/fast:
-	$(MAKE) -f CMakeFiles/hello_world.dir/build.make CMakeFiles/hello_world.dir/build
-.PHONY : hello_world/fast
+VehiclePlugin/fast:
+	$(MAKE) -f CMakeFiles/VehiclePlugin.dir/build.make CMakeFiles/VehiclePlugin.dir/build
+.PHONY : VehiclePlugin/fast
 
 #=============================================================================
 # Target rules for targets named laser_car
@@ -175,59 +175,59 @@ model_push/fast:
 	$(MAKE) -f CMakeFiles/model_push.dir/build.make CMakeFiles/model_push.dir/build
 .PHONY : model_push/fast
 
-hello_world.o: hello_world.cc.o
+VehiclePlugin.o: VehiclePlugin.cc.o
 
-.PHONY : hello_world.o
+.PHONY : VehiclePlugin.o
 
 # target to build an object file
-hello_world.cc.o:
-	$(MAKE) -f CMakeFiles/hello_world.dir/build.make CMakeFiles/hello_world.dir/hello_world.cc.o
-.PHONY : hello_world.cc.o
+VehiclePlugin.cc.o:
+	$(MAKE) -f CMakeFiles/VehiclePlugin.dir/build.make CMakeFiles/VehiclePlugin.dir/VehiclePlugin.cc.o
+.PHONY : VehiclePlugin.cc.o
 
-hello_world.i: hello_world.cc.i
+VehiclePlugin.i: VehiclePlugin.cc.i
 
-.PHONY : hello_world.i
+.PHONY : VehiclePlugin.i
 
 # target to preprocess a source file
-hello_world.cc.i:
-	$(MAKE) -f CMakeFiles/hello_world.dir/build.make CMakeFiles/hello_world.dir/hello_world.cc.i
-.PHONY : hello_world.cc.i
+VehiclePlugin.cc.i:
+	$(MAKE) -f CMakeFiles/VehiclePlugin.dir/build.make CMakeFiles/VehiclePlugin.dir/VehiclePlugin.cc.i
+.PHONY : VehiclePlugin.cc.i
 
-hello_world.s: hello_world.cc.s
+VehiclePlugin.s: VehiclePlugin.cc.s
 
-.PHONY : hello_world.s
+.PHONY : VehiclePlugin.s
 
 # target to generate assembly for a file
-hello_world.cc.s:
-	$(MAKE) -f CMakeFiles/hello_world.dir/build.make CMakeFiles/hello_world.dir/hello_world.cc.s
-.PHONY : hello_world.cc.s
+VehiclePlugin.cc.s:
+	$(MAKE) -f CMakeFiles/VehiclePlugin.dir/build.make CMakeFiles/VehiclePlugin.dir/VehiclePlugin.cc.s
+.PHONY : VehiclePlugin.cc.s
 
-laser_car.o: laser_car.cpp.o
+laser_car.o: laser_car.cc.o
 
 .PHONY : laser_car.o
 
 # target to build an object file
-laser_car.cpp.o:
-	$(MAKE) -f CMakeFiles/laser_car.dir/build.make CMakeFiles/laser_car.dir/laser_car.cpp.o
-.PHONY : laser_car.cpp.o
+laser_car.cc.o:
+	$(MAKE) -f CMakeFiles/laser_car.dir/build.make CMakeFiles/laser_car.dir/laser_car.cc.o
+.PHONY : laser_car.cc.o
 
-laser_car.i: laser_car.cpp.i
+laser_car.i: laser_car.cc.i
 
 .PHONY : laser_car.i
 
 # target to preprocess a source file
-laser_car.cpp.i:
-	$(MAKE) -f CMakeFiles/laser_car.dir/build.make CMakeFiles/laser_car.dir/laser_car.cpp.i
-.PHONY : laser_car.cpp.i
+laser_car.cc.i:
+	$(MAKE) -f CMakeFiles/laser_car.dir/build.make CMakeFiles/laser_car.dir/laser_car.cc.i
+.PHONY : laser_car.cc.i
 
-laser_car.s: laser_car.cpp.s
+laser_car.s: laser_car.cc.s
 
 .PHONY : laser_car.s
 
 # target to generate assembly for a file
-laser_car.cpp.s:
-	$(MAKE) -f CMakeFiles/laser_car.dir/build.make CMakeFiles/laser_car.dir/laser_car.cpp.s
-.PHONY : laser_car.cpp.s
+laser_car.cc.s:
+	$(MAKE) -f CMakeFiles/laser_car.dir/build.make CMakeFiles/laser_car.dir/laser_car.cc.s
+.PHONY : laser_car.cc.s
 
 model_car.o: model_car.cpp.o
 
@@ -317,15 +317,15 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... edit_cache"
+	@echo "... VehiclePlugin"
+	@echo "... laser_car"
 	@echo "... model_pull"
 	@echo "... rebuild_cache"
 	@echo "... model_car"
 	@echo "... model_push"
-	@echo "... laser_car"
-	@echo "... hello_world"
-	@echo "... hello_world.o"
-	@echo "... hello_world.i"
-	@echo "... hello_world.s"
+	@echo "... VehiclePlugin.o"
+	@echo "... VehiclePlugin.i"
+	@echo "... VehiclePlugin.s"
 	@echo "... laser_car.o"
 	@echo "... laser_car.i"
 	@echo "... laser_car.s"

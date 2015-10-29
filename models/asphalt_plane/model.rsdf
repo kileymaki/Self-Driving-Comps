@@ -1,0 +1,41 @@
+<?xml version="1.0" ?>
+<%
+  asphalt = [0,0,0]
+%>
+<sdf version="1.5">
+<%   # Asphalt Planes
+   i = 0 
+   asphalt.each do |f|
+      i = i + 1
+      name = 'asphalt_' +i.to_s
+%>
+  <%=  "<model name='#{name}'>" %>
+    <pose><%= i*100%> 100 0 0 0 0</pose>
+    <static>true</static>
+    <link name="link">
+      <collision name="collision">
+        <geometry>
+          <box>
+            <size>90 90 .1</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name="visual">
+        <cast_shadows>false</cast_shadows>
+        <geometry>
+          <box>
+            <size>90 90 .1</size>
+          </box>
+        </geometry>
+        <material>
+          <script>
+            <uri>model://asphalt_plane/materials/scripts</uri>
+            <uri>model://asphalt_plane/materials/textures</uri>
+            <name>vrc/asphalt</name>
+          </script>
+        </material>
+      </visual>
+    </link>
+  </model>
+<% end %>
+</sdf>

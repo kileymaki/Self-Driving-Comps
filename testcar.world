@@ -12,7 +12,7 @@
         </include>
         
         <include>
-            <uri>utility_cart</uri>
+            <uri>/models/utility_cart</uri>
         </include>
         
         <model name="box">

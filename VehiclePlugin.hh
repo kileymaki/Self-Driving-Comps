@@ -44,7 +44,8 @@ namespace gazebo
 
     private: void OnVelMsg(ConstPosePtr &_msg);
       
-  private: void SetGas(bool isGas);
+  private: void SetGas(bool isGas, math::Vector3 velocity, double yaw);
+  private: void Steer(bool shouldTurn);
 
     private: std::vector<event::ConnectionPtr> connections;
 
@@ -72,6 +73,8 @@ namespace gazebo
       
   private: double gas;
   private: double brake;
+  private: double steeringAngle;
+  private: bool ignoreEverything;
   };
 }
 #endif

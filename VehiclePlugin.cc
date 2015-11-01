@@ -41,6 +41,8 @@ VehiclePlugin::VehiclePlugin()
     
     this->gas = 0.0;
     this->brake = 0.0;
+    this->steeringAngle = 0.0;
+    this->ignoreEverything = false;
 }
 
 /////////////////////////////////////////////////
@@ -81,16 +83,16 @@ void VehiclePlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
   }
 
   this->joints[0]->SetParam("suspension_erp", 0, 0.15);
-  this->joints[0]->SetParam("suspension_cfm", 0, 0.04);
+  this->joints[0]->SetParam("suspension_cfm", 0, 0.01);
 
   this->joints[1]->SetParam("suspension_erp", 0, 0.15);
-  this->joints[1]->SetParam("suspension_cfm", 0, 0.04);
+  this->joints[1]->SetParam("suspension_cfm", 0, 0.01);
 
   this->joints[2]->SetParam("suspension_erp", 0, 0.15);
-  this->joints[2]->SetParam("suspension_cfm", 0, 0.04);
+  this->joints[2]->SetParam("suspension_cfm", 0, 0.01);
 
   this->joints[3]->SetParam("suspension_erp", 0, 0.15);
-  this->joints[3]->SetParam("suspension_cfm", 0, 0.04);
+  this->joints[3]->SetParam("suspension_cfm", 0, 0.01);
 
   this->gasJoint = this->model->GetJoint(_sdf->Get<std::string>("gas"));
   this->brakeJoint = this->model->GetJoint(_sdf->Get<std::string>("brake"));
@@ -191,15 +193,25 @@ void VehiclePlugin::OnUpdate()
 
   // A little force to push back on the pedals
 //  this->gasJoint->SetForce(0, -0.1);
-//  this->brakeJoint->SetForce(0, -0.1);
+    //  this->brakeJoint->SetForce(0, -0.1);
     
-    this->SetGas(CarLaser::IsAllInf());
+    // Get the current velocity of the car
+    this->velocity = this->chassis->GetWorldLinearVel();
+    
+    math::Pose pose = this->chassis->GetWorldPose();
+    double yaw = pose.rot.GetYaw();
+    
+    this->SetGas(CarLaser::IsAllInf(), this->velocity, yaw);
     
     double gas = this->gas;
     double brake = this->brake;
 
   // Get the steering angle
-  double steeringAngle = this->steeringJoint->GetAngle(0).Radian();
+//  double steeringAngle = this->steeringJoint->GetAngle(0).Radian();
+    
+    this->Steer(CarLaser::IsAllInf());
+    
+    double steeringAngle = this->steeringAngle;
 
   // Compute the angle of the front wheels.
   double wheelAngle = steeringAngle / this->steeringRatio;
@@ -234,9 +246,6 @@ void VehiclePlugin::OnUpdate()
   this->joints[1]->SetLowStop(0, wheelAngle);
   this->joints[1]->SetHighStop(0, wheelAngle);
   this->joints[1]->SetLowStop(0, wheelAngle);
-
-  // Get the current velocity of the car
-  this->velocity = this->chassis->GetWorldLinearVel();
 
   //  aerodynamics
   this->chassis->AddForce(
@@ -277,12 +286,35 @@ void VehiclePlugin::OnVelMsg(ConstPosePtr &/*_msg*/)
 {
 }
 
-void VehiclePlugin::SetGas(bool isGas){
+void VehiclePlugin::SetGas(bool isGas, math::Vector3 velocity, double yaw){
+    if(this->ignoreEverything){
+        return;
+    }
+    double velAngle = atan2(velocity.y, velocity.x);
+    
     if(isGas){
         this->gas = 0.5;
         this->brake = 0.0;
     }else{
         this->gas = 0.0;
-        this->brake = -0.5;
+        if(std::abs(yaw-velAngle) <= 3.14159265359/2.){
+            this->brake = -1;
+        }else{
+            if(rand() % 1000000000000000 == 1){
+                this->gas = 10;
+                this->brake = 0;
+                this->ignoreEverything = true;
+                return;
+            }
+            this->brake = 0;
+        }
+    }
+}
+
+void VehiclePlugin::Steer(bool shouldTurn){
+    if(shouldTurn){
+        this->steeringAngle = 0;
+    }else{
+        this->steeringAngle = -5;
     }
 }

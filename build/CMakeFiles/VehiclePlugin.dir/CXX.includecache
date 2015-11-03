@@ -13,6 +13,8 @@ gazebo/transport/transport.hh
 /Users/selfcar/Desktop/Self-Driving-Comps/gazebo/transport/transport.hh
 VehiclePlugin.hh
 /Users/selfcar/Desktop/Self-Driving-Comps/VehiclePlugin.hh
+vector
+-
 
 /Users/selfcar/Desktop/Self-Driving-Comps/VehiclePlugin.hh
 string
@@ -42,6 +44,8 @@ gazebo/sensors/sensors.hh
 gazebo/common/common.hh
 -
 stdio.h
+-
+vector
 -
 
 /usr/local/Cellar/ignition-math2/2.2.2/include/ignition/math2/ignition/math.hh

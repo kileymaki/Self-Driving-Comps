@@ -15,6 +15,7 @@
 #include <gazebo/sensors/sensors.hh>
 #include <gazebo/common/common.hh>
 #include <stdio.h>
+#include <vector>
 
 namespace gazebo
 {
@@ -25,11 +26,14 @@ namespace gazebo
     public: void OnUpdate();
         
     public: static bool IsAllInf();
+    public: static std::vector <double> GetNonInfAngles();
         
     private: sensors::RaySensorPtr parentSensor;
     private: event::ConnectionPtr updateConnection;
         
     private: static bool isAllInfVar;
+        
+    private: static std::vector <double> anglesNotAtInf;
     };
 }
 

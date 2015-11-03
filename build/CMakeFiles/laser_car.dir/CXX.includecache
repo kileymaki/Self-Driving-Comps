@@ -19,6 +19,8 @@ gazebo/common/common.hh
 -
 stdio.h
 -
+vector
+-
 laser_car.hh
 /Users/selfcar/Desktop/Self-Driving-Comps/laser_car.hh
 
@@ -34,6 +36,8 @@ gazebo/sensors/sensors.hh
 gazebo/common/common.hh
 -
 stdio.h
+-
+vector
 -
 
 /usr/local/Cellar/ignition-math2/2.2.2/include/ignition/math2/ignition/math.hh

@@ -209,7 +209,7 @@ void VehiclePlugin::OnUpdate()
     this->SetGas(CarLaser::IsAllInf());
     
     this->CheckIfOnCollisionCourse();
-
+    
   // Compute the angle of the front wheels.
   double wheelAngle = this->steeringAngle / this->steeringRatio;
 

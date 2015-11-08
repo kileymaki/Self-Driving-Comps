@@ -13,7 +13,7 @@ using namespace gazebo;
 GZ_REGISTER_SENSOR_PLUGIN(CarLaser)
 
 bool CarLaser::isAllInfVar = true;
-std::vector <double> CarLaser::anglesNotAtInf;
+std::vector<double>* CarLaser::anglesNotAtInf = new std::vector<double>();
 sensors::RaySensorPtr parentSensor;
 
 void CarLaser::Load(sensors::SensorPtr _sensor, sdf::ElementPtr /*_sdf*/){
@@ -44,12 +44,12 @@ void CarLaser::OnUpdate(){
     
     int rayCount = this->parentSensor->GetRayCount();
     
-    anglesNotAtInf.clear();
+    anglesNotAtInf->clear();
     for (unsigned int i = 0; i < rayCount; ++i)
     {
         if(!std::isinf(this->parentSensor->GetRange(i))){
             isAllInfVar = false;
-            anglesNotAtInf.push_back(minAngle.operator+(*new math::Angle(i*angleResolution)).Radian());
+            anglesNotAtInf->push_back(minAngle.operator+(*new math::Angle(i*angleResolution)).Radian());
         }
     }
 }
@@ -62,7 +62,6 @@ bool CarLaser::IsAllInf(){
     return isAllInfVar;
 }
 
-std::vector<double> CarLaser::GetNonInfAngles(){
-    std::vector<double> newVector(anglesNotAtInf);
-    return newVector;
+std::vector<double>* CarLaser::GetNonInfAngles(){
+    return anglesNotAtInf;
 }

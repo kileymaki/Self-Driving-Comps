@@ -23,7 +23,7 @@
 using namespace gazebo;
 GZ_REGISTER_MODEL_PLUGIN(VehiclePlugin)
 
-const int ARBITRARY_CUTOFF_POINT_1 = 25;
+const int ARBITRARY_CUTOFF_POINT_1 = 50;
 
 /////////////////////////////////////////////////
 VehiclePlugin::VehiclePlugin()
@@ -301,13 +301,12 @@ void VehiclePlugin::SetGas(bool isGas){
 }
 
 void VehiclePlugin::Stop(){
-    printf("I SEE ONE (OR MORE) THING(S), BETTER STOP\n");
     this->SetGas(false);
 }
 
 void VehiclePlugin::CheckIfOnCollisionCourse(){
-    std::vector <double> nonInfAngles = CarLaser::GetNonInfAngles();
-    if (nonInfAngles.size() > ARBITRARY_CUTOFF_POINT_1) {
+    std::vector<double>* nonInfAngles = CarLaser::GetNonInfAngles();
+    if (nonInfAngles->size() > ARBITRARY_CUTOFF_POINT_1) {
         this->Stop();
     }
 }

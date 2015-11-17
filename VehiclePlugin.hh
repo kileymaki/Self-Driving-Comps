@@ -32,51 +32,56 @@
 
 namespace gazebo
 {
-  class GAZEBO_VISIBLE VehiclePlugin : public ModelPlugin
-  {
-    /// \brief Constructor
-    public: VehiclePlugin();
+    class GAZEBO_VISIBLE VehiclePlugin : public ModelPlugin
+    {
+        /// \brief Constructor
+        public: VehiclePlugin();
 
-    public: virtual void Load(physics::ModelPtr _model, sdf::ElementPtr _sdf);
-    public: virtual void Init();
+        public: virtual void Load(physics::ModelPtr _model, sdf::ElementPtr _sdf);
+        public: virtual void Init();
 
-    private: void OnUpdate();
+        private: void OnUpdate();
 
-    private: void OnVelMsg(ConstPosePtr &_msg);
-      
-  private: void SetGas(bool isGas);
-  private: void Steer(double angle);
-  private: void Stop();
-  private: void CheckIfOnCollisionCourse();
+        private: void OnVelMsg(ConstPosePtr &_msg);
 
-    private: std::vector<event::ConnectionPtr> connections;
+        private: std::vector<event::ConnectionPtr> connections;
 
-    private: physics::ModelPtr model;
-    private: physics::LinkPtr chassis;
-    private: std::vector<physics::JointPtr> joints;
-    private: physics::JointPtr gasJoint, brakeJoint;
-    private: physics::JointPtr steeringJoint;
+        private: physics::ModelPtr model;
+        private: physics::LinkPtr chassis;
+        private: std::vector<physics::JointPtr> joints;
+        private: physics::JointPtr gasJoint, brakeJoint;
+        private: physics::JointPtr steeringJoint;
 
-    private: math::Vector3 velocity;
+        private: math::Vector3 velocity;
 
-    private: transport::NodePtr node;
-    private: transport::SubscriberPtr velSub;
+        private: transport::NodePtr node;
+        private: transport::SubscriberPtr velSub;
 
-    private: double frontPower, rearPower;
-    private: double maxSpeed;
-    private: double wheelRadius;
+        private: double frontPower, rearPower;
+        private: double maxSpeed;
+        private: double wheelRadius;
 
-    private: double steeringRatio;
-    private: double tireAngleRange;
-    private: double maxGas, maxBrake;
+        private: double steeringRatio;
+        private: double tireAngleRange;
+        private: double maxGas, maxBrake;
 
-    private: double aeroLoad;
-    private: double swayForce;
-      
-  private: double gas;
-  private: double brake;
-  private: double steeringAngle;
-  private: double yaw;
-  };
+        private: double aeroLoad;
+        private: double swayForce;
+        
+        /*
+         * Begin Comps Defined Stuff
+         */
+        private: bool IsMovingForwards();
+        private: void ApplyMovementForce(double amt);
+        private: void Accel(double amt = 0.5);
+        private: void Brake(double amt = 1);
+        private: void Steer(double angle);
+        private: void CheckIfOnCollisionCourse();
+
+        private: double gas;
+        private: double brake;
+        private: double steeringAngle;
+        private: double yaw;
+    };
 }
 #endif

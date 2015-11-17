@@ -19,3 +19,6 @@ target_link_libraries(laser_car ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
 
 add_library(VehiclePlugin SHARED VehiclePlugin.cc)
 target_link_libraries(VehiclePlugin laser_car ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
+
+add_library(car_gps SHARED car_gps.cc)
+target_link_libraries(car_gps ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})

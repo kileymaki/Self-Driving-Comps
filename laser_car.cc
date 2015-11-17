@@ -24,7 +24,7 @@ void CarLaser::Load(sensors::SensorPtr _sensor, sdf::ElementPtr /*_sdf*/){
     // Make sure the parent sensor is valid.
     if (!this->parentSensor)
     {
-        gzerr << "Couldn't find a laser also where does this go?\n";
+        gzerr << "Couldn't find a laser\n";
         return;
     }
     

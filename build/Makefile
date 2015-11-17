@@ -124,6 +124,19 @@ VehiclePlugin/fast:
 .PHONY : VehiclePlugin/fast
 
 #=============================================================================
+# Target rules for targets named car_gps
+
+# Build rule for target.
+car_gps: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 car_gps
+.PHONY : car_gps
+
+# fast build rule for target.
+car_gps/fast:
+	$(MAKE) -f CMakeFiles/car_gps.dir/build.make CMakeFiles/car_gps.dir/build
+.PHONY : car_gps/fast
+
+#=============================================================================
 # Target rules for targets named laser_car
 
 # Build rule for target.
@@ -201,6 +214,33 @@ VehiclePlugin.s: VehiclePlugin.cc.s
 VehiclePlugin.cc.s:
 	$(MAKE) -f CMakeFiles/VehiclePlugin.dir/build.make CMakeFiles/VehiclePlugin.dir/VehiclePlugin.cc.s
 .PHONY : VehiclePlugin.cc.s
+
+car_gps.o: car_gps.cc.o
+
+.PHONY : car_gps.o
+
+# target to build an object file
+car_gps.cc.o:
+	$(MAKE) -f CMakeFiles/car_gps.dir/build.make CMakeFiles/car_gps.dir/car_gps.cc.o
+.PHONY : car_gps.cc.o
+
+car_gps.i: car_gps.cc.i
+
+.PHONY : car_gps.i
+
+# target to preprocess a source file
+car_gps.cc.i:
+	$(MAKE) -f CMakeFiles/car_gps.dir/build.make CMakeFiles/car_gps.dir/car_gps.cc.i
+.PHONY : car_gps.cc.i
+
+car_gps.s: car_gps.cc.s
+
+.PHONY : car_gps.s
+
+# target to generate assembly for a file
+car_gps.cc.s:
+	$(MAKE) -f CMakeFiles/car_gps.dir/build.make CMakeFiles/car_gps.dir/car_gps.cc.s
+.PHONY : car_gps.cc.s
 
 laser_car.o: laser_car.cc.o
 
@@ -317,6 +357,7 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... edit_cache"
+	@echo "... car_gps"
 	@echo "... VehiclePlugin"
 	@echo "... laser_car"
 	@echo "... model_pull"
@@ -326,6 +367,9 @@ help:
 	@echo "... VehiclePlugin.o"
 	@echo "... VehiclePlugin.i"
 	@echo "... VehiclePlugin.s"
+	@echo "... car_gps.o"
+	@echo "... car_gps.i"
+	@echo "... car_gps.s"
 	@echo "... laser_car.o"
 	@echo "... laser_car.i"
 	@echo "... laser_car.s"

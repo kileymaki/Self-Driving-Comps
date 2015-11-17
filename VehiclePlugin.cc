@@ -206,7 +206,11 @@ void VehiclePlugin::OnUpdate()
     math::Pose pose = this->chassis->GetWorldPose();
     this->yaw = pose.rot.GetYaw();
     
-    this->SetGas(CarLaser::IsAllInf());
+    if(CarLaser::IsAllInf()){
+        this->Accel();
+    }else{
+        this->Brake();
+    }
     
     this->CheckIfOnCollisionCourse();
     
@@ -283,31 +287,38 @@ void VehiclePlugin::OnVelMsg(ConstPosePtr &/*_msg*/)
 {
 }
 
-void VehiclePlugin::SetGas(bool isGas){
+bool VehiclePlugin::IsMovingForwards(){
     math::Vector3 velocity = this->velocity;
     double velAngle = atan2(velocity.y, velocity.x);
-    
-    if(isGas){
-        this->gas = 0.5;
+    return std::abs(this->yaw-velAngle) <= 3.14159265359/2.;
+}
+
+void VehiclePlugin::ApplyMovementForce(double amt){
+    if(amt > 0){
+        this->gas = std::min(1.0, amt);
         this->brake = 0.0;
     }else{
         this->gas = 0.0;
-        if(std::abs(this->yaw-velAngle) <= 3.14159265359/2.){
-            this->brake = -1;
+        if(this->IsMovingForwards()){
+            this->brake = std::max(-1.0, amt);
         }else{
-            this->brake = 0;
+            this->brake = 0.0;
         }
     }
 }
 
-void VehiclePlugin::Stop(){
-    this->SetGas(false);
+void VehiclePlugin::Accel(double amt){
+    this->ApplyMovementForce(amt);
+}
+
+void VehiclePlugin::Brake(double amt){
+    this->ApplyMovementForce(-amt);
 }
 
 void VehiclePlugin::CheckIfOnCollisionCourse(){
     std::vector<double>* nonInfAngles = CarLaser::GetNonInfAngles();
     if (nonInfAngles->size() > ARBITRARY_CUTOFF_POINT_1) {
-        this->Stop();
+        this->Brake();
     }
 }
 

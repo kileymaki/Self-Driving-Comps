@@ -14,6 +14,10 @@
     <include>
       <uri>model://sun</uri>
     </include>
+    <include>
+        <uri>/models/utility_cart</uri>
+        <pose>-10 -10 5 0 0 0</pose>
+    </include>
   
   
 

@@ -1,10 +1,10 @@
-file(REMOVE_RECURSE
+FILE(REMOVE_RECURSE
   "CMakeFiles/car_gps.dir/car_gps.cc.o"
   "libcar_gps.pdb"
-  "libcar_gps.dylib"
+  "libcar_gps.so"
 )
 
 # Per-language clean rules from dependency scanning.
-foreach(lang CXX)
-  include(CMakeFiles/car_gps.dir/cmake_clean_${lang}.cmake OPTIONAL)
-endforeach()
+FOREACH(lang CXX)
+  INCLUDE(CMakeFiles/car_gps.dir/cmake_clean_${lang}.cmake OPTIONAL)
+ENDFOREACH(lang)

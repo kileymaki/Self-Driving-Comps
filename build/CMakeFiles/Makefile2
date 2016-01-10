@@ -100,7 +100,8 @@ clean: CMakeFiles/sdcBox.dir/clean
 # Target rules for target CMakeFiles/sdcCar.dir
 
 # All Build rule for target.
-CMakeFiles/sdcCar.dir/all:
+CMakeFiles/sdcCar.dir/all: CMakeFiles/sdcLaserSensor.dir/all
+CMakeFiles/sdcCar.dir/all: CMakeFiles/sdcGpsSensor.dir/all
 	$(MAKE) -f CMakeFiles/sdcCar.dir/build.make CMakeFiles/sdcCar.dir/depend
 	$(MAKE) -f CMakeFiles/sdcCar.dir/build.make CMakeFiles/sdcCar.dir/build
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/selfcar/Desktop/Self-Driving-Comps/build/CMakeFiles --progress-num=3,4 "Built target sdcCar"
@@ -113,7 +114,7 @@ all: CMakeFiles/sdcCar.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/sdcCar.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/selfcar/Desktop/Self-Driving-Comps/build/CMakeFiles 2
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/selfcar/Desktop/Self-Driving-Comps/build/CMakeFiles 6
 	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/sdcCar.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/selfcar/Desktop/Self-Driving-Comps/build/CMakeFiles 0
 .PHONY : CMakeFiles/sdcCar.dir/rule
@@ -134,52 +135,13 @@ clean: CMakeFiles/sdcCar.dir/clean
 .PHONY : clean
 
 #=============================================================================
-# Target rules for target CMakeFiles/sdcDriver.dir
-
-# All Build rule for target.
-CMakeFiles/sdcDriver.dir/all: CMakeFiles/sdcLaserSensor.dir/all
-CMakeFiles/sdcDriver.dir/all: CMakeFiles/sdcCar.dir/all
-CMakeFiles/sdcDriver.dir/all: CMakeFiles/sdcGpsSensor.dir/all
-	$(MAKE) -f CMakeFiles/sdcDriver.dir/build.make CMakeFiles/sdcDriver.dir/depend
-	$(MAKE) -f CMakeFiles/sdcDriver.dir/build.make CMakeFiles/sdcDriver.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/selfcar/Desktop/Self-Driving-Comps/build/CMakeFiles --progress-num=5,6 "Built target sdcDriver"
-.PHONY : CMakeFiles/sdcDriver.dir/all
-
-# Include target in all.
-all: CMakeFiles/sdcDriver.dir/all
-
-.PHONY : all
-
-# Build rule for subdir invocation for target.
-CMakeFiles/sdcDriver.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/selfcar/Desktop/Self-Driving-Comps/build/CMakeFiles 8
-	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/sdcDriver.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/selfcar/Desktop/Self-Driving-Comps/build/CMakeFiles 0
-.PHONY : CMakeFiles/sdcDriver.dir/rule
-
-# Convenience name for target.
-sdcDriver: CMakeFiles/sdcDriver.dir/rule
-
-.PHONY : sdcDriver
-
-# clean rule for target.
-CMakeFiles/sdcDriver.dir/clean:
-	$(MAKE) -f CMakeFiles/sdcDriver.dir/build.make CMakeFiles/sdcDriver.dir/clean
-.PHONY : CMakeFiles/sdcDriver.dir/clean
-
-# clean rule for target.
-clean: CMakeFiles/sdcDriver.dir/clean
-
-.PHONY : clean
-
-#=============================================================================
 # Target rules for target CMakeFiles/sdcFlyingBox.dir
 
 # All Build rule for target.
 CMakeFiles/sdcFlyingBox.dir/all:
 	$(MAKE) -f CMakeFiles/sdcFlyingBox.dir/build.make CMakeFiles/sdcFlyingBox.dir/depend
 	$(MAKE) -f CMakeFiles/sdcFlyingBox.dir/build.make CMakeFiles/sdcFlyingBox.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/selfcar/Desktop/Self-Driving-Comps/build/CMakeFiles --progress-num=7,8 "Built target sdcFlyingBox"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/selfcar/Desktop/Self-Driving-Comps/build/CMakeFiles --progress-num=5,6 "Built target sdcFlyingBox"
 .PHONY : CMakeFiles/sdcFlyingBox.dir/all
 
 # Include target in all.
@@ -216,7 +178,7 @@ clean: CMakeFiles/sdcFlyingBox.dir/clean
 CMakeFiles/sdcGpsSensor.dir/all:
 	$(MAKE) -f CMakeFiles/sdcGpsSensor.dir/build.make CMakeFiles/sdcGpsSensor.dir/depend
 	$(MAKE) -f CMakeFiles/sdcGpsSensor.dir/build.make CMakeFiles/sdcGpsSensor.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/selfcar/Desktop/Self-Driving-Comps/build/CMakeFiles --progress-num=9,10 "Built target sdcGpsSensor"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/selfcar/Desktop/Self-Driving-Comps/build/CMakeFiles --progress-num=7,8 "Built target sdcGpsSensor"
 .PHONY : CMakeFiles/sdcGpsSensor.dir/all
 
 # Include target in all.
@@ -253,7 +215,7 @@ clean: CMakeFiles/sdcGpsSensor.dir/clean
 CMakeFiles/sdcLaserSensor.dir/all:
 	$(MAKE) -f CMakeFiles/sdcLaserSensor.dir/build.make CMakeFiles/sdcLaserSensor.dir/depend
 	$(MAKE) -f CMakeFiles/sdcLaserSensor.dir/build.make CMakeFiles/sdcLaserSensor.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/selfcar/Desktop/Self-Driving-Comps/build/CMakeFiles --progress-num=11,12 "Built target sdcLaserSensor"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/selfcar/Desktop/Self-Driving-Comps/build/CMakeFiles --progress-num=9,10 "Built target sdcLaserSensor"
 .PHONY : CMakeFiles/sdcLaserSensor.dir/all
 
 # Include target in all.

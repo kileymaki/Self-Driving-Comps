@@ -11,9 +11,6 @@ target_link_libraries(sdcBox ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
 add_library(sdcFlyingBox SHARED sdcFlyingBox.cc)
 target_link_libraries(sdcFlyingBox ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
 
-#add_library(model_car SHARED model_car.cpp)
-#target_link_libraries(model_car ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
-
 add_library(sdcLaserSensor SHARED sdcLaserSensor.cc)
 target_link_libraries(sdcLaserSensor ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
 
@@ -21,7 +18,4 @@ add_library(sdcGpsSensor SHARED sdcGpsSensor.cc)
 target_link_libraries(sdcGpsSensor ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
 
 add_library(sdcCar SHARED sdcCar.cc)
-target_link_libraries(sdcCar ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
-
-add_library(sdcDriver SHARED sdcDriver.cc)
-target_link_libraries(sdcDriver sdcCar sdcLaserSensor sdcGpsSensor ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
+target_link_libraries(sdcCar sdcLaserSensor sdcGpsSensor ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})

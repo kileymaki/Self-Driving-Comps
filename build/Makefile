@@ -137,19 +137,6 @@ sdcCar/fast:
 .PHONY : sdcCar/fast
 
 #=============================================================================
-# Target rules for targets named sdcDriver
-
-# Build rule for target.
-sdcDriver: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 sdcDriver
-.PHONY : sdcDriver
-
-# fast build rule for target.
-sdcDriver/fast:
-	$(MAKE) -f CMakeFiles/sdcDriver.dir/build.make CMakeFiles/sdcDriver.dir/build
-.PHONY : sdcDriver/fast
-
-#=============================================================================
 # Target rules for targets named sdcFlyingBox
 
 # Build rule for target.
@@ -242,33 +229,6 @@ sdcCar.cc.s:
 	$(MAKE) -f CMakeFiles/sdcCar.dir/build.make CMakeFiles/sdcCar.dir/sdcCar.cc.s
 .PHONY : sdcCar.cc.s
 
-sdcDriver.o: sdcDriver.cc.o
-
-.PHONY : sdcDriver.o
-
-# target to build an object file
-sdcDriver.cc.o:
-	$(MAKE) -f CMakeFiles/sdcDriver.dir/build.make CMakeFiles/sdcDriver.dir/sdcDriver.cc.o
-.PHONY : sdcDriver.cc.o
-
-sdcDriver.i: sdcDriver.cc.i
-
-.PHONY : sdcDriver.i
-
-# target to preprocess a source file
-sdcDriver.cc.i:
-	$(MAKE) -f CMakeFiles/sdcDriver.dir/build.make CMakeFiles/sdcDriver.dir/sdcDriver.cc.i
-.PHONY : sdcDriver.cc.i
-
-sdcDriver.s: sdcDriver.cc.s
-
-.PHONY : sdcDriver.s
-
-# target to generate assembly for a file
-sdcDriver.cc.s:
-	$(MAKE) -f CMakeFiles/sdcDriver.dir/build.make CMakeFiles/sdcDriver.dir/sdcDriver.cc.s
-.PHONY : sdcDriver.cc.s
-
 sdcFlyingBox.o: sdcFlyingBox.cc.o
 
 .PHONY : sdcFlyingBox.o
@@ -360,7 +320,6 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... sdcCar"
 	@echo "... sdcLaserSensor"
-	@echo "... sdcDriver"
 	@echo "... sdcFlyingBox"
 	@echo "... sdcGpsSensor"
 	@echo "... sdcBox"
@@ -370,9 +329,6 @@ help:
 	@echo "... sdcCar.o"
 	@echo "... sdcCar.i"
 	@echo "... sdcCar.s"
-	@echo "... sdcDriver.o"
-	@echo "... sdcDriver.i"
-	@echo "... sdcDriver.s"
 	@echo "... sdcFlyingBox.o"
 	@echo "... sdcFlyingBox.i"
 	@echo "... sdcFlyingBox.s"

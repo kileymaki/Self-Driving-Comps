@@ -354,9 +354,9 @@ void sdcCar::Drive()
 void sdcCar::CheckIfOnCollisionCourse(){
     std::vector<double>* nonInfAngles = sdcLaserSensor::GetNonInfAngles();
     if (nonInfAngles->size() > ARBITRARY_CUTOFF_POINT_1) {
-        this->car->Brake();
+        this->Brake();
     } else {
-        this->car->Accel();
+        this->Accel();
     }
 }
 

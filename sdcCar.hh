@@ -72,11 +72,14 @@ namespace gazebo
         /*
          * Begin Comps Defined Stuff
          */
+        private: void Drive();
+        
         private: void ApplyMovementForce(double amt);
         private: void Accel(double amt = 0.5);
         private: void Brake(double amt = 1);
         private: void Steer(double angle);
         private: bool IsMovingForwards();
+        private: void CheckIfOnCollisionCourse();
 
         private: double gas;
         private: double brake;

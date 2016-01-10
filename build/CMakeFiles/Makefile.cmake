@@ -62,10 +62,10 @@ set(CMAKE_MAKEFILE_PRODUCTS
 
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
-  "CMakeFiles/car_gps.dir/DependInfo.cmake"
-  "CMakeFiles/VehiclePlugin.dir/DependInfo.cmake"
-  "CMakeFiles/laser_car.dir/DependInfo.cmake"
-  "CMakeFiles/model_pull.dir/DependInfo.cmake"
-  "CMakeFiles/model_car.dir/DependInfo.cmake"
-  "CMakeFiles/model_push.dir/DependInfo.cmake"
+  "CMakeFiles/sdcCar.dir/DependInfo.cmake"
+  "CMakeFiles/sdcLaserSensor.dir/DependInfo.cmake"
+  "CMakeFiles/sdcDriver.dir/DependInfo.cmake"
+  "CMakeFiles/sdcFlyingBox.dir/DependInfo.cmake"
+  "CMakeFiles/sdcGpsSensor.dir/DependInfo.cmake"
+  "CMakeFiles/sdcBox.dir/DependInfo.cmake"
   )

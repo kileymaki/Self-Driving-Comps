@@ -60,224 +60,226 @@ CMAKE_SOURCE_DIR = /Users/selfcar/Desktop/Self-Driving-Comps
 CMAKE_BINARY_DIR = /Users/selfcar/Desktop/Self-Driving-Comps/build
 
 #=============================================================================
-# Target rules for target CMakeFiles/VehiclePlugin.dir
+# Target rules for target CMakeFiles/sdcBox.dir
 
 # All Build rule for target.
-CMakeFiles/VehiclePlugin.dir/all: CMakeFiles/laser_car.dir/all
-	$(MAKE) -f CMakeFiles/VehiclePlugin.dir/build.make CMakeFiles/VehiclePlugin.dir/depend
-	$(MAKE) -f CMakeFiles/VehiclePlugin.dir/build.make CMakeFiles/VehiclePlugin.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/selfcar/Desktop/Self-Driving-Comps/build/CMakeFiles --progress-num=1,2 "Built target VehiclePlugin"
-.PHONY : CMakeFiles/VehiclePlugin.dir/all
+CMakeFiles/sdcBox.dir/all:
+	$(MAKE) -f CMakeFiles/sdcBox.dir/build.make CMakeFiles/sdcBox.dir/depend
+	$(MAKE) -f CMakeFiles/sdcBox.dir/build.make CMakeFiles/sdcBox.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/selfcar/Desktop/Self-Driving-Comps/build/CMakeFiles --progress-num=1,2 "Built target sdcBox"
+.PHONY : CMakeFiles/sdcBox.dir/all
 
 # Include target in all.
-all: CMakeFiles/VehiclePlugin.dir/all
+all: CMakeFiles/sdcBox.dir/all
 
 .PHONY : all
 
 # Build rule for subdir invocation for target.
-CMakeFiles/VehiclePlugin.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/selfcar/Desktop/Self-Driving-Comps/build/CMakeFiles 4
-	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/VehiclePlugin.dir/all
+CMakeFiles/sdcBox.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/selfcar/Desktop/Self-Driving-Comps/build/CMakeFiles 2
+	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/sdcBox.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/selfcar/Desktop/Self-Driving-Comps/build/CMakeFiles 0
-.PHONY : CMakeFiles/VehiclePlugin.dir/rule
+.PHONY : CMakeFiles/sdcBox.dir/rule
 
 # Convenience name for target.
-VehiclePlugin: CMakeFiles/VehiclePlugin.dir/rule
+sdcBox: CMakeFiles/sdcBox.dir/rule
 
-.PHONY : VehiclePlugin
-
-# clean rule for target.
-CMakeFiles/VehiclePlugin.dir/clean:
-	$(MAKE) -f CMakeFiles/VehiclePlugin.dir/build.make CMakeFiles/VehiclePlugin.dir/clean
-.PHONY : CMakeFiles/VehiclePlugin.dir/clean
+.PHONY : sdcBox
 
 # clean rule for target.
-clean: CMakeFiles/VehiclePlugin.dir/clean
+CMakeFiles/sdcBox.dir/clean:
+	$(MAKE) -f CMakeFiles/sdcBox.dir/build.make CMakeFiles/sdcBox.dir/clean
+.PHONY : CMakeFiles/sdcBox.dir/clean
+
+# clean rule for target.
+clean: CMakeFiles/sdcBox.dir/clean
 
 .PHONY : clean
 
 #=============================================================================
-# Target rules for target CMakeFiles/car_gps.dir
+# Target rules for target CMakeFiles/sdcCar.dir
 
 # All Build rule for target.
-CMakeFiles/car_gps.dir/all:
-	$(MAKE) -f CMakeFiles/car_gps.dir/build.make CMakeFiles/car_gps.dir/depend
-	$(MAKE) -f CMakeFiles/car_gps.dir/build.make CMakeFiles/car_gps.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/selfcar/Desktop/Self-Driving-Comps/build/CMakeFiles --progress-num=3,4 "Built target car_gps"
-.PHONY : CMakeFiles/car_gps.dir/all
+CMakeFiles/sdcCar.dir/all:
+	$(MAKE) -f CMakeFiles/sdcCar.dir/build.make CMakeFiles/sdcCar.dir/depend
+	$(MAKE) -f CMakeFiles/sdcCar.dir/build.make CMakeFiles/sdcCar.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/selfcar/Desktop/Self-Driving-Comps/build/CMakeFiles --progress-num=3,4 "Built target sdcCar"
+.PHONY : CMakeFiles/sdcCar.dir/all
 
 # Include target in all.
-all: CMakeFiles/car_gps.dir/all
+all: CMakeFiles/sdcCar.dir/all
 
 .PHONY : all
 
 # Build rule for subdir invocation for target.
-CMakeFiles/car_gps.dir/rule: cmake_check_build_system
+CMakeFiles/sdcCar.dir/rule: cmake_check_build_system
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/selfcar/Desktop/Self-Driving-Comps/build/CMakeFiles 2
-	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/car_gps.dir/all
+	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/sdcCar.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/selfcar/Desktop/Self-Driving-Comps/build/CMakeFiles 0
-.PHONY : CMakeFiles/car_gps.dir/rule
+.PHONY : CMakeFiles/sdcCar.dir/rule
 
 # Convenience name for target.
-car_gps: CMakeFiles/car_gps.dir/rule
+sdcCar: CMakeFiles/sdcCar.dir/rule
 
-.PHONY : car_gps
-
-# clean rule for target.
-CMakeFiles/car_gps.dir/clean:
-	$(MAKE) -f CMakeFiles/car_gps.dir/build.make CMakeFiles/car_gps.dir/clean
-.PHONY : CMakeFiles/car_gps.dir/clean
+.PHONY : sdcCar
 
 # clean rule for target.
-clean: CMakeFiles/car_gps.dir/clean
+CMakeFiles/sdcCar.dir/clean:
+	$(MAKE) -f CMakeFiles/sdcCar.dir/build.make CMakeFiles/sdcCar.dir/clean
+.PHONY : CMakeFiles/sdcCar.dir/clean
+
+# clean rule for target.
+clean: CMakeFiles/sdcCar.dir/clean
 
 .PHONY : clean
 
 #=============================================================================
-# Target rules for target CMakeFiles/laser_car.dir
+# Target rules for target CMakeFiles/sdcDriver.dir
 
 # All Build rule for target.
-CMakeFiles/laser_car.dir/all:
-	$(MAKE) -f CMakeFiles/laser_car.dir/build.make CMakeFiles/laser_car.dir/depend
-	$(MAKE) -f CMakeFiles/laser_car.dir/build.make CMakeFiles/laser_car.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/selfcar/Desktop/Self-Driving-Comps/build/CMakeFiles --progress-num=5,6 "Built target laser_car"
-.PHONY : CMakeFiles/laser_car.dir/all
+CMakeFiles/sdcDriver.dir/all: CMakeFiles/sdcLaserSensor.dir/all
+CMakeFiles/sdcDriver.dir/all: CMakeFiles/sdcCar.dir/all
+CMakeFiles/sdcDriver.dir/all: CMakeFiles/sdcGpsSensor.dir/all
+	$(MAKE) -f CMakeFiles/sdcDriver.dir/build.make CMakeFiles/sdcDriver.dir/depend
+	$(MAKE) -f CMakeFiles/sdcDriver.dir/build.make CMakeFiles/sdcDriver.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/selfcar/Desktop/Self-Driving-Comps/build/CMakeFiles --progress-num=5,6 "Built target sdcDriver"
+.PHONY : CMakeFiles/sdcDriver.dir/all
 
 # Include target in all.
-all: CMakeFiles/laser_car.dir/all
+all: CMakeFiles/sdcDriver.dir/all
 
 .PHONY : all
 
 # Build rule for subdir invocation for target.
-CMakeFiles/laser_car.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/selfcar/Desktop/Self-Driving-Comps/build/CMakeFiles 2
-	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/laser_car.dir/all
+CMakeFiles/sdcDriver.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/selfcar/Desktop/Self-Driving-Comps/build/CMakeFiles 8
+	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/sdcDriver.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/selfcar/Desktop/Self-Driving-Comps/build/CMakeFiles 0
-.PHONY : CMakeFiles/laser_car.dir/rule
+.PHONY : CMakeFiles/sdcDriver.dir/rule
 
 # Convenience name for target.
-laser_car: CMakeFiles/laser_car.dir/rule
+sdcDriver: CMakeFiles/sdcDriver.dir/rule
 
-.PHONY : laser_car
-
-# clean rule for target.
-CMakeFiles/laser_car.dir/clean:
-	$(MAKE) -f CMakeFiles/laser_car.dir/build.make CMakeFiles/laser_car.dir/clean
-.PHONY : CMakeFiles/laser_car.dir/clean
+.PHONY : sdcDriver
 
 # clean rule for target.
-clean: CMakeFiles/laser_car.dir/clean
+CMakeFiles/sdcDriver.dir/clean:
+	$(MAKE) -f CMakeFiles/sdcDriver.dir/build.make CMakeFiles/sdcDriver.dir/clean
+.PHONY : CMakeFiles/sdcDriver.dir/clean
+
+# clean rule for target.
+clean: CMakeFiles/sdcDriver.dir/clean
 
 .PHONY : clean
 
 #=============================================================================
-# Target rules for target CMakeFiles/model_car.dir
+# Target rules for target CMakeFiles/sdcFlyingBox.dir
 
 # All Build rule for target.
-CMakeFiles/model_car.dir/all:
-	$(MAKE) -f CMakeFiles/model_car.dir/build.make CMakeFiles/model_car.dir/depend
-	$(MAKE) -f CMakeFiles/model_car.dir/build.make CMakeFiles/model_car.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/selfcar/Desktop/Self-Driving-Comps/build/CMakeFiles --progress-num=7,8 "Built target model_car"
-.PHONY : CMakeFiles/model_car.dir/all
+CMakeFiles/sdcFlyingBox.dir/all:
+	$(MAKE) -f CMakeFiles/sdcFlyingBox.dir/build.make CMakeFiles/sdcFlyingBox.dir/depend
+	$(MAKE) -f CMakeFiles/sdcFlyingBox.dir/build.make CMakeFiles/sdcFlyingBox.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/selfcar/Desktop/Self-Driving-Comps/build/CMakeFiles --progress-num=7,8 "Built target sdcFlyingBox"
+.PHONY : CMakeFiles/sdcFlyingBox.dir/all
 
 # Include target in all.
-all: CMakeFiles/model_car.dir/all
+all: CMakeFiles/sdcFlyingBox.dir/all
 
 .PHONY : all
 
 # Build rule for subdir invocation for target.
-CMakeFiles/model_car.dir/rule: cmake_check_build_system
+CMakeFiles/sdcFlyingBox.dir/rule: cmake_check_build_system
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/selfcar/Desktop/Self-Driving-Comps/build/CMakeFiles 2
-	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/model_car.dir/all
+	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/sdcFlyingBox.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/selfcar/Desktop/Self-Driving-Comps/build/CMakeFiles 0
-.PHONY : CMakeFiles/model_car.dir/rule
+.PHONY : CMakeFiles/sdcFlyingBox.dir/rule
 
 # Convenience name for target.
-model_car: CMakeFiles/model_car.dir/rule
+sdcFlyingBox: CMakeFiles/sdcFlyingBox.dir/rule
 
-.PHONY : model_car
-
-# clean rule for target.
-CMakeFiles/model_car.dir/clean:
-	$(MAKE) -f CMakeFiles/model_car.dir/build.make CMakeFiles/model_car.dir/clean
-.PHONY : CMakeFiles/model_car.dir/clean
+.PHONY : sdcFlyingBox
 
 # clean rule for target.
-clean: CMakeFiles/model_car.dir/clean
+CMakeFiles/sdcFlyingBox.dir/clean:
+	$(MAKE) -f CMakeFiles/sdcFlyingBox.dir/build.make CMakeFiles/sdcFlyingBox.dir/clean
+.PHONY : CMakeFiles/sdcFlyingBox.dir/clean
+
+# clean rule for target.
+clean: CMakeFiles/sdcFlyingBox.dir/clean
 
 .PHONY : clean
 
 #=============================================================================
-# Target rules for target CMakeFiles/model_pull.dir
+# Target rules for target CMakeFiles/sdcGpsSensor.dir
 
 # All Build rule for target.
-CMakeFiles/model_pull.dir/all:
-	$(MAKE) -f CMakeFiles/model_pull.dir/build.make CMakeFiles/model_pull.dir/depend
-	$(MAKE) -f CMakeFiles/model_pull.dir/build.make CMakeFiles/model_pull.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/selfcar/Desktop/Self-Driving-Comps/build/CMakeFiles --progress-num=9,10 "Built target model_pull"
-.PHONY : CMakeFiles/model_pull.dir/all
+CMakeFiles/sdcGpsSensor.dir/all:
+	$(MAKE) -f CMakeFiles/sdcGpsSensor.dir/build.make CMakeFiles/sdcGpsSensor.dir/depend
+	$(MAKE) -f CMakeFiles/sdcGpsSensor.dir/build.make CMakeFiles/sdcGpsSensor.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/selfcar/Desktop/Self-Driving-Comps/build/CMakeFiles --progress-num=9,10 "Built target sdcGpsSensor"
+.PHONY : CMakeFiles/sdcGpsSensor.dir/all
 
 # Include target in all.
-all: CMakeFiles/model_pull.dir/all
+all: CMakeFiles/sdcGpsSensor.dir/all
 
 .PHONY : all
 
 # Build rule for subdir invocation for target.
-CMakeFiles/model_pull.dir/rule: cmake_check_build_system
+CMakeFiles/sdcGpsSensor.dir/rule: cmake_check_build_system
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/selfcar/Desktop/Self-Driving-Comps/build/CMakeFiles 2
-	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/model_pull.dir/all
+	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/sdcGpsSensor.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/selfcar/Desktop/Self-Driving-Comps/build/CMakeFiles 0
-.PHONY : CMakeFiles/model_pull.dir/rule
+.PHONY : CMakeFiles/sdcGpsSensor.dir/rule
 
 # Convenience name for target.
-model_pull: CMakeFiles/model_pull.dir/rule
+sdcGpsSensor: CMakeFiles/sdcGpsSensor.dir/rule
 
-.PHONY : model_pull
-
-# clean rule for target.
-CMakeFiles/model_pull.dir/clean:
-	$(MAKE) -f CMakeFiles/model_pull.dir/build.make CMakeFiles/model_pull.dir/clean
-.PHONY : CMakeFiles/model_pull.dir/clean
+.PHONY : sdcGpsSensor
 
 # clean rule for target.
-clean: CMakeFiles/model_pull.dir/clean
+CMakeFiles/sdcGpsSensor.dir/clean:
+	$(MAKE) -f CMakeFiles/sdcGpsSensor.dir/build.make CMakeFiles/sdcGpsSensor.dir/clean
+.PHONY : CMakeFiles/sdcGpsSensor.dir/clean
+
+# clean rule for target.
+clean: CMakeFiles/sdcGpsSensor.dir/clean
 
 .PHONY : clean
 
 #=============================================================================
-# Target rules for target CMakeFiles/model_push.dir
+# Target rules for target CMakeFiles/sdcLaserSensor.dir
 
 # All Build rule for target.
-CMakeFiles/model_push.dir/all:
-	$(MAKE) -f CMakeFiles/model_push.dir/build.make CMakeFiles/model_push.dir/depend
-	$(MAKE) -f CMakeFiles/model_push.dir/build.make CMakeFiles/model_push.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/selfcar/Desktop/Self-Driving-Comps/build/CMakeFiles --progress-num=11,12 "Built target model_push"
-.PHONY : CMakeFiles/model_push.dir/all
+CMakeFiles/sdcLaserSensor.dir/all:
+	$(MAKE) -f CMakeFiles/sdcLaserSensor.dir/build.make CMakeFiles/sdcLaserSensor.dir/depend
+	$(MAKE) -f CMakeFiles/sdcLaserSensor.dir/build.make CMakeFiles/sdcLaserSensor.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/selfcar/Desktop/Self-Driving-Comps/build/CMakeFiles --progress-num=11,12 "Built target sdcLaserSensor"
+.PHONY : CMakeFiles/sdcLaserSensor.dir/all
 
 # Include target in all.
-all: CMakeFiles/model_push.dir/all
+all: CMakeFiles/sdcLaserSensor.dir/all
 
 .PHONY : all
 
 # Build rule for subdir invocation for target.
-CMakeFiles/model_push.dir/rule: cmake_check_build_system
+CMakeFiles/sdcLaserSensor.dir/rule: cmake_check_build_system
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/selfcar/Desktop/Self-Driving-Comps/build/CMakeFiles 2
-	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/model_push.dir/all
+	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/sdcLaserSensor.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/selfcar/Desktop/Self-Driving-Comps/build/CMakeFiles 0
-.PHONY : CMakeFiles/model_push.dir/rule
+.PHONY : CMakeFiles/sdcLaserSensor.dir/rule
 
 # Convenience name for target.
-model_push: CMakeFiles/model_push.dir/rule
+sdcLaserSensor: CMakeFiles/sdcLaserSensor.dir/rule
 
-.PHONY : model_push
-
-# clean rule for target.
-CMakeFiles/model_push.dir/clean:
-	$(MAKE) -f CMakeFiles/model_push.dir/build.make CMakeFiles/model_push.dir/clean
-.PHONY : CMakeFiles/model_push.dir/clean
+.PHONY : sdcLaserSensor
 
 # clean rule for target.
-clean: CMakeFiles/model_push.dir/clean
+CMakeFiles/sdcLaserSensor.dir/clean:
+	$(MAKE) -f CMakeFiles/sdcLaserSensor.dir/build.make CMakeFiles/sdcLaserSensor.dir/clean
+.PHONY : CMakeFiles/sdcLaserSensor.dir/clean
+
+# clean rule for target.
+clean: CMakeFiles/sdcLaserSensor.dir/clean
 
 .PHONY : clean
 

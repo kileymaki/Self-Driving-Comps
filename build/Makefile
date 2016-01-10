@@ -111,244 +111,244 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named VehiclePlugin
+# Target rules for targets named sdcBox
 
 # Build rule for target.
-VehiclePlugin: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 VehiclePlugin
-.PHONY : VehiclePlugin
+sdcBox: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 sdcBox
+.PHONY : sdcBox
 
 # fast build rule for target.
-VehiclePlugin/fast:
-	$(MAKE) -f CMakeFiles/VehiclePlugin.dir/build.make CMakeFiles/VehiclePlugin.dir/build
-.PHONY : VehiclePlugin/fast
+sdcBox/fast:
+	$(MAKE) -f CMakeFiles/sdcBox.dir/build.make CMakeFiles/sdcBox.dir/build
+.PHONY : sdcBox/fast
 
 #=============================================================================
-# Target rules for targets named car_gps
+# Target rules for targets named sdcCar
 
 # Build rule for target.
-car_gps: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 car_gps
-.PHONY : car_gps
+sdcCar: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 sdcCar
+.PHONY : sdcCar
 
 # fast build rule for target.
-car_gps/fast:
-	$(MAKE) -f CMakeFiles/car_gps.dir/build.make CMakeFiles/car_gps.dir/build
-.PHONY : car_gps/fast
+sdcCar/fast:
+	$(MAKE) -f CMakeFiles/sdcCar.dir/build.make CMakeFiles/sdcCar.dir/build
+.PHONY : sdcCar/fast
 
 #=============================================================================
-# Target rules for targets named laser_car
+# Target rules for targets named sdcDriver
 
 # Build rule for target.
-laser_car: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 laser_car
-.PHONY : laser_car
+sdcDriver: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 sdcDriver
+.PHONY : sdcDriver
 
 # fast build rule for target.
-laser_car/fast:
-	$(MAKE) -f CMakeFiles/laser_car.dir/build.make CMakeFiles/laser_car.dir/build
-.PHONY : laser_car/fast
+sdcDriver/fast:
+	$(MAKE) -f CMakeFiles/sdcDriver.dir/build.make CMakeFiles/sdcDriver.dir/build
+.PHONY : sdcDriver/fast
 
 #=============================================================================
-# Target rules for targets named model_car
+# Target rules for targets named sdcFlyingBox
 
 # Build rule for target.
-model_car: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 model_car
-.PHONY : model_car
+sdcFlyingBox: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 sdcFlyingBox
+.PHONY : sdcFlyingBox
 
 # fast build rule for target.
-model_car/fast:
-	$(MAKE) -f CMakeFiles/model_car.dir/build.make CMakeFiles/model_car.dir/build
-.PHONY : model_car/fast
+sdcFlyingBox/fast:
+	$(MAKE) -f CMakeFiles/sdcFlyingBox.dir/build.make CMakeFiles/sdcFlyingBox.dir/build
+.PHONY : sdcFlyingBox/fast
 
 #=============================================================================
-# Target rules for targets named model_pull
+# Target rules for targets named sdcGpsSensor
 
 # Build rule for target.
-model_pull: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 model_pull
-.PHONY : model_pull
+sdcGpsSensor: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 sdcGpsSensor
+.PHONY : sdcGpsSensor
 
 # fast build rule for target.
-model_pull/fast:
-	$(MAKE) -f CMakeFiles/model_pull.dir/build.make CMakeFiles/model_pull.dir/build
-.PHONY : model_pull/fast
+sdcGpsSensor/fast:
+	$(MAKE) -f CMakeFiles/sdcGpsSensor.dir/build.make CMakeFiles/sdcGpsSensor.dir/build
+.PHONY : sdcGpsSensor/fast
 
 #=============================================================================
-# Target rules for targets named model_push
+# Target rules for targets named sdcLaserSensor
 
 # Build rule for target.
-model_push: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 model_push
-.PHONY : model_push
+sdcLaserSensor: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 sdcLaserSensor
+.PHONY : sdcLaserSensor
 
 # fast build rule for target.
-model_push/fast:
-	$(MAKE) -f CMakeFiles/model_push.dir/build.make CMakeFiles/model_push.dir/build
-.PHONY : model_push/fast
+sdcLaserSensor/fast:
+	$(MAKE) -f CMakeFiles/sdcLaserSensor.dir/build.make CMakeFiles/sdcLaserSensor.dir/build
+.PHONY : sdcLaserSensor/fast
 
-VehiclePlugin.o: VehiclePlugin.cc.o
+sdcBox.o: sdcBox.cpp.o
 
-.PHONY : VehiclePlugin.o
-
-# target to build an object file
-VehiclePlugin.cc.o:
-	$(MAKE) -f CMakeFiles/VehiclePlugin.dir/build.make CMakeFiles/VehiclePlugin.dir/VehiclePlugin.cc.o
-.PHONY : VehiclePlugin.cc.o
-
-VehiclePlugin.i: VehiclePlugin.cc.i
-
-.PHONY : VehiclePlugin.i
-
-# target to preprocess a source file
-VehiclePlugin.cc.i:
-	$(MAKE) -f CMakeFiles/VehiclePlugin.dir/build.make CMakeFiles/VehiclePlugin.dir/VehiclePlugin.cc.i
-.PHONY : VehiclePlugin.cc.i
-
-VehiclePlugin.s: VehiclePlugin.cc.s
-
-.PHONY : VehiclePlugin.s
-
-# target to generate assembly for a file
-VehiclePlugin.cc.s:
-	$(MAKE) -f CMakeFiles/VehiclePlugin.dir/build.make CMakeFiles/VehiclePlugin.dir/VehiclePlugin.cc.s
-.PHONY : VehiclePlugin.cc.s
-
-car_gps.o: car_gps.cc.o
-
-.PHONY : car_gps.o
+.PHONY : sdcBox.o
 
 # target to build an object file
-car_gps.cc.o:
-	$(MAKE) -f CMakeFiles/car_gps.dir/build.make CMakeFiles/car_gps.dir/car_gps.cc.o
-.PHONY : car_gps.cc.o
+sdcBox.cpp.o:
+	$(MAKE) -f CMakeFiles/sdcBox.dir/build.make CMakeFiles/sdcBox.dir/sdcBox.cpp.o
+.PHONY : sdcBox.cpp.o
 
-car_gps.i: car_gps.cc.i
+sdcBox.i: sdcBox.cpp.i
 
-.PHONY : car_gps.i
+.PHONY : sdcBox.i
 
 # target to preprocess a source file
-car_gps.cc.i:
-	$(MAKE) -f CMakeFiles/car_gps.dir/build.make CMakeFiles/car_gps.dir/car_gps.cc.i
-.PHONY : car_gps.cc.i
+sdcBox.cpp.i:
+	$(MAKE) -f CMakeFiles/sdcBox.dir/build.make CMakeFiles/sdcBox.dir/sdcBox.cpp.i
+.PHONY : sdcBox.cpp.i
 
-car_gps.s: car_gps.cc.s
+sdcBox.s: sdcBox.cpp.s
 
-.PHONY : car_gps.s
+.PHONY : sdcBox.s
 
 # target to generate assembly for a file
-car_gps.cc.s:
-	$(MAKE) -f CMakeFiles/car_gps.dir/build.make CMakeFiles/car_gps.dir/car_gps.cc.s
-.PHONY : car_gps.cc.s
+sdcBox.cpp.s:
+	$(MAKE) -f CMakeFiles/sdcBox.dir/build.make CMakeFiles/sdcBox.dir/sdcBox.cpp.s
+.PHONY : sdcBox.cpp.s
 
-laser_car.o: laser_car.cc.o
+sdcCar.o: sdcCar.cc.o
 
-.PHONY : laser_car.o
+.PHONY : sdcCar.o
 
 # target to build an object file
-laser_car.cc.o:
-	$(MAKE) -f CMakeFiles/laser_car.dir/build.make CMakeFiles/laser_car.dir/laser_car.cc.o
-.PHONY : laser_car.cc.o
+sdcCar.cc.o:
+	$(MAKE) -f CMakeFiles/sdcCar.dir/build.make CMakeFiles/sdcCar.dir/sdcCar.cc.o
+.PHONY : sdcCar.cc.o
 
-laser_car.i: laser_car.cc.i
+sdcCar.i: sdcCar.cc.i
 
-.PHONY : laser_car.i
+.PHONY : sdcCar.i
 
 # target to preprocess a source file
-laser_car.cc.i:
-	$(MAKE) -f CMakeFiles/laser_car.dir/build.make CMakeFiles/laser_car.dir/laser_car.cc.i
-.PHONY : laser_car.cc.i
+sdcCar.cc.i:
+	$(MAKE) -f CMakeFiles/sdcCar.dir/build.make CMakeFiles/sdcCar.dir/sdcCar.cc.i
+.PHONY : sdcCar.cc.i
 
-laser_car.s: laser_car.cc.s
+sdcCar.s: sdcCar.cc.s
 
-.PHONY : laser_car.s
+.PHONY : sdcCar.s
 
 # target to generate assembly for a file
-laser_car.cc.s:
-	$(MAKE) -f CMakeFiles/laser_car.dir/build.make CMakeFiles/laser_car.dir/laser_car.cc.s
-.PHONY : laser_car.cc.s
+sdcCar.cc.s:
+	$(MAKE) -f CMakeFiles/sdcCar.dir/build.make CMakeFiles/sdcCar.dir/sdcCar.cc.s
+.PHONY : sdcCar.cc.s
 
-model_car.o: model_car.cpp.o
+sdcDriver.o: sdcDriver.cc.o
 
-.PHONY : model_car.o
+.PHONY : sdcDriver.o
 
 # target to build an object file
-model_car.cpp.o:
-	$(MAKE) -f CMakeFiles/model_car.dir/build.make CMakeFiles/model_car.dir/model_car.cpp.o
-.PHONY : model_car.cpp.o
+sdcDriver.cc.o:
+	$(MAKE) -f CMakeFiles/sdcDriver.dir/build.make CMakeFiles/sdcDriver.dir/sdcDriver.cc.o
+.PHONY : sdcDriver.cc.o
 
-model_car.i: model_car.cpp.i
+sdcDriver.i: sdcDriver.cc.i
 
-.PHONY : model_car.i
+.PHONY : sdcDriver.i
 
 # target to preprocess a source file
-model_car.cpp.i:
-	$(MAKE) -f CMakeFiles/model_car.dir/build.make CMakeFiles/model_car.dir/model_car.cpp.i
-.PHONY : model_car.cpp.i
+sdcDriver.cc.i:
+	$(MAKE) -f CMakeFiles/sdcDriver.dir/build.make CMakeFiles/sdcDriver.dir/sdcDriver.cc.i
+.PHONY : sdcDriver.cc.i
 
-model_car.s: model_car.cpp.s
+sdcDriver.s: sdcDriver.cc.s
 
-.PHONY : model_car.s
+.PHONY : sdcDriver.s
 
 # target to generate assembly for a file
-model_car.cpp.s:
-	$(MAKE) -f CMakeFiles/model_car.dir/build.make CMakeFiles/model_car.dir/model_car.cpp.s
-.PHONY : model_car.cpp.s
+sdcDriver.cc.s:
+	$(MAKE) -f CMakeFiles/sdcDriver.dir/build.make CMakeFiles/sdcDriver.dir/sdcDriver.cc.s
+.PHONY : sdcDriver.cc.s
 
-model_pull.o: model_pull.cpp.o
+sdcFlyingBox.o: sdcFlyingBox.cc.o
 
-.PHONY : model_pull.o
+.PHONY : sdcFlyingBox.o
 
 # target to build an object file
-model_pull.cpp.o:
-	$(MAKE) -f CMakeFiles/model_pull.dir/build.make CMakeFiles/model_pull.dir/model_pull.cpp.o
-.PHONY : model_pull.cpp.o
+sdcFlyingBox.cc.o:
+	$(MAKE) -f CMakeFiles/sdcFlyingBox.dir/build.make CMakeFiles/sdcFlyingBox.dir/sdcFlyingBox.cc.o
+.PHONY : sdcFlyingBox.cc.o
 
-model_pull.i: model_pull.cpp.i
+sdcFlyingBox.i: sdcFlyingBox.cc.i
 
-.PHONY : model_pull.i
+.PHONY : sdcFlyingBox.i
 
 # target to preprocess a source file
-model_pull.cpp.i:
-	$(MAKE) -f CMakeFiles/model_pull.dir/build.make CMakeFiles/model_pull.dir/model_pull.cpp.i
-.PHONY : model_pull.cpp.i
+sdcFlyingBox.cc.i:
+	$(MAKE) -f CMakeFiles/sdcFlyingBox.dir/build.make CMakeFiles/sdcFlyingBox.dir/sdcFlyingBox.cc.i
+.PHONY : sdcFlyingBox.cc.i
 
-model_pull.s: model_pull.cpp.s
+sdcFlyingBox.s: sdcFlyingBox.cc.s
 
-.PHONY : model_pull.s
+.PHONY : sdcFlyingBox.s
 
 # target to generate assembly for a file
-model_pull.cpp.s:
-	$(MAKE) -f CMakeFiles/model_pull.dir/build.make CMakeFiles/model_pull.dir/model_pull.cpp.s
-.PHONY : model_pull.cpp.s
+sdcFlyingBox.cc.s:
+	$(MAKE) -f CMakeFiles/sdcFlyingBox.dir/build.make CMakeFiles/sdcFlyingBox.dir/sdcFlyingBox.cc.s
+.PHONY : sdcFlyingBox.cc.s
 
-model_push.o: model_push.cc.o
+sdcGpsSensor.o: sdcGpsSensor.cc.o
 
-.PHONY : model_push.o
+.PHONY : sdcGpsSensor.o
 
 # target to build an object file
-model_push.cc.o:
-	$(MAKE) -f CMakeFiles/model_push.dir/build.make CMakeFiles/model_push.dir/model_push.cc.o
-.PHONY : model_push.cc.o
+sdcGpsSensor.cc.o:
+	$(MAKE) -f CMakeFiles/sdcGpsSensor.dir/build.make CMakeFiles/sdcGpsSensor.dir/sdcGpsSensor.cc.o
+.PHONY : sdcGpsSensor.cc.o
 
-model_push.i: model_push.cc.i
+sdcGpsSensor.i: sdcGpsSensor.cc.i
 
-.PHONY : model_push.i
+.PHONY : sdcGpsSensor.i
 
 # target to preprocess a source file
-model_push.cc.i:
-	$(MAKE) -f CMakeFiles/model_push.dir/build.make CMakeFiles/model_push.dir/model_push.cc.i
-.PHONY : model_push.cc.i
+sdcGpsSensor.cc.i:
+	$(MAKE) -f CMakeFiles/sdcGpsSensor.dir/build.make CMakeFiles/sdcGpsSensor.dir/sdcGpsSensor.cc.i
+.PHONY : sdcGpsSensor.cc.i
 
-model_push.s: model_push.cc.s
+sdcGpsSensor.s: sdcGpsSensor.cc.s
 
-.PHONY : model_push.s
+.PHONY : sdcGpsSensor.s
 
 # target to generate assembly for a file
-model_push.cc.s:
-	$(MAKE) -f CMakeFiles/model_push.dir/build.make CMakeFiles/model_push.dir/model_push.cc.s
-.PHONY : model_push.cc.s
+sdcGpsSensor.cc.s:
+	$(MAKE) -f CMakeFiles/sdcGpsSensor.dir/build.make CMakeFiles/sdcGpsSensor.dir/sdcGpsSensor.cc.s
+.PHONY : sdcGpsSensor.cc.s
+
+sdcLaserSensor.o: sdcLaserSensor.cc.o
+
+.PHONY : sdcLaserSensor.o
+
+# target to build an object file
+sdcLaserSensor.cc.o:
+	$(MAKE) -f CMakeFiles/sdcLaserSensor.dir/build.make CMakeFiles/sdcLaserSensor.dir/sdcLaserSensor.cc.o
+.PHONY : sdcLaserSensor.cc.o
+
+sdcLaserSensor.i: sdcLaserSensor.cc.i
+
+.PHONY : sdcLaserSensor.i
+
+# target to preprocess a source file
+sdcLaserSensor.cc.i:
+	$(MAKE) -f CMakeFiles/sdcLaserSensor.dir/build.make CMakeFiles/sdcLaserSensor.dir/sdcLaserSensor.cc.i
+.PHONY : sdcLaserSensor.cc.i
+
+sdcLaserSensor.s: sdcLaserSensor.cc.s
+
+.PHONY : sdcLaserSensor.s
+
+# target to generate assembly for a file
+sdcLaserSensor.cc.s:
+	$(MAKE) -f CMakeFiles/sdcLaserSensor.dir/build.make CMakeFiles/sdcLaserSensor.dir/sdcLaserSensor.cc.s
+.PHONY : sdcLaserSensor.cc.s
 
 # Help Target
 help:
@@ -357,31 +357,31 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... edit_cache"
-	@echo "... car_gps"
-	@echo "... VehiclePlugin"
-	@echo "... laser_car"
-	@echo "... model_pull"
 	@echo "... rebuild_cache"
-	@echo "... model_car"
-	@echo "... model_push"
-	@echo "... VehiclePlugin.o"
-	@echo "... VehiclePlugin.i"
-	@echo "... VehiclePlugin.s"
-	@echo "... car_gps.o"
-	@echo "... car_gps.i"
-	@echo "... car_gps.s"
-	@echo "... laser_car.o"
-	@echo "... laser_car.i"
-	@echo "... laser_car.s"
-	@echo "... model_car.o"
-	@echo "... model_car.i"
-	@echo "... model_car.s"
-	@echo "... model_pull.o"
-	@echo "... model_pull.i"
-	@echo "... model_pull.s"
-	@echo "... model_push.o"
-	@echo "... model_push.i"
-	@echo "... model_push.s"
+	@echo "... sdcCar"
+	@echo "... sdcLaserSensor"
+	@echo "... sdcDriver"
+	@echo "... sdcFlyingBox"
+	@echo "... sdcGpsSensor"
+	@echo "... sdcBox"
+	@echo "... sdcBox.o"
+	@echo "... sdcBox.i"
+	@echo "... sdcBox.s"
+	@echo "... sdcCar.o"
+	@echo "... sdcCar.i"
+	@echo "... sdcCar.s"
+	@echo "... sdcDriver.o"
+	@echo "... sdcDriver.i"
+	@echo "... sdcDriver.s"
+	@echo "... sdcFlyingBox.o"
+	@echo "... sdcFlyingBox.i"
+	@echo "... sdcFlyingBox.s"
+	@echo "... sdcGpsSensor.o"
+	@echo "... sdcGpsSensor.i"
+	@echo "... sdcGpsSensor.s"
+	@echo "... sdcLaserSensor.o"
+	@echo "... sdcLaserSensor.i"
+	@echo "... sdcLaserSensor.s"
 .PHONY : help
 
 

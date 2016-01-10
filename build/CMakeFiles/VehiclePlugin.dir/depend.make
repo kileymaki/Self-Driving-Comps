@@ -3,6 +3,7 @@
 
 CMakeFiles/VehiclePlugin.dir/VehiclePlugin.cc.o: ../VehiclePlugin.cc
 CMakeFiles/VehiclePlugin.dir/VehiclePlugin.cc.o: ../VehiclePlugin.hh
+CMakeFiles/VehiclePlugin.dir/VehiclePlugin.cc.o: ../car_gps.hh
 CMakeFiles/VehiclePlugin.dir/VehiclePlugin.cc.o: ../laser_car.hh
 CMakeFiles/VehiclePlugin.dir/VehiclePlugin.cc.o: /usr/local/Cellar/ignition-math2/2.2.2/include/ignition/math2/ignition/math.hh
 CMakeFiles/VehiclePlugin.dir/VehiclePlugin.cc.o: /usr/local/Cellar/ignition-math2/2.2.2/include/ignition/math2/ignition/math/AffineException.hh

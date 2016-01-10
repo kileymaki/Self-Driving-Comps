@@ -1,5 +1,0 @@
-/Users/selfcar/Desktop/Self-Driving-Comps/build/CMakeFiles/sdcCar.dir
-/Users/selfcar/Desktop/Self-Driving-Comps/build/CMakeFiles/sdcLaserSensor.dir
-/Users/selfcar/Desktop/Self-Driving-Comps/build/CMakeFiles/sdcFlyingBox.dir
-/Users/selfcar/Desktop/Self-Driving-Comps/build/CMakeFiles/sdcGpsSensor.dir
-/Users/selfcar/Desktop/Self-Driving-Comps/build/CMakeFiles/sdcBox.dir

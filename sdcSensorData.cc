@@ -36,7 +36,6 @@ void sdcSensorData::UpdateLidar(math::Angle minAngle, double angleResolution, st
     
 }
 
-
 bool sdcSensorData::IsAllInf(){
     return isAllInfVar;
 }
@@ -47,4 +46,18 @@ std::vector<double>* sdcSensorData::GetNonInfAngles(){
 
 double sdcSensorData::GetRangeInFront(){
     return rayRange;
+}
+
+
+math::Angle* sdcSensorData::targetLon = new math::Angle(0);
+math::Angle* sdcSensorData::lat = new math::Angle(0);
+math::Angle* sdcSensorData::lon = new math::Angle(0);
+
+void sdcSensorData::UpdateGPS(math::Angle* newLat, math::Angle* newLon){
+    lat = newLat;
+    lon = newLon;
+}
+
+double sdcSensorData::GetLongitude(){
+    return lon->Degree();
 }

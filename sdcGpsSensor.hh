@@ -17,6 +17,8 @@
 #include <stdio.h>
 #include <vector>
 
+#include "sdcSensorData.hh"
+
 namespace gazebo
 {
     class GAZEBO_VISIBLE sdcGpsSensor : public SensorPlugin
@@ -24,9 +26,6 @@ namespace gazebo
         public: virtual void Load(sensors::SensorPtr _sensor, sdf::ElementPtr /*_sdf*/);
         
         public: void OnUpdate();
-        public: double GetLongitude();
-        
-        private: math::Angle targetLon;
         
         private: sensors::GpsSensorPtr parentSensor;
         private: event::ConnectionPtr updateConnection;

@@ -21,18 +21,25 @@ namespace gazebo
 {
     class sdcSensorData
     {
+        // Lidar variables and methods
         public: static bool IsAllInf();
         public: static std::vector<double>* GetNonInfAngles();
         public: static double GetRangeInFront();
-            
         private: static double rayRange;
-            
         private: static bool isAllInfVar;
         private: static std::vector<double>* anglesNotAtInf;
         
-        
         private: static std::vector<double>* lidarRays;
         public: static void UpdateLidar(math::Angle minAngle, double angleResolution, std::vector<double>* newRays);
+        
+        
+        // GPS variables and methods
+        public: static double GetLongitude();
+        private: static math::Angle* targetLon;
+        private: static math::Angle* lat;
+        private: static math::Angle* lon;
+        
+        public: static void UpdateGPS(math::Angle* newLat, math::Angle* newLon);
     };
 }
 

@@ -39,11 +39,7 @@ void sdcGpsSensor::OnUpdate(){
     math::Angle lon = this->parentSensor->Longitude();
     
     printf("LAT:\t%f\nLON:\t%f\n\n",lat.Degree(), lon.Degree());
-}
-
-double sdcGpsSensor::GetLongitude(){
-    math::Angle targetLon = this->parentSensor->Longitude();
-    return targetLon.Degree();
+    sdcSensorData::UpdateGPS(&lat, &lon);
 }
 
 

@@ -17,6 +17,8 @@
 #include <stdio.h>
 #include <vector>
 
+#include "sdcSensorData.hh"
+
 namespace gazebo
 {
     class GAZEBO_VISIBLE sdcLaserSensor : public SensorPlugin
@@ -24,19 +26,9 @@ namespace gazebo
         public: virtual void Load(sensors::SensorPtr _sensor, sdf::ElementPtr /*_sdf*/);
             
         public: void OnUpdate();
-            
-        public: static bool IsAllInf();
-        public: static std::vector<double>* GetNonInfAngles();
-        public: static double GetRangeInFront();
-        
-        private: static double rayRange;
         
         private: sensors::RaySensorPtr parentSensor;
         private: event::ConnectionPtr updateConnection;
-            
-        private: static bool isAllInfVar;
-            
-        private: static std::vector<double>* anglesNotAtInf;
     };
 }
 

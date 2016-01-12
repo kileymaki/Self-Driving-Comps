@@ -12,8 +12,10 @@ using namespace gazebo;
 // Register this plugin with the simulator
 GZ_REGISTER_SENSOR_PLUGIN(sdcLaserSensor)
 
-bool sdcLaserSensor::isAllInfVar = true;
-std::vector<double>* sdcLaserSensor::anglesNotAtInf = new std::vector<double>();
+
+// Pointer to the update event connection
+event::ConnectionPtr updateConnection;
+
 sensors::RaySensorPtr parentSensor;
 
 void sdcLaserSensor::Load(sensors::SensorPtr _sensor, sdf::ElementPtr /*_sdf*/){
@@ -37,38 +39,10 @@ void sdcLaserSensor::Load(sensors::SensorPtr _sensor, sdf::ElementPtr /*_sdf*/){
     
 // Called by the world update start event
 void sdcLaserSensor::OnUpdate(){
-    isAllInfVar = true;
     
-    math::Angle minAngle = this->parentSensor->AngleMin();
-    double angleResolution = this->parentSensor->GetAngleResolution();
-    
-    int rayCount = this->parentSensor->GetRayCount();
-    
-    double rayRange = this->parentSensor->GetRange(320);
-    printf("Ray Range: %f\n", rayRange);
-    
-    anglesNotAtInf->clear();
-    for (unsigned int i = 0; i < rayCount; ++i)
-    {
-        if(!std::isinf(this->parentSensor->GetRange(i))){
-            isAllInfVar = false;
-            anglesNotAtInf->push_back(minAngle.operator+(*new math::Angle(i*angleResolution)).Radian());
-        }
+    std::vector<double>* rays = new std::vector<double>();
+    for (unsigned int i = 0; i < this->parentSensor->GetRayCount(); ++i){
+        rays->push_back(this->parentSensor->GetRange(i));
     }
+    sdcSensorData::UpdateLidar(this->parentSensor->AngleMin(), this->parentSensor->GetAngleResolution(), rays);
 }
-
-    
-// Pointer to the update event connection
-event::ConnectionPtr updateConnection;
-    
-bool sdcLaserSensor::IsAllInf(){
-    return isAllInfVar;
-}
-
-std::vector<double>* sdcLaserSensor::GetNonInfAngles(){
-    return anglesNotAtInf;
-}
-
-//double sdcLaserSensor::GetRangeInFront(){
-//    return rayRange;
-//}

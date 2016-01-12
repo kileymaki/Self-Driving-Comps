@@ -348,26 +348,26 @@ void sdcCar::Drive()
     //        this->Brake();
     //    }
     
-    this->CheckIfOnCollisionCourse();
-    //this->TurnRightIfObjectAhead();
+//    this->CheckIfOnCollisionCourse();
+    this->TurnRightIfObjectAhead();
 }
 
 // Turns right when range of rays is ARBITRARY_CUTOFF_POINT_1 or larger, continues forward if not
 void sdcCar::CheckIfOnCollisionCourse(){
-    std::vector<double>* nonInfAngles = sdcLaserSensor::GetNonInfAngles();
+    std::vector<double>* nonInfAngles = sdcSensorData::GetNonInfAngles();
     if (nonInfAngles->size() > ARBITRARY_CUTOFF_POINT_1) {
         //this->Brake();
-        this->Steer(5);
+//        this->Steer(5);
     } else {
         this->Steer(0);
         this->Accel();
     }
 }
 
-/*
+
 //Car turns right when it sees an object <10 units away; when it's gone it will continue straight
 void sdcCar::TurnRightIfObjectAhead(){
-    double RayRange = sdcLaserSensor::GetRangeInFront();
+    double RayRange = sdcSensorData::GetRangeInFront();
     if(RayRange < 10.0){
         this->Steer(8);
     } else {
@@ -375,7 +375,7 @@ void sdcCar::TurnRightIfObjectAhead(){
         this->Accel();
     }
 }
- */
+
 
 // Drive in a straight line until it passes LON: 0.000200
 // Currently does not compile...

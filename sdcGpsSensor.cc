@@ -41,9 +41,10 @@ void sdcGpsSensor::OnUpdate(){
     printf("LAT:\t%f\nLON:\t%f\n\n",lat.Degree(), lon.Degree());
 }
 
-//math::Angle sdcGpsSensor::GetLongitude(){
-//    return lon.Degree();
-//}
+double sdcGpsSensor::GetLongitude(){
+    math::Angle targetLon = this->parentSensor->Longitude();
+    return targetLon.Degree();
+}
 
 
 // Pointer to the update event connection

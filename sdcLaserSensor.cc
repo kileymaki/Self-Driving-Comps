@@ -44,7 +44,7 @@ void sdcLaserSensor::OnUpdate(){
     
     int rayCount = this->parentSensor->GetRayCount();
     
-    double rayRange = this->parentSensor->GetRange(100);
+    double rayRange = this->parentSensor->GetRange(320);
     printf("Ray Range: %f\n", rayRange);
     
     anglesNotAtInf->clear();
@@ -58,7 +58,7 @@ void sdcLaserSensor::OnUpdate(){
 }
 
     
-    // Pointer to the update event connection
+// Pointer to the update event connection
 event::ConnectionPtr updateConnection;
     
 bool sdcLaserSensor::IsAllInf(){
@@ -68,3 +68,7 @@ bool sdcLaserSensor::IsAllInf(){
 std::vector<double>* sdcLaserSensor::GetNonInfAngles(){
     return anglesNotAtInf;
 }
+
+//double sdcLaserSensor::GetRangeInFront(){
+//    return rayRange;
+//}

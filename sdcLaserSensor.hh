@@ -21,19 +21,22 @@ namespace gazebo
 {
     class GAZEBO_VISIBLE sdcLaserSensor : public SensorPlugin
     {
-    public: virtual void Load(sensors::SensorPtr _sensor, sdf::ElementPtr /*_sdf*/);
+        public: virtual void Load(sensors::SensorPtr _sensor, sdf::ElementPtr /*_sdf*/);
+            
+        public: void OnUpdate();
+            
+        public: static bool IsAllInf();
+        public: static std::vector<double>* GetNonInfAngles();
+        public: static double GetRangeInFront();
         
-    public: void OnUpdate();
+        private: static double rayRange;
         
-    public: static bool IsAllInf();
-    public: static std::vector<double>* GetNonInfAngles();
-        
-    private: sensors::RaySensorPtr parentSensor;
-    private: event::ConnectionPtr updateConnection;
-        
-    private: static bool isAllInfVar;
-        
-    private: static std::vector<double>* anglesNotAtInf;
+        private: sensors::RaySensorPtr parentSensor;
+        private: event::ConnectionPtr updateConnection;
+            
+        private: static bool isAllInfVar;
+            
+        private: static std::vector<double>* anglesNotAtInf;
     };
 }
 

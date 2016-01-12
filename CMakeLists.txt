@@ -18,4 +18,4 @@ add_library(sdcGpsSensor SHARED sdcGpsSensor.cc)
 target_link_libraries(sdcGpsSensor ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
 
 add_library(sdcCar SHARED sdcCar.cc)
-target_link_libraries(sdcCar sdcLaserSensor sdcGpsSensor ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
+target_link_libraries(sdcCar sdcGpsSensor sdcLaserSensor ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})

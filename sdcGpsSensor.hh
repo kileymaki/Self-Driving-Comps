@@ -24,9 +24,9 @@ namespace gazebo
         public: virtual void Load(sensors::SensorPtr _sensor, sdf::ElementPtr /*_sdf*/);
         
         public: void OnUpdate();
-        public: static math::Angle GetLongitude();
+        public: double GetLongitude();
         
-        private: static math::Angle lon;
+        private: math::Angle targetLon;
         
         private: sensors::GpsSensorPtr parentSensor;
         private: event::ConnectionPtr updateConnection;

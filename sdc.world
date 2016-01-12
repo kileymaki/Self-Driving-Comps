@@ -16,7 +16,7 @@
         </include>
         
         <model name="box">
-            <pose>0 10 0.5 25 12 69</pose>
+            <pose>10 0 0.5 0 0 0</pose>
             <link name="link">
                 <collision name="collision">
                     <geometry>
@@ -39,12 +39,12 @@
         </model>
         
         <model name="box2">
-            <pose>20 0 0.5 0 0 0</pose>
+            <pose>40 0 0.5 0 0 0</pose>
             <link name="link">
                 <collision name="collision">
                     <geometry>
                         <box>
-                            <size>1 1 1</size>
+                            <size>1 15 1</size>
                         </box>
                     </geometry>
                 </collision>
@@ -52,13 +52,13 @@
                 <visual name="visual">
                     <geometry>
                         <box>
-                            <size>1 1 1</size>
+                            <size>1 15 1</size>
                         </box>
                     </geometry>
                 </visual>
             </link>
             
-            <plugin name="model_pull" filename="build/libsdcFlyingBox.so"/>
+            <!-- <plugin name="model_pull" filename="build/libsdcFlyingBox.so"/> -->
         </model>
     </world>
 </sdf>

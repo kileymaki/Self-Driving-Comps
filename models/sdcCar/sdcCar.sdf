@@ -1,17 +1,18 @@
 <?xml version="1.0" ?>
 <sdf version="1.4">
     <model name="car">
+        <!-- CHASSIS -->
         <link name="chassis">
             <pose>0 0 0.3 0 0 0</pose>
             <inertial>
                 <mass>100.0</mass>
             </inertial>
-            <collision name="collision">
+            <collision name="chassis_collision">
                 <geometry>
                     <box><size>2.0 1.0 0.2</size></box>
                 </geometry>
             </collision>
-            <visual name="visual">
+            <visual name="chassis_visual">
                 <geometry>
                     <mesh>
                         <uri>file://models/sdcCar/testcar.dae</uri>
@@ -19,14 +20,16 @@
                 </geometry>
             </visual>
         </link>
+        
+        <!-- FRONT LEFT WHEEL -->
         <link name="front_left_wheel">
             <pose>0.8 0.6 0.3 0 1.5707 1.5707</pose>
-            <collision name="collision">
+            <collision name="front_left_wheel_collision">
                 <geometry>
                     <cylinder><radius>0.3</radius><length>0.1</length></cylinder>
                 </geometry>
             </collision>
-            <visual name="visual">
+            <visual name="front_left_wheel_visual">
                 <geometry>
                     <cylinder><radius>0.3</radius><length>0.1</length></cylinder>
                 </geometry>
@@ -38,14 +41,16 @@
                 </material>
             </visual>
         </link>
+        
+        <!-- FRONT RIGHT WHEEL -->
         <link name="front_right_wheel">
             <pose>0.8 -0.6 0.3 0 1.5707 1.5707</pose>
-            <collision name="collision">
+            <collision name="front_right_wheel_collision">
                 <geometry>
                     <cylinder><radius>0.3</radius><length>0.1</length></cylinder>
                 </geometry>
             </collision>
-            <visual name="visual">
+            <visual name="front_right_wheel_visual">
                 <geometry>
                     <cylinder><radius>0.3</radius><length>0.1</length></cylinder>
                 </geometry>
@@ -57,14 +62,16 @@
                 </material>
             </visual>
         </link>
+        
+        <!-- BACK RIGHT WHEEL -->
         <link name="back_right_wheel">
             <pose>-0.8 -0.6 0.3 0 1.5707 1.5707</pose>
-            <collision name="collision">
+            <collision name="back_right_wheel_collision">
                 <geometry>
                     <cylinder><radius>0.3</radius><length>0.1</length></cylinder>
                 </geometry>
             </collision>
-            <visual name="visual">
+            <visual name="back_right_wheel_visual">
                 <geometry>
                     <cylinder><radius>0.3</radius><length>0.1</length></cylinder>
                 </geometry>
@@ -76,14 +83,16 @@
                 </material>
             </visual>
         </link>
+        
+        <!-- Back left wheel for the car -->
         <link name="back_left_wheel">
             <pose>-0.8 0.6 0.3 0 1.5707 1.5707</pose>
-            <collision name="collision">
+            <collision name="back_left_wheel_collision">
                 <geometry>
                     <cylinder><radius>0.3</radius><length>0.1</length></cylinder>
                 </geometry>
             </collision>
-            <visual name="visual">
+            <visual name="back_left_wheel_visual">
                 <geometry>
                     <cylinder><radius>0.3</radius><length>0.1</length></cylinder>
                 </geometry>
@@ -95,14 +104,16 @@
                 </material>
             </visual>
         </link>
+        
+        <!-- GAS PEDAL -->
         <link name="gas_pedal">
             <pose>0.3 0.1 0.5 0 0 0</pose>
-            <collision name="collision">
+            <collision name="gas_pedal_collision">
                 <geometry>
                     <box><size>0.1 0.1 0.1</size></box>
                 </geometry>
             </collision>
-            <visual name="visual">
+            <visual name="gas_pedal_visual">
                 <geometry>
                     <box><size>0.1 0.1 0.1</size></box>
                 </geometry>
@@ -114,14 +125,16 @@
                 </material>
             </visual>
         </link>
+        
+        <!-- BRAKE PEDAL -->
         <link name="brake_pedal">
             <pose>0.3 0.25 0.5 0 0 0</pose>
-            <collision name="collision">
+            <collision name="brake_pedal_collision">
                 <geometry>
                     <box><size>0.1 0.1 0.1</size></box>
                 </geometry>
             </collision>
-            <visual name="visual">
+            <visual name="brake_pedal_visual">
                 <geometry>
                     <box><size>0.1 0.1 0.1</size></box>
                 </geometry>
@@ -133,14 +146,16 @@
                 </material>
             </visual>
         </link>
+        
+        <!-- STEERING WHEEL -->
         <link name="steering_wheel">
             <pose>0.3 0.2 1.0 0 1.5707 0</pose>
-            <collision name="collision">
+            <collision name="steering_wheel_collision">
                 <geometry>
                     <cylinder><radius>0.1</radius><length>0.01</length></cylinder>
                 </geometry>
             </collision>
-            <visual name="visual">
+            <visual name="steering_wheel_visual">
                 <geometry>
                     <cylinder><radius>0.1</radius><length>0.01</length></cylinder>
                 </geometry>
@@ -152,6 +167,8 @@
                 </material>
             </visual>
         </link>
+        
+        <!-- JOINT BETWEEN THE GAS PEDAL AND CAR -->
         <joint type="prismatic" name="gas_joint">
             <parent>chassis</parent>
             <child>gas_pedal</child>
@@ -160,6 +177,8 @@
                 <limit><lower>0</lower><upper>0.2</upper></limit>
             </axis>
         </joint>
+        
+        <!-- JOINT BETWEEN THE BRAKE PEDAL AND CAR -->
         <joint type="prismatic" name="brake_joint">
             <parent>chassis</parent>
             <child>brake_pedal</child>
@@ -168,6 +187,8 @@
                 <limit><lower>0</lower><upper>0.2</upper></limit>
             </axis>
         </joint>
+        
+        <!-- JOINT BETWEEN THE STEERING WHEEL AND CAR -->
         <joint type="revolute" name="steering_joint">
             <parent>chassis</parent>
             <child>steering_wheel</child>
@@ -176,6 +197,8 @@
                 <limit><lower>-7.853</lower><upper>7.853</upper></limit>
             </axis>
         </joint>
+        
+        <!-- JOINT BETWEEN THE FRONT LEFT WHEEL AND CAR -->
         <joint type="revolute2" name="front_left_joint">
             <parent>chassis</parent>
             <child>front_left_wheel</child>
@@ -195,6 +218,8 @@
                 </ode>
             </physics>
         </joint>
+        
+        <!-- JOINT BETWEEN THE FRONT RIGHT WHEEL AND CAR -->
         <joint type="revolute2" name="front_right_joint">
             <parent>chassis</parent>
             <child>front_right_wheel</child>
@@ -210,6 +235,8 @@
                 </ode>
             </physics>
         </joint>
+        
+        <!-- JOINT BETWEEN THE BACK RIGHT WHEEL AND CAR -->
         <joint type="revolute2" name="back_right_joint">
             <parent>chassis</parent>
             <child>back_right_wheel</child>
@@ -225,6 +252,8 @@
                 </ode>
             </physics>
         </joint>
+        
+        <!-- JOINT BETWEEN THE BACK LEFT WHEEL AND CAR -->
         <joint type="revolute2" name="back_left_joint">
             <parent>chassis</parent>
             <child>back_left_wheel</child>
@@ -241,20 +270,20 @@
             </physics>
         </joint>
         
-        
+        <!-- FRONT LASER SENSOR -->
         <link name="car_laser">
             <pose>1.0 0 0.4 0 0 0</pose>
             <inertial>
                 <mass>0.1</mass>
             </inertial>
-            <visual name="visual">
+            <visual name="car_laser_visual">
                 <geometry>
                     <mesh>
                         <uri>model://hokuyo/meshes/hokuyo.dae</uri>
                     </mesh>
                 </geometry>
             </visual>
-            <collision name="collision-base">
+            <collision name="car_laser_collision-base">
                 <pose>0 0 -0.0145 0 0 0</pose>
                 <geometry>
                     <box>
@@ -262,7 +291,7 @@
                     </box>
                 </geometry>
             </collision>
-            <collision name="collision-top">
+            <collision name="car_laser_collision-top">
                 <pose>0 0 0.0205 0 0 0</pose>
                 <geometry>
                     <cylinder>
@@ -294,6 +323,8 @@
                 <visualize>true</visualize>
             </sensor>
         </link>
+        
+        <!-- JOINT BETWEEN THE FRONT LASER SENSOR AND CAR -->
         <joint name="car_laser_joint" type="revolute">
             <child>car_laser</child>
             <parent>chassis</parent>
@@ -306,6 +337,7 @@
             </axis>
         </joint>
         
+        <!-- GPS SENSOR -->
         <link name="car_gps">
             <pose>0.0 0.0 2.0 0 0 0</pose>
             <inertial>
@@ -343,6 +375,8 @@
                 <visualize>true</visualize>
             </sensor>
         </link>
+        
+        <!-- JOINT BETWEEN GPS SENSOR AND CAR -->
         <joint name="car_gps_joint" type="revolute">
             <child>car_gps</child>
             <parent>chassis</parent>
@@ -355,7 +389,7 @@
             </axis>
         </joint>
 
-        
+        <!-- PLUGINS FOR THE CAR; ESSENTIALLY THE "BRAINS" OF THE CAR -->
         <plugin filename="build/libsdcCar.so" name="sdcCar">
             <!-- Joints for each wheel -->
             <front_left>front_left_joint</front_left>
@@ -380,5 +414,4 @@
             <aero_load>0.1</aero_load>
         </plugin>
     </model>
-    
 </sdf>

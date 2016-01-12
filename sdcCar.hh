@@ -80,6 +80,8 @@ namespace gazebo
         private: void Steer(double angle);
         private: bool IsMovingForwards();
         private: void CheckIfOnCollisionCourse();
+        private: void DriveStraightThenStop();
+        private: void TurnRightIfObjectAhead();
 
         private: double gas;
         private: double brake;

@@ -383,7 +383,7 @@ void sdcCar::TurnRightIfObjectAhead(){
 
 void sdcCar::DriveStraightThenStop(){
      double targetLon = sdcSensorData::GetLongitude();
-     printf("targetLon: %f\n", targetLon);
+//     printf("targetLon: %f\n", targetLon);
      if (targetLon > 0.0005) {
          this->Brake();
      } else {

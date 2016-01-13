@@ -22,7 +22,7 @@ void sdcSensorData::UpdateLidar(math::Angle minAngle, double angleResolution, st
     unsigned int rayCount = lidarRays->size();
     
     rayRange = (*lidarRays)[320];
-    printf("Ray Range: %f\n", rayRange);
+//    printf("Ray Range: %f\n", rayRange);
     
     isAllInfVar = true;
     anglesNotAtInf->clear();

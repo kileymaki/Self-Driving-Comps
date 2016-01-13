@@ -33,7 +33,6 @@ void sdcSensorData::UpdateLidar(math::Angle minAngle, double angleResolution, st
             anglesNotAtInf->push_back(minAngle.operator+(*new math::Angle(i*angleResolution)).Radian());
         }
     }
-    
 }
 
 bool sdcSensorData::IsAllInf(){
@@ -60,4 +59,8 @@ void sdcSensorData::UpdateGPS(math::Angle* newLat, math::Angle* newLon){
 
 double sdcSensorData::GetLongitude(){
     return lon->Degree();
+}
+
+double sdcSensorData::GetLatitude(){
+    return lat->Degree();
 }

@@ -82,7 +82,9 @@ namespace gazebo
         private: void CheckIfOnCollisionCourse();
         private: void DriveStraightThenStop();
         private: void TurnRightIfObjectAhead();
-
+        private: void DriveToCoordinates(double lat, double lon);
+        private: void TurnRight();
+        
         private: double gas;
         private: double brake;
         private: double steeringAngle;

@@ -35,6 +35,7 @@ namespace gazebo
         
         // GPS variables and methods
         public: static double GetLongitude();
+        public: static double GetLatitude();
         private: static math::Angle* targetLon;
         private: static math::Angle* lat;
         private: static math::Angle* lon;

@@ -184,7 +184,7 @@ void sdcCar::Init()
   // Maximum brake is the upper limit of the gas joint
   this->maxBrake = this->gasJoint->GetHighStop(0).Radian();
 
-  printf("SteeringRation[%f] MaxGa[%f]\n", this->steeringRatio, this->maxGas);
+  printf("SteeringRation[%f] MaxGas[%f]\n", this->steeringRatio, this->maxGas);
 }
 
 /////////////////////////////////////////////////
@@ -208,7 +208,7 @@ void sdcCar::OnUpdate()
     this->yaw = pose.rot.GetYaw();
     
     
-    
+
     
     this->Drive();
     
@@ -293,11 +293,11 @@ void sdcCar::ApplyMovementForce(double amt){
     if(amt > 0){
         this->gas = std::min(5.0, amt);
         this->brake = 0.0;
-    }else{
+    } else{
         this->gas = 0.0;
         if(this->IsMovingForwards()){
             this->brake = std::max(-10.0, amt);
-        }else{
+        } else{
             this->brake = 0.0;
         }
     }
@@ -313,7 +313,7 @@ bool sdcCar::IsMovingForwards(){
  * Default: 0.5
  */
 void sdcCar::Accel(double amt){
-    amt = 5;
+    amt = 3;
     this->ApplyMovementForce(amt);
 }
 
@@ -321,7 +321,7 @@ void sdcCar::Accel(double amt){
  * Default: 1.0
  */
 void sdcCar::Brake(double amt){
-    amt = 5;
+    amt = 7;
     this->ApplyMovementForce(-amt);
 }
 
@@ -341,7 +341,7 @@ void sdcCar::Steer(double angle){
 
 void sdcCar::Drive()
 {
-    
+    //this->Accel();
     //    if(sdcLaserSensor::IsAllInf()){
     //        this->Accel();
     //    }else{
@@ -349,7 +349,9 @@ void sdcCar::Drive()
     //    }
     
 //    this->CheckIfOnCollisionCourse();
-    this->TurnRightIfObjectAhead();
+//    this->TurnRightIfObjectAhead();
+//    this->DriveStraightThenStop();
+    this->DriveToCoordinates(0.00005, 0.0005);
 }
 
 // Turns right when range of rays is ARBITRARY_CUTOFF_POINT_1 or larger, continues forward if not
@@ -368,7 +370,7 @@ void sdcCar::CheckIfOnCollisionCourse(){
 //Car turns right when it sees an object <10 units away; when it's gone it will continue straight
 void sdcCar::TurnRightIfObjectAhead(){
     double RayRange = sdcSensorData::GetRangeInFront();
-    if(RayRange < 10.0){
+    if (RayRange < 10.0) {
         this->Steer(8);
     } else {
         this->Steer(0);
@@ -378,14 +380,45 @@ void sdcCar::TurnRightIfObjectAhead(){
 
 
 // Drive in a straight line until it passes LON: 0.000200
-// Currently does not compile...
-/*
- void sdcCar::DriveStraightThenStop(){
-     double targetDistance = sdcGpsSensor::GetLongitude();
-     if (targetDistance > 0.0002){
+
+void sdcCar::DriveStraightThenStop(){
+     double targetLon = sdcSensorData::GetLongitude();
+     printf("targetLon: %f\n", targetLon);
+     if (targetLon > 0.0005) {
          this->Brake();
      } else {
          this->Accel();
      }
  }
-*/
+
+
+void sdcCar::DriveToCoordinates(double lat, double lon){
+    double currentLat = sdcSensorData::GetLatitude();
+    double currentLon = sdcSensorData::GetLongitude();
+    if (currentLon != lon) {
+        if (currentLon > lon) {
+            this->Brake();
+        } else if (currentLon < lon) {
+            this->Accel();
+        }
+    } else if (currentLon == lon) {
+        Steer(0);
+    }
+    if (currentLat != lat && currentLon == lon) {
+        if (currentLat > lat) {
+            this->Steer(7);
+            this->Accel();
+        } else if (currentLat < lat) {
+            this->Steer(-7);
+            this->Accel();
+        }
+    } else if (currentLat == lat) {
+        this->Steer(0);
+        this->Brake();
+    }
+}
+
+// Work in progress to turn car 90 degress right
+void sdcCar::TurnRight() {
+    
+}

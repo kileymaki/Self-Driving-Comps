@@ -83,6 +83,7 @@ namespace gazebo
         private: void DriveStraightThenStop();
         private: void TurnRightIfObjectAhead();
         private: void DriveToCoordinates(double lat, double lon);
+        private: void WalledDriving();
         private: void TurnRight();
         
         private: double gas;

@@ -351,7 +351,8 @@ void sdcCar::Drive()
 //    this->CheckIfOnCollisionCourse();
 //    this->TurnRightIfObjectAhead();
 //    this->DriveStraightThenStop();
-    this->DriveToCoordinates(0.00005, 0.0005);
+//    this->DriveToCoordinates(0.00005, 0.0005);
+    this->WalledDriving();
 }
 
 // Turns right when range of rays is ARBITRARY_CUTOFF_POINT_1 or larger, continues forward if not
@@ -366,6 +367,32 @@ void sdcCar::CheckIfOnCollisionCourse(){
     }
 }
 
+// Drive with walled roads
+void sdcCar::WalledDriving(){
+    std::vector<double> lidar = sdcSensorData::GetLidarRays();
+    if(lidar.size() > 0){
+        std::cout << lidar.size() << std::endl;
+        std::cout << lidar.at(0) << std::endl;
+        std::cout << lidar.at(lidar.size()-1) << "\n" << std::endl;
+    }
+    this->Accel();
+    
+    int weight = 0;
+    int numrays = lidar.size()/2;
+    for (int i =0; i < numrays; ++i) {
+        if(!std::isinf(lidar[i])){
+            ++weight;
+        }
+        if(!std::isinf(lidar[i+320])){
+            --weight;
+        }
+    }
+    std::cout << weight << std::endl;
+    this->Steer(-weight/5);
+    //std::cout << (*lidar).size() << std::endl;
+    //std::cout << (*lidar)[320] << std::endl;
+    //std::cout << (*lidar)[639] << std::endl;
+}
 
 //Car turns right when it sees an object <10 units away; when it's gone it will continue straight
 void sdcCar::TurnRightIfObjectAhead(){

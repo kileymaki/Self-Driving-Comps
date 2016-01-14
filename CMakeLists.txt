@@ -17,6 +17,9 @@ target_link_libraries(sdcSensorData ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
 add_library(sdcLaserSensor SHARED sdcLaserSensor.cc)
 target_link_libraries(sdcLaserSensor sdcSensorData ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
 
+add_library(sdcTopLaserSensor SHARED sdcTopLaserSensor.cc)
+target_link_libraries(sdcTopLaserSensor sdcSensorData ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
+
 add_library(sdcGpsSensor SHARED sdcGpsSensor.cc)
 target_link_libraries(sdcGpsSensor sdcSensorData ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
 

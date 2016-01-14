@@ -13,7 +13,12 @@ using namespace gazebo;
 bool sdcSensorData::isAllInfVar = true;
 std::vector<double>* sdcSensorData::anglesNotAtInf = new std::vector<double>();
 double sdcSensorData::rayRange = std::numeric_limits<double>::infinity();
+
 std::vector<double>* sdcSensorData::lidarRays = new std::vector<double>();
+std::vector<double>* sdcSensorData::leftLidarRays = new std::vector<double>();
+std::vector<double>* sdcSensorData::rightLidarRays = new std::vector<double>();
+std::vector<double>* sdcSensorData::forwardLidarRays = new std::vector<double>();
+std::vector<double>* sdcSensorData::backwardLidarRays = new std::vector<double>();
 
 void sdcSensorData::UpdateLidar(math::Angle minAngle, double angleResolution, std::vector<double>* newRays){
     
@@ -35,12 +40,30 @@ void sdcSensorData::UpdateLidar(math::Angle minAngle, double angleResolution, st
     }
 }
 
+void sdcSensorData::UpdateLeftLidar(math::Angle minAngle, double angleResolution, std::vector<double>* newRays){
+    leftLidarRays = newRays;
+}
+void sdcSensorData::UpdateRightLidar(math::Angle minAngle, double angleResolution, std::vector<double>* newRays){
+    rightLidarRays = newRays;
+}
+void sdcSensorData::UpdateForwardLidar(math::Angle minAngle, double angleResolution, std::vector<double>* newRays){
+    forwardLidarRays = newRays;
+}
+void sdcSensorData::UpdateBackwardLidar(math::Angle minAngle, double angleResolution, std::vector<double>* newRays){
+    backwardLidarRays = newRays;
+}
+
 bool sdcSensorData::IsAllInf(){
     return isAllInfVar;
 }
 
 std::vector<double>* sdcSensorData::GetNonInfAngles(){
     return anglesNotAtInf;
+}
+
+std::vector<double> sdcSensorData::GetLidarRays(){
+    std::vector<double> lidarRaysCopy = (*lidarRays);
+    return lidarRaysCopy;
 }
 
 double sdcSensorData::GetRangeInFront(){

@@ -337,20 +337,20 @@
             </axis>
         </joint>
         
-        <!-- TOP LEFT LASER SENSOR -->
-        <link name="top_left_laser">
-            <pose>0.0 0 2.0 0.0 0.18 1.5708</pose>
+        <!-- TOP LASER SENSOR -->
+        <link name="top_laser">
+            <pose>0.0 0 2.0 0.0 0.0 0.0</pose>
             <inertial>
                 <mass>0.1</mass>
             </inertial>
-            <visual name="top_left_laser_visual">
+            <visual name="top_laser_visual">
                 <geometry>
                     <mesh>
                         <uri>model://hokuyo/meshes/hokuyo.dae</uri>
                     </mesh>
                 </geometry>
             </visual>
-            <collision name="top_left_laser_collision-base">
+            <collision name="top_laser_collision-base">
                 <pose>0 0 -0.0145 0 0 0</pose>
                 <geometry>
                     <box>
@@ -358,7 +358,7 @@
                     </box>
                 </geometry>
             </collision>
-            <collision name="top_left_laser_collision-top">
+            <collision name="top_laser_collision-top">
                 <pose>0 0 0.0205 0 0 0</pose>
                 <geometry>
                     <cylinder>
@@ -368,7 +368,7 @@
                 </geometry>
             </collision>
             <sensor name="top_left_laser" type="ray">
-                <pose>0.01 0 0.0175 0 -0 0</pose>
+                <pose>0.01 0 0.0175 0 0.18 1.5708</pose>
                 <ray>
                     <scan>
                         <horizontal>
@@ -384,58 +384,13 @@
                         <resolution>0.01</resolution>
                     </range>
                 </ray>
-                <plugin name="sdcLaserSensor" filename="build/libsdcLaserSensor.so" />
+                <plugin name="sdcTopLaserSensor" filename="build/libsdcTopLaserSensor.so" />
                 <always_on>1</always_on>
                 <update_rate>30</update_rate>
                 <visualize>true</visualize>
             </sensor>
-        </link>
-        
-        <!-- JOINT BETWEEN THE TOP LEFT LASER SENSOR AND CAR -->
-        <joint name="top_left_laser_joint" type="revolute">
-            <child>top_left_laser</child>
-            <parent>chassis</parent>
-            <axis>
-                <xyz>0 0 1</xyz>
-                <limit>
-                    <upper>0</upper>
-                    <lower>0</lower>
-                </limit>
-            </axis>
-        </joint>
-        
-        <!-- TOP FORWARD LASER SENSOR -->
-        <link name="top_forward_laser">
-            <pose>0.0 0 2.0 0 0.18 0</pose>
-            <inertial>
-                <mass>0.1</mass>
-            </inertial>
-            <visual name="top_forward_laser_visual">
-                <geometry>
-                    <mesh>
-                        <uri>model://hokuyo/meshes/hokuyo.dae</uri>
-                    </mesh>
-                </geometry>
-            </visual>
-            <collision name="top_forward_laser_collision-base">
-                <pose>0 0 -0.0145 0 0 0</pose>
-                <geometry>
-                    <box>
-                        <size>0.05 0.05 0.041</size>
-                    </box>
-                </geometry>
-            </collision>
-            <collision name="top_forward_laser_collision-top">
-                <pose>0 0 0.0205 0 0 0</pose>
-                <geometry>
-                    <cylinder>
-                        <radius>0.021</radius>
-                        <length>0.029</length>
-                    </cylinder>
-                </geometry>
-            </collision>
             <sensor name="top_forward_laser" type="ray">
-                <pose>0.01 0 0.0175 0 -0 0</pose>
+                <pose>0.01 0 0.0175 0 0.18 0</pose>
                 <ray>
                     <scan>
                         <horizontal>
@@ -451,58 +406,13 @@
                         <resolution>0.01</resolution>
                     </range>
                 </ray>
-                <plugin name="sdcLaserSensor" filename="build/libsdcLaserSensor.so" />
+                <plugin name="sdcTopLaserSensor" filename="build/libsdcTopLaserSensor.so" />
                 <always_on>1</always_on>
                 <update_rate>30</update_rate>
                 <visualize>true</visualize>
             </sensor>
-        </link>
-        
-        <!-- JOINT BETWEEN THE TOP FORWARD LASER SENSOR AND CAR -->
-        <joint name="top_forward_laser_joint" type="revolute">
-            <child>top_forward_laser</child>
-            <parent>chassis</parent>
-            <axis>
-                <xyz>0 0 1</xyz>
-                <limit>
-                    <upper>0</upper>
-                    <lower>0</lower>
-                </limit>
-            </axis>
-        </joint>
-        
-        <!-- TOP BACKWARD LASER SENSOR -->
-        <link name="top_backward_laser">
-            <pose>0.0 0 2.0 0 0.18 3.14159</pose>
-            <inertial>
-                <mass>0.1</mass>
-            </inertial>
-            <visual name="top_backward_laser_visual">
-                <geometry>
-                    <mesh>
-                        <uri>model://hokuyo/meshes/hokuyo.dae</uri>
-                    </mesh>
-                </geometry>
-            </visual>
-            <collision name="top_backward_laser_collision-base">
-                <pose>0 0 -0.0145 0 0 0</pose>
-                <geometry>
-                    <box>
-                        <size>0.05 0.05 0.041</size>
-                    </box>
-                </geometry>
-            </collision>
-            <collision name="top_backward_laser_collision-top">
-                <pose>0 0 0.0205 0 0 0</pose>
-                <geometry>
-                    <cylinder>
-                        <radius>0.021</radius>
-                        <length>0.029</length>
-                    </cylinder>
-                </geometry>
-            </collision>
             <sensor name="top_backward_laser" type="ray">
-                <pose>0.01 0 0.0175 0 -0 0</pose>
+                <pose>0.01 0 0.0175 0 0.18 3.14159</pose>
                 <ray>
                     <scan>
                         <horizontal>
@@ -518,58 +428,13 @@
                         <resolution>0.01</resolution>
                     </range>
                 </ray>
-                <plugin name="sdcLaserSensor" filename="build/libsdcLaserSensor.so" />
+                <plugin name="sdcTopLaserSensor" filename="build/libsdcTopLaserSensor.so" />
                 <always_on>1</always_on>
                 <update_rate>30</update_rate>
                 <visualize>true</visualize>
             </sensor>
-        </link>
-        
-        <!-- JOINT BETWEEN THE TOP BACKWARD LASER SENSOR AND CAR -->
-        <joint name="top_backward_laser_joint" type="revolute">
-            <child>top_backward_laser</child>
-            <parent>chassis</parent>
-            <axis>
-                <xyz>0 0 1</xyz>
-                <limit>
-                    <upper>0</upper>
-                    <lower>0</lower>
-                </limit>
-            </axis>
-        </joint>
-        
-        <!-- TOP RIGHT LASER SENSOR -->
-        <link name="top_right_laser">
-            <pose>0.0 0 2.0 0 0.18 -1.5708</pose>
-            <inertial>
-                <mass>0.1</mass>
-            </inertial>
-            <visual name="top_right_laser_visual">
-                <geometry>
-                    <mesh>
-                        <uri>model://hokuyo/meshes/hokuyo.dae</uri>
-                    </mesh>
-                </geometry>
-            </visual>
-            <collision name="top_right_laser_collision-base">
-                <pose>0 0 -0.0145 0 0 0</pose>
-                <geometry>
-                    <box>
-                        <size>0.05 0.05 0.041</size>
-                    </box>
-                </geometry>
-            </collision>
-            <collision name="top_right_laser_collision-top">
-                <pose>0 0 0.0205 0 0 0</pose>
-                <geometry>
-                    <cylinder>
-                        <radius>0.021</radius>
-                        <length>0.029</length>
-                    </cylinder>
-                </geometry>
-            </collision>
             <sensor name="top_right_laser" type="ray">
-                <pose>0.01 0 0.0175 0 -0 0</pose>
+                <pose>0.01 0 0.0175 0 0.18 -1.5708</pose>
                 <ray>
                     <scan>
                         <horizontal>
@@ -585,16 +450,16 @@
                         <resolution>0.01</resolution>
                     </range>
                 </ray>
-                <plugin name="sdcLaserSensor" filename="build/libsdcLaserSensor.so" />
+                <plugin name="sdcTopLaserSensor" filename="build/libsdcTopLaserSensor.so" />
                 <always_on>1</always_on>
                 <update_rate>30</update_rate>
                 <visualize>true</visualize>
             </sensor>
         </link>
         
-        <!-- JOINT BETWEEN THE TOP RIGHT LASER SENSOR AND CAR -->
-        <joint name="top_right_laser_joint" type="revolute">
-            <child>top_right_laser</child>
+        <!-- JOINT BETWEEN THE TOP LASER SENSOR AND CAR -->
+        <joint name="top_laser_joint" type="revolute">
+            <child>top_laser</child>
             <parent>chassis</parent>
             <axis>
                 <xyz>0 0 1</xyz>
@@ -604,6 +469,8 @@
                 </limit>
             </axis>
         </joint>
+        
+        
         
         <!-- GPS SENSOR -->
         <link name="gps">

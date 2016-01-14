@@ -24,14 +24,23 @@ namespace gazebo
         // Lidar variables and methods
         public: static bool IsAllInf();
         public: static std::vector<double>* GetNonInfAngles();
+        public: static std::vector<double> GetLidarRays();
         public: static double GetRangeInFront();
         private: static double rayRange;
         private: static bool isAllInfVar;
         private: static std::vector<double>* anglesNotAtInf;
         
         private: static std::vector<double>* lidarRays;
-        public: static void UpdateLidar(math::Angle minAngle, double angleResolution, std::vector<double>* newRays);
+        private: static std::vector<double>* leftLidarRays;
+        private: static std::vector<double>* rightLidarRays;
+        private: static std::vector<double>* forwardLidarRays;
+        private: static std::vector<double>* backwardLidarRays;
         
+        public: static void UpdateLidar(math::Angle minAngle, double angleResolution, std::vector<double>* newRays);
+        public: static void UpdateLeftLidar(math::Angle minAngle, double angleResolution, std::vector<double>* newRays);
+        public: static void UpdateRightLidar(math::Angle minAngle, double angleResolution, std::vector<double>* newRays);
+        public: static void UpdateForwardLidar(math::Angle minAngle, double angleResolution, std::vector<double>* newRays);
+        public: static void UpdateBackwardLidar(math::Angle minAngle, double angleResolution, std::vector<double>* newRays);
         
         // GPS variables and methods
         public: static double GetLongitude();

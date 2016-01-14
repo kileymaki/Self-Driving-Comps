@@ -351,15 +351,17 @@ void sdcCar::Drive()
 //    this->CheckIfOnCollisionCourse();
 //    this->TurnRightIfObjectAhead();
 //    this->DriveStraightThenStop();
-//    this->DriveToCoordinates(0.00005, 0.0005);
+//    this->DriveToCoordinates(0.0005, 0.0005);
     this->WalledDriving();
 }
 
 // Turns right when range of rays is ARBITRARY_CUTOFF_POINT_1 or larger, continues forward if not
 void sdcCar::CheckIfOnCollisionCourse(){
     std::vector<double>* nonInfAngles = sdcSensorData::GetNonInfAngles();
-    if (nonInfAngles->size() > ARBITRARY_CUTOFF_POINT_1) {
-        //this->Brake();
+    //if (nonInfAngles->size() > ARBITRARY_CUTOFF_POINT_1) {
+    double RayRange = sdcSensorData::GetRangeInFront();
+    if (RayRange < 10.0) {
+        this->Brake();
 //        this->Steer(5);
     } else {
         this->Steer(0);
@@ -387,7 +389,9 @@ void sdcCar::WalledDriving(){
             --weight;
         }
     }
+    std::cout << "Weight: ";
     std::cout << weight << std::endl;
+    printf("Steering angle: %f\n", this->steeringAngle);
     this->Steer(-weight/5);
     //std::cout << (*lidar).size() << std::endl;
     //std::cout << (*lidar)[320] << std::endl;
@@ -423,7 +427,7 @@ void sdcCar::DriveToCoordinates(double lat, double lon){
     double currentLat = sdcSensorData::GetLatitude();
     double currentLon = sdcSensorData::GetLongitude();
     if (currentLon != lon) {
-        if (currentLon > lon) {
+        if (currentLon + 0.00015 > lon) {
             this->Brake();
         } else if (currentLon < lon) {
             this->Accel();
@@ -431,8 +435,12 @@ void sdcCar::DriveToCoordinates(double lat, double lon){
     } else if (currentLon == lon) {
         Steer(0);
     }
-    if (currentLat != lat && currentLon == lon) {
+    if (currentLat != lat && (std::abs(currentLon - lon) < 0.0001)) {
         if (currentLat > lat) {
+            
+            int weight = 0;
+            
+            
             this->Steer(7);
             this->Accel();
         } else if (currentLat < lat) {

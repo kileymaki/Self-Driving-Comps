@@ -38,8 +38,13 @@ void sdcGpsSensor::OnUpdate(){
     math::Angle lat = this->parentSensor->Latitude();
     math::Angle lon = this->parentSensor->Longitude();
     
-    printf("LAT:\t%f\nLON:\t%f\n\n",lat.Degree(), lon.Degree());
-    sdcSensorData::UpdateGPS(&lat, &lon);
+    math::Vector2d coordinate = math::Vector2d(lat.Degree(),lon.Degree());
+    //printf("2D LAT:\t%f\n", coordinate[0]);
+    //printf("2D LON:\t%f\n\n", coordinate[1]);
+    
+    //printf("LAT:\t%f\nLON:\t%f\n\n",lat.Degree(), lon.Degree());
+    //sdcSensorData::UpdateGPS(&lat, &lon);
+    sdcSensorData::UpdateGPS(coordinate);
 }
 
 

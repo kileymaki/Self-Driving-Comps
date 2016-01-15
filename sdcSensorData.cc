@@ -70,16 +70,35 @@ double sdcSensorData::GetRangeInFront(){
     return rayRange;
 }
 
+// New gps system using 2d vector
+math::Vector2d sdcSensorData::coordinate;
 
+void sdcSensorData::UpdateGPS(math::Vector2d newCoordinate){
+    coordinate = newCoordinate;
+}
+
+math::Vector2d sdcSensorData::GetCurrentCoord(){
+    return coordinate;
+}
+
+double sdcSensorData::GetLatitude(){
+    return coordinate[0];
+}
+
+double sdcSensorData::GetLongitude(){
+    return coordinate[1];
+}
+
+/* Old coordinate system
 math::Angle* sdcSensorData::targetLon = new math::Angle(0);
 math::Angle* sdcSensorData::lat = new math::Angle(0);
 math::Angle* sdcSensorData::lon = new math::Angle(0);
 
-void sdcSensorData::UpdateGPS(math::Angle* newLat, math::Angle* newLon){
-    lat = newLat;
-    lon = newLon;
-}
-
+ void sdcSensorData::UpdateGPS(math::Angle* newLat, math::Angle* newLon){
+ lat = newLat;
+ lon = newLon;
+ }
+ 
 double sdcSensorData::GetLongitude(){
     return lon->Degree();
 }
@@ -87,3 +106,4 @@ double sdcSensorData::GetLongitude(){
 double sdcSensorData::GetLatitude(){
     return lat->Degree();
 }
+*/

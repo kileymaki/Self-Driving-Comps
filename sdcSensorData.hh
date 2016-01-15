@@ -43,13 +43,16 @@ namespace gazebo
         public: static void UpdateBackwardLidar(math::Angle minAngle, double angleResolution, std::vector<double>* newRays);
         
         // GPS variables and methods
+        public: static math::Vector2d GetCurrentCoord();
         public: static double GetLongitude();
         public: static double GetLatitude();
-        private: static math::Angle* targetLon;
-        private: static math::Angle* lat;
-        private: static math::Angle* lon;
+        //private: static math::Angle* targetLon;
+        //private: static math::Angle* lat;
+        //private: static math::Angle* lon;
+        private: static math::Vector2d coordinate;
         
-        public: static void UpdateGPS(math::Angle* newLat, math::Angle* newLon);
+        //public: static void UpdateGPS(math::Angle* newLat, math::Angle* newLon);
+        public: static void UpdateGPS(math::Vector2d newCoordinate);
     };
 }
 

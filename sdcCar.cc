@@ -426,6 +426,7 @@ void sdcCar::DriveStraightThenStop(){
 void sdcCar::DriveToCoordinates(double lat, double lon){
     double currentLat = sdcSensorData::GetLatitude();
     double currentLon = sdcSensorData::GetLongitude();
+    math::Vector2d coordinate = sdcSensorData::GetCurrentCoord();
     if (currentLon != lon) {
         if (currentLon + 0.00015 > lon) {
             this->Brake();
@@ -436,16 +437,27 @@ void sdcCar::DriveToCoordinates(double lat, double lon){
         Steer(0);
     }
     if (currentLat != lat && (std::abs(currentLon - lon) < 0.0001)) {
+        //double distance = coordinate.Distance(math::Vector2d(lat,lon));
+        //std::cout << "Distance is:" << distance << "\n\n";
         if (currentLat > lat) {
             
             int weight = 0;
-            
+            // Do trig to find out if gps is aligned with lat
+
             
             this->Steer(7);
             this->Accel();
+            
         } else if (currentLat < lat) {
-            this->Steer(-7);
-            this->Accel();
+            if ((currentLon - lon) >= 0) {
+                this->Steer(0);
+                this->Steer(-7);
+                this->Accel();
+            } else if ((currentLon -lon) < 0) {
+                this->Steer(0);
+                this->Steer(7);
+                this->Accel();
+            }
         }
     } else if (currentLat == lat) {
         this->Steer(0);

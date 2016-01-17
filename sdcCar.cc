@@ -24,6 +24,7 @@ using namespace gazebo;
 GZ_REGISTER_MODEL_PLUGIN(sdcCar)
 
 const int ARBITRARY_CUTOFF_POINT_1 = 50;
+bool isTurningRight = false;
 
 /////////////////////////////////////////////////
 sdcCar::sdcCar()
@@ -46,6 +47,7 @@ sdcCar::sdcCar()
     this->gas = 0.0;
     this->brake = 0.0;
     this->steeringAngle = 0.0;
+    this->targetDirection = -3.14159/2;
 }
 
 /////////////////////////////////////////////////
@@ -204,6 +206,8 @@ void sdcCar::OnUpdate()
     // Get the current velocity of the car
     this->velocity = this->chassis->GetWorldLinearVel();
     
+    //std::cout << this->GetSpeed() << "\n";
+    
     math::Pose pose = this->chassis->GetWorldPose();
     this->yaw = pose.rot.GetYaw();
     
@@ -288,20 +292,28 @@ void sdcCar::OnUpdate()
 void sdcCar::OnVelMsg(ConstPosePtr &/*_msg*/)
 {
 }
-
+/*
+ * Both Accel and Brake call ApplyMovementForce
+ * Caps max velocity and accelerates the vehicle.
+ */
 void sdcCar::ApplyMovementForce(double amt){
-    if(amt > 0){
-        this->gas = std::min(5.0, amt);
-        this->brake = 0.0;
-    } else{
+    if(this->GetSpeed() > 6){
         this->gas = 0.0;
-        if(this->IsMovingForwards()){
-            this->brake = std::max(-10.0, amt);
-        } else{
+    } else {
+        if(amt > 0){
+            this->gas = std::min(5.0, amt);
             this->brake = 0.0;
+        } else {
+            this->gas = 0.0;
+            if(this->IsMovingForwards()){
+                this->brake = std::max(-10.0, amt);
+            } else{
+                this->brake = 0.0;
+            }
         }
     }
 }
+
 
 bool sdcCar::IsMovingForwards(){
     math::Vector3 velocity = this->velocity;
@@ -333,6 +345,16 @@ void sdcCar::Steer(double angle){
     this->steeringAngle = angle;
 }
 
+double sdcCar::GetSpeed(){
+    return sqrt(pow(this->velocity.x,2) + pow(this->velocity.y,2));
+}
+
+double sdcCar::GetDirection(){
+    math::Vector3 velocity = this->velocity;
+    double velAngle = atan2(velocity.y, velocity.x);
+    return velAngle;
+}
+
 ////////////////////////////////
 ////////////////////////////////
 // BEGIN THE BRAIN OF THE CAR //
@@ -352,7 +374,8 @@ void sdcCar::Drive()
 //    this->TurnRightIfObjectAhead();
 //    this->DriveStraightThenStop();
 //    this->DriveToCoordinates(0.0005, 0.0005);
-    this->WalledDriving();
+//    this->WalledDriving();
+    this->DriveStraightThenTurn();
 }
 
 // Turns right when range of rays is ARBITRARY_CUTOFF_POINT_1 or larger, continues forward if not
@@ -420,7 +443,7 @@ void sdcCar::DriveStraightThenStop(){
      } else {
          this->Accel();
      }
- }
+}
 
 
 void sdcCar::DriveToCoordinates(double lat, double lon){
@@ -435,6 +458,7 @@ void sdcCar::DriveToCoordinates(double lat, double lon){
         }
     } else if (currentLon == lon) {
         Steer(0);
+        this->Brake();
     }
     if (currentLat != lat && (std::abs(currentLon - lon) < 0.0001)) {
         //double distance = coordinate.Distance(math::Vector2d(lat,lon));
@@ -450,12 +474,12 @@ void sdcCar::DriveToCoordinates(double lat, double lon){
             
         } else if (currentLat < lat) {
             if ((currentLon - lon) >= 0) {
-                this->Steer(0);
-                this->Steer(-7);
+                this->Brake();
+                this->Steer(2);
                 this->Accel();
-            } else if ((currentLon -lon) < 0) {
+            } else if ((currentLon - lon) < 0) {
                 this->Steer(0);
-                this->Steer(7);
+                this->Steer(-2);
                 this->Accel();
             }
         }
@@ -468,4 +492,31 @@ void sdcCar::DriveToCoordinates(double lat, double lon){
 // Work in progress to turn car 90 degress right
 void sdcCar::TurnRight() {
     
+}
+
+void sdcCar::DriveStraightThenTurn(){
+    double targetLon = sdcSensorData::GetLongitude();
+    double direction = this->GetDirection();
+    static int print = 0;
+    //     printf("targetLon: %f\n", targetLon);
+    if (targetLon > 0.0005) {
+        if(direction > targetDirection - .1 && direction < targetDirection + .1){
+            this->Steer(0);
+            this->Accel();
+            if(print ==1){
+                std::cout << "X: " << sdcSensorData::GetLongitude() << " Y: " << sdcSensorData::GetLatitude() << std::endl;
+                print = 2;
+            }
+        } else {
+            if(print == 0){
+                std::cout << "X: " << sdcSensorData::GetLongitude() << " Y: " << sdcSensorData::GetLatitude() << std::endl;
+                print = 1;
+            }
+//            std::cout << direction << std::endl;
+            this->Steer(7);
+            this->Accel();
+        }
+    } else {
+        this->Accel();
+    }
 }

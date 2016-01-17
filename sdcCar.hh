@@ -85,12 +85,17 @@ namespace gazebo
         private: void DriveToCoordinates(double lat, double lon);
         private: void WalledDriving();
         private: void TurnRight();
+        private: double GetSpeed();
+        private: double GetDirection();
+        private: void DriveStraightThenTurn();
         
         private: double gas;
         private: double brake;
         private: double steeringAngle;
         private: double yaw;
         private: double lon;
+        private: double targetDirection;
+        private: bool isTurningRight;
     };
 }
 #endif

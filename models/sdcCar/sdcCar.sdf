@@ -546,7 +546,7 @@
             <max_speed>10</max_speed>
             <!-- Factor for the down-force applied as the car travels faster -->
             <!-- A larger number increases the down force -->
-            <aero_load>0.1</aero_load>
+            <aero_load>1.0</aero_load>
         </plugin>
     </model>
 </sdf>

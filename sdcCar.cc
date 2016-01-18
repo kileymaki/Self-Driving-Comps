@@ -50,6 +50,9 @@ sdcCar::sdcCar()
     
     this->targetDirection = 0.0;
     this->targetSteeringAngle = 0.0;
+    
+    // Used to track waypoint driving
+    this->waypointProgress = 0;
 }
 
 /////////////////////////////////////////////////
@@ -299,19 +302,18 @@ void sdcCar::OnVelMsg(ConstPosePtr &/*_msg*/)
  * Caps max velocity and accelerates the vehicle.
  */
 void sdcCar::ApplyMovementForce(double amt){
-    if(this->GetSpeed() > 6){
-        this->gas = 0.0;
+    if(amt > 0){
+        if(this->GetSpeed() > 6){
+            amt = 0;
+        }
+        this->gas = std::min(5.0, amt);
+        this->brake = 0.0;
     } else {
-        if(amt > 0){
-            this->gas = std::min(5.0, amt);
+        this->gas = 0.0;
+        if(this->IsMovingForwards()){
+            this->brake = std::max(-10.0, amt);
+        } else{
             this->brake = 0.0;
-        } else {
-            this->gas = 0.0;
-            if(this->IsMovingForwards()){
-                this->brake = std::max(-10.0, amt);
-            } else{
-                this->brake = 0.0;
-            }
         }
     }
 }
@@ -366,7 +368,7 @@ double sdcCar::GetDirection(){
 
 void sdcCar::Drive()
 {
-    if (std::abs(this->GetDirection() - this->targetDirection) > 0.1) {
+    if (std::abs(this->GetDirection() - this->targetDirection) > 0.00855) {
 //        printf("Target direction: %f\nCurrent direction: %f\n", this->targetDirection, this->GetDirection());
 //        printf("Corresponding steering angle: %f\n\n", -7*sin(this->targetDirection - this->GetDirection()));
         this->Steer(-7*sin(this->targetDirection - this->GetDirection()));
@@ -391,7 +393,8 @@ void sdcCar::Drive()
 //    this->DriveStraightThenStop();
 //    this->DriveToCoordinates(0.0005, 0.0005);
 //    this->WalledDriving();
-    this->DriveStraightThenTurn();
+//    this->DriveStraightThenTurn();
+    this->WaypointDriving();
 }
 
 // Turns right when range of rays is ARBITRARY_CUTOFF_POINT_1 or larger, continues forward if not
@@ -406,6 +409,43 @@ void sdcCar::CheckIfOnCollisionCourse(){
         this->Steer(0);
         this->Accel();
     }
+}
+
+////////////////////////////////////////////////////////////////////////////
+// Drive from point to point
+void sdcCar::WaypointDriving(){
+    int progress = this->waypointProgress;
+    std::vector<math::Vector2d> waypoints = {math::Vector2d(0.0005,0.000), math::Vector2d(0.0006,0.0005), math::Vector2d(0.001,0.001)};
+    //std::cout << progress << " / " << waypoints.size() << " " << (progress < waypoints.size()) << std::endl;
+    //std::cout << "/n(" << sdcSensorData::GetCurrentCoord().x << "," << sdcSensorData::GetCurrentCoord().y << ")" << std::endl;
+    if(progress < waypoints.size()){
+        math::Vector2d nextTarget = waypoints[progress];
+        double targetAngle = AngleToTarget(nextTarget);
+        this->targetDirection = targetAngle;
+        
+        //std::cout << targetAngle << std::endl;
+        
+        this->Accel();
+        
+        double distance = sdcSensorData::GetCurrentCoord().Distance(nextTarget);
+        //std::cout << distance << std::endl;
+        if (distance < 0.0001) {
+            //std::cout << "#################################/nTarget achieved#################################/n";
+            ++progress;
+        }
+    }
+    else {
+        this->Brake();
+    }
+    this->waypointProgress = progress;
+}
+
+// Returns the angle from the car's current position to a target position
+double sdcCar::AngleToTarget(math::Vector2d target) {
+    math::Vector2d position = sdcSensorData::GetCurrentCoord();
+    math::Vector2d targetVector = math::Vector2d(target.x - position.x, target.y - position.y);
+    double targetAngle = atan2(targetVector.y, targetVector.x);
+    return targetAngle;
 }
 
 // Drive with walled roads

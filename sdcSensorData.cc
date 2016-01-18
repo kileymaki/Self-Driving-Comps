@@ -82,11 +82,11 @@ math::Vector2d sdcSensorData::GetCurrentCoord(){
 }
 
 double sdcSensorData::GetLatitude(){
-    return coordinate[0];
+    return coordinate[1];
 }
 
 double sdcSensorData::GetLongitude(){
-    return coordinate[1];
+    return coordinate[0];
 }
 
 /* Old coordinate system

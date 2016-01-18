@@ -89,6 +89,9 @@ namespace gazebo
         private: double GetDirection();
         private: void DriveStraightThenTurn();
         
+        private: void WaypointDriving();
+        private: double AngleToTarget(math::Vector2d target);
+        
         private: double gas;
         private: double brake;
         private: double steeringAngle;
@@ -96,6 +99,7 @@ namespace gazebo
         private: double lon;
         private: double targetDirection;
         private: bool isTurningRight;
+        private: int waypointProgress;
         
         private: double targetSteeringAngle;
     };

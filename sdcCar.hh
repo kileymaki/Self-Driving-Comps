@@ -96,6 +96,8 @@ namespace gazebo
         private: double lon;
         private: double targetDirection;
         private: bool isTurningRight;
+        
+        private: double targetSteeringAngle;
     };
 }
 #endif

@@ -47,7 +47,9 @@ sdcCar::sdcCar()
     this->gas = 0.0;
     this->brake = 0.0;
     this->steeringAngle = 0.0;
-    this->targetDirection = -3.14159/2;
+    
+    this->targetDirection = 0.0;
+    this->targetSteeringAngle = 0.0;
 }
 
 /////////////////////////////////////////////////
@@ -342,7 +344,8 @@ void sdcCar::Brake(double amt){
  * Positive numbers turn right
  */
 void sdcCar::Steer(double angle){
-    this->steeringAngle = angle;
+//    this->steeringAngle = angle;
+    this->targetSteeringAngle = angle;
 }
 
 double sdcCar::GetSpeed(){
@@ -363,6 +366,19 @@ double sdcCar::GetDirection(){
 
 void sdcCar::Drive()
 {
+    if (std::abs(this->GetDirection() - this->targetDirection) > 0.1) {
+//        printf("Target direction: %f\nCurrent direction: %f\n", this->targetDirection, this->GetDirection());
+//        printf("Corresponding steering angle: %f\n\n", -7*sin(this->targetDirection - this->GetDirection()));
+        this->Steer(-7*sin(this->targetDirection - this->GetDirection()));
+    }
+    if (std::abs(this->steeringAngle - this->targetSteeringAngle) > 0.05) {
+        if (this->steeringAngle < this->targetSteeringAngle) {
+            this->steeringAngle = this->steeringAngle + 0.01;
+        }else{
+            this->steeringAngle = this->steeringAngle - 0.01;
+        }
+    }
+    
     //this->Accel();
     //    if(sdcLaserSensor::IsAllInf()){
     //        this->Accel();
@@ -497,12 +513,14 @@ void sdcCar::TurnRight() {
 void sdcCar::DriveStraightThenTurn(){
     double targetLon = sdcSensorData::GetLongitude();
     double direction = this->GetDirection();
+    this->Accel();
     static int print = 0;
     //     printf("targetLon: %f\n", targetLon);
     if (targetLon > 0.0005) {
+        this->targetDirection = -3.14159/2;
+        
+        
         if(direction > targetDirection - .1 && direction < targetDirection + .1){
-            this->Steer(0);
-            this->Accel();
             if(print ==1){
                 std::cout << "X: " << sdcSensorData::GetLongitude() << " Y: " << sdcSensorData::GetLatitude() << std::endl;
                 print = 2;
@@ -512,11 +530,6 @@ void sdcCar::DriveStraightThenTurn(){
                 std::cout << "X: " << sdcSensorData::GetLongitude() << " Y: " << sdcSensorData::GetLatitude() << std::endl;
                 print = 1;
             }
-//            std::cout << direction << std::endl;
-            this->Steer(7);
-            this->Accel();
         }
-    } else {
-        this->Accel();
     }
 }

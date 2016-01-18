@@ -297,6 +297,7 @@ void sdcCar::OnUpdate()
 void sdcCar::OnVelMsg(ConstPosePtr &/*_msg*/)
 {
 }
+
 /*
  * Both Accel and Brake call ApplyMovementForce
  * Caps max velocity and accelerates the vehicle.
@@ -312,7 +313,7 @@ void sdcCar::ApplyMovementForce(double amt){
         this->gas = 0.0;
         if(this->IsMovingForwards()){
             this->brake = std::max(-10.0, amt);
-        } else{
+        } else {
             this->brake = 0.0;
         }
     }
@@ -368,6 +369,7 @@ double sdcCar::GetDirection(){
 
 void sdcCar::Drive()
 {
+    // Smooths out turning
     if (std::abs(this->GetDirection() - this->targetDirection) > 0.00855) {
 //        printf("Target direction: %f\nCurrent direction: %f\n", this->targetDirection, this->GetDirection());
 //        printf("Corresponding steering angle: %f\n\n", -7*sin(this->targetDirection - this->GetDirection()));
@@ -394,7 +396,10 @@ void sdcCar::Drive()
 //    this->DriveToCoordinates(0.0005, 0.0005);
 //    this->WalledDriving();
 //    this->DriveStraightThenTurn();
-    this->WaypointDriving();
+    
+    // List of points passed to WaypointDriving
+    std::vector<math::Vector2d> waypoints = {math::Vector2d(0.0005,0.000), math::Vector2d(0.0006,0.0005), math::Vector2d(0.001,0.001)};
+    this->WaypointDriving(waypoints);
 }
 
 // Turns right when range of rays is ARBITRARY_CUTOFF_POINT_1 or larger, continues forward if not
@@ -413,9 +418,9 @@ void sdcCar::CheckIfOnCollisionCourse(){
 
 ////////////////////////////////////////////////////////////////////////////
 // Drive from point to point
-void sdcCar::WaypointDriving(){
+void sdcCar::WaypointDriving(std::vector<math::Vector2d> waypoints){
     int progress = this->waypointProgress;
-    std::vector<math::Vector2d> waypoints = {math::Vector2d(0.0005,0.000), math::Vector2d(0.0006,0.0005), math::Vector2d(0.001,0.001)};
+    //std::vector<math::Vector2d> waypoints = waypoints;
     //std::cout << progress << " / " << waypoints.size() << " " << (progress < waypoints.size()) << std::endl;
     //std::cout << "/n(" << sdcSensorData::GetCurrentCoord().x << "," << sdcSensorData::GetCurrentCoord().y << ")" << std::endl;
     if(progress < waypoints.size()){
@@ -506,6 +511,9 @@ void sdcCar::DriveToCoordinates(double lat, double lon){
     double currentLat = sdcSensorData::GetLatitude();
     double currentLon = sdcSensorData::GetLongitude();
     math::Vector2d coordinate = sdcSensorData::GetCurrentCoord();
+    
+    
+    
     if (currentLon != lon) {
         if (currentLon + 0.00015 > lon) {
             this->Brake();

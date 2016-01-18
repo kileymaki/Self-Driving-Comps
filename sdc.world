@@ -22,7 +22,7 @@
         </gui>
         
         <model name="box">
-            <pose>100 100 0.5 0 0 0</pose>
+            <pose>-100 -100 0.5 0 0 0</pose>
             <link name="link">
                 <collision name="collision">
                     <geometry>
@@ -45,7 +45,7 @@
         </model>
         
         <model name="box2">
-            <pose>20 -20 0.5 0 0 0</pose>
+            <pose>-20 -20 0.5 0 0 0</pose>
             <link name="link">
                 <collision name="collision">
                     <geometry>
@@ -68,7 +68,7 @@
         </model>
         
         <model name="box3">
-            <pose>80 80 0.5 0 0 0</pose>
+            <pose>35 0 0.5 0 0 0</pose>
             <link name="link">
                 <collision name="collision">
                     <geometry>

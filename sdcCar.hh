@@ -89,7 +89,7 @@ namespace gazebo
         private: double GetDirection();
         private: void DriveStraightThenTurn();
         
-        private: void WaypointDriving();
+        private: void WaypointDriving(std::vector<math::Vector2d> waypoints);
         private: double AngleToTarget(math::Vector2d target);
         
         private: double gas;

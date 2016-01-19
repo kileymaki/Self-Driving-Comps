@@ -373,7 +373,7 @@ void sdcCar::Drive()
     if (std::abs(this->GetDirection() - this->targetDirection) > 0.00855) {
 //        printf("Target direction: %f\nCurrent direction: %f\n", this->targetDirection, this->GetDirection());
 //        printf("Corresponding steering angle: %f\n\n", -7*sin(this->targetDirection - this->GetDirection()));
-        this->Steer(-7*sin(this->targetDirection - this->GetDirection()));
+        this->targetSteeringAngle = -7*sin(this->targetDirection - this->GetDirection());
     }
     if (std::abs(this->steeringAngle - this->targetSteeringAngle) > 0.05) {
         if (this->steeringAngle < this->targetSteeringAngle) {
@@ -394,12 +394,12 @@ void sdcCar::Drive()
 //    this->TurnRightIfObjectAhead();
 //    this->DriveStraightThenStop();
 //    this->DriveToCoordinates(0.0005, 0.0005);
-//    this->WalledDriving();
+    this->WalledDriving();
 //    this->DriveStraightThenTurn();
     
     // List of points passed to WaypointDriving
     std::vector<math::Vector2d> waypoints = {math::Vector2d(0.0005,0.000), math::Vector2d(0.0006,0.0005), math::Vector2d(0.001,0.001)};
-    this->WaypointDriving(waypoints);
+//    this->WaypointDriving(waypoints);
 }
 
 // Turns right when range of rays is ARBITRARY_CUTOFF_POINT_1 or larger, continues forward if not
@@ -476,7 +476,7 @@ void sdcCar::WalledDriving(){
     std::cout << "Weight: ";
     std::cout << weight << std::endl;
     printf("Steering angle: %f\n", this->steeringAngle);
-    this->Steer(-weight/5);
+    this->targetDirection = this->GetDirection() + weight*3.14159/320;
     //std::cout << (*lidar).size() << std::endl;
     //std::cout << (*lidar)[320] << std::endl;
     //std::cout << (*lidar)[639] << std::endl;
@@ -511,7 +511,6 @@ void sdcCar::DriveToCoordinates(double lat, double lon){
     double currentLat = sdcSensorData::GetLatitude();
     double currentLon = sdcSensorData::GetLongitude();
     math::Vector2d coordinate = sdcSensorData::GetCurrentCoord();
-    
     
     
     if (currentLon != lon) {
@@ -562,22 +561,8 @@ void sdcCar::DriveStraightThenTurn(){
     double targetLon = sdcSensorData::GetLongitude();
     double direction = this->GetDirection();
     this->Accel();
-    static int print = 0;
     //     printf("targetLon: %f\n", targetLon);
     if (targetLon > 0.0005) {
         this->targetDirection = -3.14159/2;
-        
-        
-        if(direction > targetDirection - .1 && direction < targetDirection + .1){
-            if(print ==1){
-                std::cout << "X: " << sdcSensorData::GetLongitude() << " Y: " << sdcSensorData::GetLatitude() << std::endl;
-                print = 2;
-            }
-        } else {
-            if(print == 0){
-                std::cout << "X: " << sdcSensorData::GetLongitude() << " Y: " << sdcSensorData::GetLatitude() << std::endl;
-                print = 1;
-            }
-        }
     }
 }

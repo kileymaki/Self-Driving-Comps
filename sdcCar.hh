@@ -92,8 +92,8 @@ namespace gazebo
         private: void WaypointDriving(std::vector<math::Vector2d> waypoints);
         private: double AngleToTarget(math::Vector2d target);
         
-        private: double gas;
-        private: double brake;
+        private: double gas; //variable that accelerates the car
+        private: double brake; //variable that brakes the car and breaks your false perception of reality
         private: double steeringAngle;
         private: double yaw;
         private: double lon;

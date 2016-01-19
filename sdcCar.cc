@@ -394,12 +394,20 @@ void sdcCar::Drive()
 //    this->TurnRightIfObjectAhead();
 //    this->DriveStraightThenStop();
 //    this->DriveToCoordinates(0.0005, 0.0005);
-    this->WalledDriving();
+    
+    // Combines WalledDriving with WaypointDriving
+    if (!(sdcSensorData::IsAllInf())) {
+        this->WalledDriving();
+    } else {
+        std::vector<math::Vector2d> waypoints = {math::Vector2d(0.0005,0.000), math::Vector2d(0.0006,0.0005), math::Vector2d(0.001,0.001)};
+        this->WaypointDriving(waypoints);
+    }
+    //this->WalledDriving();
 //    this->DriveStraightThenTurn();
     
     // List of points passed to WaypointDriving
-    std::vector<math::Vector2d> waypoints = {math::Vector2d(0.0005,0.000), math::Vector2d(0.0006,0.0005), math::Vector2d(0.001,0.001)};
-//    this->WaypointDriving(waypoints);
+    //std::vector<math::Vector2d> waypoints = {math::Vector2d(0.0005,0.000), math::Vector2d(0.0006,0.0005), math::Vector2d(0.001,0.001)};
+    //this->WaypointDriving(waypoints);
 }
 
 // Turns right when range of rays is ARBITRARY_CUTOFF_POINT_1 or larger, continues forward if not
@@ -407,9 +415,8 @@ void sdcCar::CheckIfOnCollisionCourse(){
     std::vector<double>* nonInfAngles = sdcSensorData::GetNonInfAngles();
     //if (nonInfAngles->size() > ARBITRARY_CUTOFF_POINT_1) {
     double RayRange = sdcSensorData::GetRangeInFront();
-    if (RayRange < 10.0) {
+    if (RayRange < 5.0) {
         this->Brake();
-//        this->Steer(5);
     } else {
         this->Steer(0);
         this->Accel();
@@ -511,8 +518,6 @@ void sdcCar::DriveToCoordinates(double lat, double lon){
     double currentLat = sdcSensorData::GetLatitude();
     double currentLon = sdcSensorData::GetLongitude();
     math::Vector2d coordinate = sdcSensorData::GetCurrentCoord();
-    
-    
     if (currentLon != lon) {
         if (currentLon + 0.00015 > lon) {
             this->Brake();
@@ -527,11 +532,6 @@ void sdcCar::DriveToCoordinates(double lat, double lon){
         //double distance = coordinate.Distance(math::Vector2d(lat,lon));
         //std::cout << "Distance is:" << distance << "\n\n";
         if (currentLat > lat) {
-            
-            int weight = 0;
-            // Do trig to find out if gps is aligned with lat
-
-            
             this->Steer(7);
             this->Accel();
             

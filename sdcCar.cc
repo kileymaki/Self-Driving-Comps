@@ -24,7 +24,6 @@ using namespace gazebo;
 GZ_REGISTER_MODEL_PLUGIN(sdcCar)
 
 const int ARBITRARY_CUTOFF_POINT_1 = 50;
-bool isTurningRight = false;
 
 /////////////////////////////////////////////////
 sdcCar::sdcCar()
@@ -395,7 +394,7 @@ void sdcCar::Drive()
 //    this->DriveStraightThenStop();
 //    this->DriveToCoordinates(0.0005, 0.0005);
     
-    // Combines WalledDriving with WaypointDriving
+    // Combines WalledDriving with WaypointDriving;
     if (!(sdcSensorData::IsAllInf())) {
         this->WalledDriving();
     } else {
@@ -429,7 +428,7 @@ void sdcCar::WaypointDriving(std::vector<math::Vector2d> waypoints){
     int progress = this->waypointProgress;
     //std::vector<math::Vector2d> waypoints = waypoints;
     //std::cout << progress << " / " << waypoints.size() << " " << (progress < waypoints.size()) << std::endl;
-    //std::cout << "/n(" << sdcSensorData::GetCurrentCoord().x << "," << sdcSensorData::GetCurrentCoord().y << ")" << std::endl;
+    std::cout << "/n(" << sdcSensorData::GetCurrentCoord().x << "," << sdcSensorData::GetCurrentCoord().y << ")" << std::endl;
     if(progress < waypoints.size()){
         math::Vector2d nextTarget = waypoints[progress];
         double targetAngle = AngleToTarget(nextTarget);
@@ -445,8 +444,7 @@ void sdcCar::WaypointDriving(std::vector<math::Vector2d> waypoints){
             //std::cout << "#################################/nTarget achieved#################################/n";
             ++progress;
         }
-    }
-    else {
+    } else {
         this->Brake();
     }
     this->waypointProgress = progress;
@@ -468,11 +466,12 @@ void sdcCar::WalledDriving(){
         std::cout << lidar.at(0) << std::endl;
         std::cout << lidar.at(lidar.size()-1) << "\n" << std::endl;
     }
+    std::cout << "/n(" << sdcSensorData::GetCurrentCoord().x << "," << sdcSensorData::GetCurrentCoord().y << ")" << std::endl;
     this->Accel();
     
     int weight = 0;
     int numrays = lidar.size()/2;
-    for (int i =0; i < numrays; ++i) {
+    for (int i = 0; i < numrays; ++i) {
         if(!std::isinf(lidar[i])){
             ++weight;
         }
@@ -480,9 +479,9 @@ void sdcCar::WalledDriving(){
             --weight;
         }
     }
-    std::cout << "Weight: ";
-    std::cout << weight << std::endl;
-    printf("Steering angle: %f\n", this->steeringAngle);
+    //std::cout << "Weight: ";
+    //std::cout << weight << std::endl;
+    //printf("Steering angle: %f\n", this->steeringAngle);
     this->targetDirection = this->GetDirection() + weight*3.14159/320;
     //std::cout << (*lidar).size() << std::endl;
     //std::cout << (*lidar)[320] << std::endl;
@@ -502,7 +501,6 @@ void sdcCar::TurnRightIfObjectAhead(){
 
 
 // Drive in a straight line until it passes LON: 0.000200
-
 void sdcCar::DriveStraightThenStop(){
      double targetLon = sdcSensorData::GetLongitude();
 //     printf("targetLon: %f\n", targetLon);
@@ -513,7 +511,7 @@ void sdcCar::DriveStraightThenStop(){
      }
 }
 
-
+// WaypointDriving works better than this method
 void sdcCar::DriveToCoordinates(double lat, double lon){
     double currentLat = sdcSensorData::GetLatitude();
     double currentLon = sdcSensorData::GetLongitude();

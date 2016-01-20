@@ -98,7 +98,6 @@ namespace gazebo
         private: double yaw;
         private: double lon;
         private: double targetDirection;
-        private: bool isTurningRight;
         private: int waypointProgress;
         
         private: double targetSteeringAngle;

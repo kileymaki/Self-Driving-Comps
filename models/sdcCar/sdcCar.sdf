@@ -9,29 +9,32 @@
             </inertial>
             <collision name="chassis_collision">
                 <geometry>
-                    <box><size>2.0 1.0 0.2</size></box>
+                    <box><size>2.0 0.8 0.2</size></box>
                 </geometry>
             </collision>
             <visual name="chassis_visual">
+              <pose>0.1 0 -0.2 0 -0 1.57079</pose>
                 <geometry>
                     <mesh>
-                        <uri>file://models/sdcCar/testcar.dae</uri>
+                        <uri>/Users/selfcar/Desktop/Self-Driving-Comps/models/minicooper/minicooper-nowheels.stl</uri>
                     </mesh>
                 </geometry>
             </visual>
         </link>
-        
+
         <!-- FRONT LEFT WHEEL -->
         <link name="front_left_wheel">
-            <pose>0.8 0.6 0.3 0 1.5707 1.5707</pose>
+            <pose>0.8 0.5 0.3 -0.13 1.5707 1.5707</pose>
             <collision name="front_left_wheel_collision">
                 <geometry>
-                    <cylinder><radius>0.3</radius><length>0.1</length></cylinder>
+                    <cylinder><radius>0.21</radius><length>0.1</length></cylinder>
                 </geometry>
             </collision>
             <visual name="front_left_wheel_visual">
                 <geometry>
-                    <cylinder><radius>0.3</radius><length>0.1</length></cylinder>
+                  <mesh>
+                    <uri>/Users/selfcar/Desktop/Self-Driving-Comps/models/minicooper/wheel.stl</uri>
+                  </mesh>
                 </geometry>
                 <material>
                     <script>
@@ -41,18 +44,20 @@
                 </material>
             </visual>
         </link>
-        
+
         <!-- FRONT RIGHT WHEEL -->
         <link name="front_right_wheel">
-            <pose>0.8 -0.6 0.3 0 1.5707 1.5707</pose>
+            <pose>0.8 -0.5 0.3 0.43 1.5707 1.5707</pose>
             <collision name="front_right_wheel_collision">
                 <geometry>
-                    <cylinder><radius>0.3</radius><length>0.1</length></cylinder>
+                    <cylinder><radius>0.21</radius><length>0.1</length></cylinder>
                 </geometry>
             </collision>
             <visual name="front_right_wheel_visual">
                 <geometry>
-                    <cylinder><radius>0.3</radius><length>0.1</length></cylinder>
+                  <mesh>
+                    <uri>/Users/selfcar/Desktop/Self-Driving-Comps/models/minicooper/wheel.stl</uri>
+                  </mesh>
                 </geometry>
                 <material>
                     <script>
@@ -62,18 +67,20 @@
                 </material>
             </visual>
         </link>
-        
+
         <!-- BACK RIGHT WHEEL -->
         <link name="back_right_wheel">
-            <pose>-0.8 -0.6 0.3 0 1.5707 1.5707</pose>
+            <pose>-0.87 -0.5 0.3 -0.02 1.5707 1.5707</pose>
             <collision name="back_right_wheel_collision">
                 <geometry>
-                    <cylinder><radius>0.3</radius><length>0.1</length></cylinder>
+                    <cylinder><radius>0.21</radius><length>0.1</length></cylinder>
                 </geometry>
             </collision>
             <visual name="back_right_wheel_visual">
                 <geometry>
-                    <cylinder><radius>0.3</radius><length>0.1</length></cylinder>
+                  <mesh>
+                    <uri>/Users/selfcar/Desktop/Self-Driving-Comps/models/minicooper/wheel.stl</uri>
+                  </mesh>
                 </geometry>
                 <material>
                     <script>
@@ -83,18 +90,20 @@
                 </material>
             </visual>
         </link>
-        
+
         <!-- Back left wheel for the car -->
         <link name="back_left_wheel">
-            <pose>-0.8 0.6 0.3 0 1.5707 1.5707</pose>
+            <pose>-0.87 0.5 0.3 0 1.5707 1.5707</pose>
             <collision name="back_left_wheel_collision">
                 <geometry>
-                    <cylinder><radius>0.3</radius><length>0.1</length></cylinder>
+                    <cylinder><radius>0.21</radius><length>0.1</length></cylinder>
                 </geometry>
             </collision>
             <visual name="back_left_wheel_visual">
                 <geometry>
-                    <cylinder><radius>0.3</radius><length>0.1</length></cylinder>
+                  <mesh>
+                    <uri>/Users/selfcar/Desktop/Self-Driving-Comps/models/minicooper/wheel.stl</uri>
+                  </mesh>
                 </geometry>
                 <material>
                     <script>
@@ -104,7 +113,7 @@
                 </material>
             </visual>
         </link>
-        
+
         <!-- GAS PEDAL -->
         <link name="gas_pedal">
             <pose>0.3 0.1 0.5 0 0 0</pose>
@@ -125,7 +134,7 @@
                 </material>
             </visual>
         </link>
-        
+
         <!-- BRAKE PEDAL -->
         <link name="brake_pedal">
             <pose>0.3 0.25 0.5 0 0 0</pose>
@@ -146,10 +155,10 @@
                 </material>
             </visual>
         </link>
-        
+
         <!-- STEERING WHEEL -->
         <link name="steering_wheel">
-            <pose>0.3 0.2 1.0 0 1.5707 0</pose>
+            <pose>0.3 0.2 0.5 0 1.5707 0</pose>
             <collision name="steering_wheel_collision">
                 <geometry>
                     <cylinder><radius>0.1</radius><length>0.01</length></cylinder>
@@ -167,7 +176,7 @@
                 </material>
             </visual>
         </link>
-        
+
         <!-- JOINT BETWEEN THE GAS PEDAL AND CAR -->
         <joint type="prismatic" name="gas_joint">
             <parent>chassis</parent>
@@ -177,7 +186,7 @@
                 <limit><lower>0</lower><upper>0.2</upper></limit>
             </axis>
         </joint>
-        
+
         <!-- JOINT BETWEEN THE BRAKE PEDAL AND CAR -->
         <joint type="prismatic" name="brake_joint">
             <parent>chassis</parent>
@@ -187,7 +196,7 @@
                 <limit><lower>0</lower><upper>0.2</upper></limit>
             </axis>
         </joint>
-        
+
         <!-- JOINT BETWEEN THE STEERING WHEEL AND CAR -->
         <joint type="revolute" name="steering_joint">
             <parent>chassis</parent>
@@ -197,7 +206,7 @@
                 <limit><lower>-7.853</lower><upper>7.853</upper></limit>
             </axis>
         </joint>
-        
+
         <!-- JOINT BETWEEN THE FRONT LEFT WHEEL AND CAR -->
         <joint type="revolute2" name="front_left_joint">
             <parent>chassis</parent>
@@ -218,7 +227,7 @@
                 </ode>
             </physics>
         </joint>
-        
+
         <!-- JOINT BETWEEN THE FRONT RIGHT WHEEL AND CAR -->
         <joint type="revolute2" name="front_right_joint">
             <parent>chassis</parent>
@@ -235,7 +244,7 @@
                 </ode>
             </physics>
         </joint>
-        
+
         <!-- JOINT BETWEEN THE BACK RIGHT WHEEL AND CAR -->
         <joint type="revolute2" name="back_right_joint">
             <parent>chassis</parent>
@@ -252,7 +261,7 @@
                 </ode>
             </physics>
         </joint>
-        
+
         <!-- JOINT BETWEEN THE BACK LEFT WHEEL AND CAR -->
         <joint type="revolute2" name="back_left_joint">
             <parent>chassis</parent>
@@ -269,7 +278,7 @@
                 </ode>
             </physics>
         </joint>
-        
+
         <!-- FRONT LASER SENSOR -->
         <link name="front_laser">
             <pose>1.0 0 0.4 0 0 0</pose>
@@ -323,7 +332,7 @@
                 <visualize>false</visualize>
             </sensor>
         </link>
-        
+
         <!-- JOINT BETWEEN THE FRONT LASER SENSOR AND CAR -->
         <joint name="front_laser_joint" type="revolute">
             <child>front_laser</child>
@@ -336,7 +345,7 @@
                 </limit>
             </axis>
         </joint>
-        
+
         <!-- TOP LASER SENSOR -->
         <link name="top_laser">
             <pose>0.0 0 2.0 0.0 0.0 0.0</pose>
@@ -456,7 +465,136 @@
                 <visualize>false</visualize>
             </sensor>
         </link>
-        
+
+        <!-- CAMERA -->
+        <link name='camera::link'>
+              <pose>0.32091 -0 1.2 0 0.262543 0</pose>
+              <inertial>
+                <mass>0.1</mass>
+                <inertia>
+                  <ixx>0.000166667</ixx>
+                  <iyy>0.000166667</iyy>
+                  <izz>0.000166667</izz>
+                  <ixy>0</ixy>
+                  <ixz>0</ixz>
+                  <iyz>0</iyz>
+                </inertia>
+              </inertial>
+              <self_collide>0</self_collide>
+              <kinematic>0</kinematic>
+              <sensor name='camera' type='camera'>
+                <camera name='__default__'>
+                  <horizontal_fov>1.047</horizontal_fov>
+                  <image>
+                    <width>320</width>
+                    <height>240</height>
+                  </image>
+                  <clip>
+                    <near>0.1</near>
+                    <far>100</far>
+                  </clip>
+                </camera>
+                <always_on>1</always_on>
+                <update_rate>30</update_rate>
+                <visualize>1</visualize>
+              </sensor>
+              <visual name='visual'>
+                <geometry>
+                  <box>
+                    <size>0.1 0.1 0.1</size>
+                  </box>
+                </geometry>
+                <material>
+                  <shader type='pixel'/>
+                </material>
+                <pose>0 0 0 0 -0 0</pose>
+                <cast_shadows>1</cast_shadows>
+                <transparency>0</transparency>
+              </visual>
+              <collision name='collision'>
+                <laser_retro>0</laser_retro>
+                <max_contacts>10</max_contacts>
+                <pose>0 0 0 0 -0 0</pose>
+                <geometry>
+                  <box>
+                    <size>0.1 0.1 0.1</size>
+                  </box>
+                </geometry>
+                <surface>
+                  <friction>
+                    <ode>
+                      <mu>1</mu>
+                      <mu2>1</mu2>
+                      <fdir1>0 0 0</fdir1>
+                      <slip1>0</slip1>
+                      <slip2>0</slip2>
+                    </ode>
+                  </friction>
+                  <bounce>
+                    <restitution_coefficient>0</restitution_coefficient>
+                    <threshold>1e+06</threshold>
+                  </bounce>
+                  <contact>
+                    <collide_without_contact>0</collide_without_contact>
+                    <collide_without_contact_bitmask>1</collide_without_contact_bitmask>
+                    <collide_bitmask>1</collide_bitmask>
+                    <ode>
+                      <soft_cfm>0</soft_cfm>
+                      <soft_erp>0.2</soft_erp>
+                      <kp>1e+13</kp>
+                      <kd>1</kd>
+                      <max_vel>0.01</max_vel>
+                      <min_depth>0</min_depth>
+                    </ode>
+                    <bullet>
+                      <split_impulse>1</split_impulse>
+                      <split_impulse_penetration_threshold>-0.01</split_impulse_penetration_threshold>
+                      <soft_cfm>0</soft_cfm>
+                      <soft_erp>0.2</soft_erp>
+                      <kp>1e+13</kp>
+                      <kd>1</kd>
+                    </bullet>
+                  </contact>
+                </surface>
+              </collision>
+        </link>
+
+
+        <!-- JOINT BETWEEN CAMERA SENSOR AND CAR -->
+        <joint name='camera' type='revolute'>
+          <parent>chassis</parent>
+          <child>camera::link</child>
+          <axis>
+            <xyz>0 0 1</xyz>
+            <use_parent_model_frame>0</use_parent_model_frame>
+            <limit>
+              <lower>0</lower>
+              <upper>0</upper>
+              <effort>-1</effort>
+              <velocity>-1</velocity>
+            </limit>
+            <dynamics>
+              <spring_reference>0</spring_reference>
+              <spring_stiffness>0</spring_stiffness>
+              <damping>0</damping>
+              <friction>0</friction>
+            </dynamics>
+          </axis>
+          <physics>
+            <ode>
+              <limit>
+                <cfm>0</cfm>
+                <erp>0.2</erp>
+              </limit>
+              <suspension>
+                <cfm>0</cfm>
+                <erp>0.2</erp>
+              </suspension>
+            </ode>
+          </physics>
+        </joint>
+
+
         <!-- JOINT BETWEEN THE TOP LASER SENSOR AND CAR -->
         <joint name="top_laser_joint" type="revolute">
             <child>top_laser</child>
@@ -469,9 +607,8 @@
                 </limit>
             </axis>
         </joint>
-        
-        
-        
+
+
         <!-- GPS SENSOR -->
         <link name="gps">
             <pose>0.0 0.0 1.0 0 0 0</pose>
@@ -510,7 +647,7 @@
                 <visualize>true</visualize>
             </sensor>
         </link>
-        
+
         <!-- JOINT BETWEEN GPS SENSOR AND CAR -->
         <joint name="gps_joint" type="revolute">
             <child>gps</child>
@@ -523,6 +660,7 @@
                 </limit>
             </axis>
         </joint>
+
 
         <!-- PLUGINS FOR THE CAR; ESSENTIALLY THE "BRAINS" OF THE CAR -->
         <plugin filename="build/libsdcCar.so" name="sdcCar">

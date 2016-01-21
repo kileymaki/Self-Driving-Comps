@@ -16,7 +16,7 @@
               <pose>0.1 0 -0.2 0 -0 1.57079</pose>
                 <geometry>
                     <mesh>
-                        <uri>/Users/selfcar/Desktop/Self-Driving-Comps/models/minicooper/minicooper-nowheels.stl</uri>
+                        <uri>/Users/selfcar/Desktop/Self-Driving-Comps/models/sdcCar/minicooper-nowheels.stl</uri>
                     </mesh>
                 </geometry>
             </visual>
@@ -33,7 +33,7 @@
             <visual name="front_left_wheel_visual">
                 <geometry>
                   <mesh>
-                    <uri>/Users/selfcar/Desktop/Self-Driving-Comps/models/minicooper/wheel.stl</uri>
+                    <uri>/Users/selfcar/Desktop/Self-Driving-Comps/models/sdcCar/wheel.stl</uri>
                   </mesh>
                 </geometry>
                 <material>
@@ -56,7 +56,7 @@
             <visual name="front_right_wheel_visual">
                 <geometry>
                   <mesh>
-                    <uri>/Users/selfcar/Desktop/Self-Driving-Comps/models/minicooper/wheel.stl</uri>
+                    <uri>/Users/selfcar/Desktop/Self-Driving-Comps/models/sdcCar/wheel.stl</uri>
                   </mesh>
                 </geometry>
                 <material>
@@ -79,7 +79,7 @@
             <visual name="back_right_wheel_visual">
                 <geometry>
                   <mesh>
-                    <uri>/Users/selfcar/Desktop/Self-Driving-Comps/models/minicooper/wheel.stl</uri>
+                    <uri>/Users/selfcar/Desktop/Self-Driving-Comps/models/sdcCar/wheel.stl</uri>
                   </mesh>
                 </geometry>
                 <material>
@@ -102,7 +102,7 @@
             <visual name="back_left_wheel_visual">
                 <geometry>
                   <mesh>
-                    <uri>/Users/selfcar/Desktop/Self-Driving-Comps/models/minicooper/wheel.stl</uri>
+                    <uri>/Users/selfcar/Desktop/Self-Driving-Comps/models/sdcCar/wheel.stl</uri>
                   </mesh>
                 </geometry>
                 <material>
@@ -498,7 +498,7 @@
             </sensor>
         </link>
 
-        <!-- CAMERA -->
+        <!-- STEREO CAMERA -->
         <link name='camera::link'>
               <pose>0.32091 -0 1.2 0 0.262543 0</pose>
               <inertial>
@@ -514,20 +514,33 @@
               </inertial>
               <self_collide>0</self_collide>
               <kinematic>0</kinematic>
-              <sensor name='camera' type='camera'>
-                <camera name='__default__'>
+              <sensor name='camera' type='multicamera'>
+                <always_on>1</always_on>
+                <update_rate>30</update_rate>
+                <camera name="left">
+                  <pose>0 0.2 0 0 0 0</pose>
                   <horizontal_fov>1.047</horizontal_fov>
                   <image>
-                    <width>640</width>
-                    <height>480</height>
+                    <width>320</width>
+                    <height>240</height>
                   </image>
                   <clip>
                     <near>0.1</near>
                     <far>100</far>
                   </clip>
                 </camera>
-                <always_on>1</always_on>
-                <update_rate>30</update_rate>
+                <camera name="right">
+                  <pose>0 -0.2 0 0 0 0</pose>
+                  <horizontal_fov>1.047</horizontal_fov>
+                  <image>
+                    <width>320</width>
+                    <height>240</height>
+                  </image>
+                  <clip>
+                    <near>0.1</near>
+                    <far>100</far>
+                  </clip>
+                </camera>
                 <visualize>1</visualize>
               </sensor>
               <visual name='visual'>

@@ -430,6 +430,8 @@
         </surface>
       </collision>
     </link>
+
+
     <link name='car_gps'>
       <pose>0 0 0.441684 0 -0 0</pose>
       <inertial>

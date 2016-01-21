@@ -30,7 +30,7 @@
 #include "gazebo/util/system.hh"
 #include "sdcLaserSensor.hh"
 #include "sdcGpsSensor.hh"
-#include "angle.hh"
+#include "Angle.hh"
 
 
 namespace gazebo
@@ -78,15 +78,15 @@ namespace gazebo
         private: void Drive();
         private: void Steer();
 
-        private: void SetTargetDirection(angle direction);
-        private: void SetTargetSteeringAngle(angle a);
+        private: void SetTargetDirection(Angle direction);
+        private: void SetTargetSteeringAmount(double a);
         private: void ApplyMovementForce(double amt);
         private: void Accel(double amt = 0.5);
         private: void Brake(double amt = 1);
 
         private: bool IsMovingForwards();
         private: double GetSpeed();
-        private: angle GetDirection();
+        private: Angle GetDirection();
 
         private: void DriveStraightThenStop();
         private: void WalledDriving();
@@ -94,17 +94,17 @@ namespace gazebo
         private: void WaypointDriving(std::vector<math::Vector2d> waypoints);
 
 
-        private: angle AngleToTarget(math::Vector2d target);
+        private: Angle AngleToTarget(math::Vector2d target);
 
         private: double gas; //variable that accelerates the car
         private: double brake; //variable that brakes the car and breaks your false perception of reality
-        private: angle steeringAngle;
+        private: double steeringAmount;
         private: double yaw;
         private: double lon;
-        private: angle targetDirection;
+        private: Angle targetDirection;
         private: int waypointProgress;
 
-        private: angle targetSteeringAngle;
+        private: double targetSteeringAmount;
     };
 }
 #endif

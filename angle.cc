@@ -1,44 +1,49 @@
-#include "angle.hh"
+#include <stdio.h>
+#include "Angle.hh"
 
 const double PI = 3.14159265359;
 
 //Negative Y angles are bigger than postive Y angles
-angle::angle(double a){
-  Angle = fmod(a,(2*PI));
-}
-angle::angle(){
-  Angle = 0;
-}
-
-bool angle::isFrontFacing(){
-  return this->Angle >= 3*PI/2 || this->Angle <= PI/2;
+Angle::Angle(double a){
+  angle = fmod(a,(2*PI));
+  if (angle < 0.0) {
+    angle += 2.0 * PI;
+  }
 }
 
-bool angle::withinMargin(double x){
+Angle::Angle(){
+  angle = 0;
+}
+
+bool Angle::isFrontFacing(){
+  return this->angle >= 3*PI/2 || this->angle <= PI/2;
+}
+
+bool Angle::withinMargin(double x){
   // Not to be used with angles x<0 or x>PI
-  return this->Angle >= 2*PI-x || this->Angle <= x;
+  return this->angle >= 2*PI-x || this->angle <= x;
 }
 
-bool angle::isBackFacing(){
-  return this->Angle < 3*PI/2 && this->Angle > PI/2;
+bool Angle::isBackFacing(){
+  return this->angle < 3*PI/2 && this->angle > PI/2;
 }
 
-angle operator+(const angle& a, const angle& b){
-  return angle(a.Angle + b.Angle);
+Angle operator+(const Angle& a, const Angle& b){
+  return Angle(a.angle + b.angle);
 }
 
- angle operator-(const angle& a, const angle& b){
-  return angle(a.Angle - b.Angle);
+ Angle operator-(const Angle& a, const Angle& b){
+  return Angle(a.angle - b.angle);
 }
 
-bool operator<(const angle& a, const angle& b){
-  return (a.Angle-b.Angle) > PI;
+bool operator<(const Angle& a, const Angle& b){
+  return (a.angle-b.angle) > PI;
 }
 
-bool operator>(const angle& a, const angle& b){
-  return (a.Angle-b.Angle) < PI && (a.Angle-b.Angle) > 0;
+bool operator>(const Angle& a, const Angle& b){
+  return (a.angle-b.angle) < PI && (a.angle-b.angle) > 0;
 }
 
-bool operator==(const angle& a, const angle& b){
-  return a.Angle == b.Angle;
+bool operator==(const Angle& a, const Angle& b){
+  return a.angle == b.angle;
 }

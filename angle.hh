@@ -1,20 +1,20 @@
-#ifndef _angle_hh_
-#define _angle_hh_
+#ifndef _Angle_hh_
+#define _Angle_hh_
 #include <math.h>
 
-class angle {
+class Angle {
 public:
-    angle(double a);
-    angle();
-    double Angle;
+    Angle(double a);
+    Angle();
+    double angle;
     bool isFrontFacing();
     bool isBackFacing();
     bool withinMargin(double x);
-    friend angle operator+(const angle& a, const angle& b);
-    friend angle operator-(const angle& a, const angle& b);
-    friend bool operator<(const angle& a, const angle& b);
-    friend bool operator>(const angle& a, const angle& b);
-    friend bool operator==(const angle& a, const angle& b);
+    friend Angle operator+(const Angle& a, const Angle& b);
+    friend Angle operator-(const Angle& a, const Angle& b);
+    friend bool operator<(const Angle& a, const Angle& b);
+    friend bool operator>(const Angle& a, const Angle& b);
+    friend bool operator==(const Angle& a, const Angle& b);
 };
 
 #endif

@@ -7,14 +7,14 @@
 	<key>IDESourceControlProjectIdentifier</key>
 	<string>4904D196-131E-4C4D-9812-1591CE052463</string>
 	<key>IDESourceControlProjectName</key>
-	<string>project</string>
+	<string>CompsLaneDetection</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
 		<key>7C7078B5026BC8AA823FE65EB8A7A7AFD6F8EA94</key>
 		<string>https://github.com/kileymaki/Self-Driving-Comps.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>OpenCV/CompsLaneDetection/CompsLaneDetection.xcodeproj/project.xcworkspace</string>
+	<string>OpenCV/CompsLaneDetection/CompsLaneDetection.xcodeproj</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
 		<key>7C7078B5026BC8AA823FE65EB8A7A7AFD6F8EA94</key>

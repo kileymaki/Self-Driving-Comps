@@ -52,10 +52,10 @@ sdcCar::sdcCar()
 
     this->gas = 0.0;
     this->brake = 0.0;
-    this->steeringAngle = angle(0.0);
+    this->steeringAmount = 0.0;
 
-    this->targetDirection = angle(0.0);
-    this->targetSteeringAngle = angle(0.0);
+    this->targetDirection = Angle(0.0);
+    this->targetSteeringAmount = 0.0;
 
     // Used to track waypoint driving
     this->waypointProgress = 0;
@@ -233,7 +233,7 @@ void sdcCar::OnUpdate()
 
 
   // Compute the angle of the front wheels.
-  double wheelAngle = this->steeringAngle.Angle / this->steeringRatio;
+  double wheelAngle = this->steeringAmount / this->steeringRatio;
 
   // double idleSpeed = 0.5;
 
@@ -329,8 +329,8 @@ void sdcCar::ApplyMovementForce(double amt){
 
 bool sdcCar::IsMovingForwards(){
     math::Vector3 velocity = this->velocity;
-    angle velAngle = angle(atan2(velocity.y, velocity.x));
-    angle carAngle = GetDirection();
+    Angle velAngle = GetDirection();
+    Angle carAngle = Angle(this->yaw);
     return (carAngle - velAngle).isFrontFacing();
 }
 
@@ -357,21 +357,22 @@ void sdcCar::Brake(double amt){
 void sdcCar::Steer(){
     // Get the amount to turn (doesn't work for some angles due to flipping of directions from positive to negative)
     // FIXME PLEASE
-    angle directionAngleChange = this->GetDirection() - this->targetDirection;
+    Angle directionAngleChange = this->GetDirection() - this->targetDirection;
 
     // If the car needs to turn, set the target steering amount
     if (!directionAngleChange.withinMargin(DIRECTION_MARGIN_OF_ERROR)) {
-        angle proposedSteeringAngle = angle(7*pow(sin(std::abs(directionAngleChange.Angle)/2)-1,3)+7);
+        // Angle proposedSteeringAngle = Angle(7*pow(sin(std::abs(directionAngleChange.angle)/2)-1,3)+7);
+        double proposedSteeringAmount = fmax(fmin(-7*tan(directionAngleChange.angle/-2), 7), -7);
 
-        this->SetTargetSteeringAngle(proposedSteeringAngle);
+        this->SetTargetSteeringAmount(proposedSteeringAmount);
     }
 
     // Check if the car needs to steer, and apply a small turn in the corresponding direction
-    if ((this->steeringAngle - this->targetSteeringAngle).withinMargin(STEERING_MARGIN_OF_ERROR)) {
-        if (this->steeringAngle < this->targetSteeringAngle) {
-            this->steeringAngle = this->steeringAngle + angle(STEERING_ADJUSTMENT_RATE);
+    if (!(std::abs(this->targetSteeringAmount - this->steeringAmount) < STEERING_MARGIN_OF_ERROR)) {
+        if (this->steeringAmount < this->targetSteeringAmount) {
+            this->steeringAmount = this->steeringAmount + STEERING_ADJUSTMENT_RATE;
         }else{
-            this->steeringAngle = this->steeringAngle - angle(STEERING_ADJUSTMENT_RATE);
+            this->steeringAmount = this->steeringAmount - STEERING_ADJUSTMENT_RATE;
         }
     }
 }
@@ -379,15 +380,15 @@ void sdcCar::Steer(){
 /*
  * Sets a target direction for the car
  */
-void sdcCar::SetTargetDirection(angle direction){
+void sdcCar::SetTargetDirection(Angle direction){
     this->targetDirection = direction;
 }
 
 /*
  * Sets a target steering amount for the steering wheel
  */
-void sdcCar::SetTargetSteeringAngle(angle a){
-    this->targetSteeringAngle = a;
+void sdcCar::SetTargetSteeringAmount(double a){
+    this->targetSteeringAmount = a;
 }
 
 /*
@@ -400,10 +401,9 @@ double sdcCar::GetSpeed(){
 /*
  * Gets the current direction of the car
  */
-angle sdcCar::GetDirection(){
+Angle sdcCar::GetDirection(){
     math::Vector3 velocity = this->velocity;
-    angle velAngle = angle(atan2(velocity.y, velocity.x));
-    return velAngle;
+    return Angle(atan2(velocity.y, velocity.x));
 }
 
 ////////////////////////////////
@@ -442,7 +442,7 @@ void sdcCar::WaypointDriving(std::vector<math::Vector2d> waypoints){
     //std::cout << progress << " / " << waypoints.size() << " " << (progress < waypoints.size()) << std::endl;
     if(progress < waypoints.size()){
         math::Vector2d nextTarget = waypoints[progress];
-        angle targetAngle = AngleToTarget(nextTarget);
+        Angle targetAngle = AngleToTarget(nextTarget);
         this->SetTargetDirection(targetAngle);
 
         //std::cout << targetAngle << std::endl;
@@ -462,11 +462,10 @@ void sdcCar::WaypointDriving(std::vector<math::Vector2d> waypoints){
 }
 
 // Returns the angle from the car's current position to a target position
-angle sdcCar::AngleToTarget(math::Vector2d target) {
+Angle sdcCar::AngleToTarget(math::Vector2d target) {
     math::Vector2d position = sdcSensorData::GetCurrentCoord();
     math::Vector2d targetVector = math::Vector2d(target.x - position.x, target.y - position.y);
-    angle targetAngle = angle(atan2(targetVector.y, targetVector.x));
-    return targetAngle;
+    return Angle(atan2(targetVector.y, targetVector.x));
 }
 
 // Drive with walled roads
@@ -492,7 +491,7 @@ void sdcCar::WalledDriving(){
     //std::cout << "Weight: ";
     //std::cout << weight << std::endl;
     //printf("Steering angle: %f\n", this->steeringAngle);
-    this->SetTargetDirection(this->GetDirection() + angle(weight*PI/320));
+    this->SetTargetDirection(this->GetDirection() + Angle(weight*PI/320));
     //std::cout << (*lidar).size() << std::endl;
     //std::cout << (*lidar)[320] << std::endl;
     //std::cout << (*lidar)[639] << std::endl;
@@ -511,10 +510,10 @@ void sdcCar::DriveStraightThenStop(){
 
 void sdcCar::DriveStraightThenTurn(){
     double targetLon = sdcSensorData::GetLongitude();
-    angle direction = this->GetDirection();
+    Angle direction = this->GetDirection();
     this->Accel();
     //     printf("targetLon: %f\n", targetLon);
     if (targetLon > 0.0005) {
-        this->targetDirection = angle(-PI/2);
+        this->targetDirection = Angle(-PI/2);
     }
 }

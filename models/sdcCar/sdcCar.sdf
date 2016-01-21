@@ -3,7 +3,7 @@
     <model name="car">
         <!-- CHASSIS -->
         <link name="chassis">
-            <pose>0 0 0.3 0 0 0</pose>
+            <pose>0 0 0.35 0 0 0</pose>
             <inertial>
                 <mass>100.0</mass>
             </inertial>
@@ -24,7 +24,7 @@
 
         <!-- FRONT LEFT WHEEL -->
         <link name="front_left_wheel">
-            <pose>0.8 0.5 0.3 -0.13 1.5707 1.5707</pose>
+            <pose>0.8 0.5 0.3 0 1.57079 1.57079</pose>
             <collision name="front_left_wheel_collision">
                 <geometry>
                     <cylinder><radius>0.21</radius><length>0.1</length></cylinder>
@@ -47,7 +47,7 @@
 
         <!-- FRONT RIGHT WHEEL -->
         <link name="front_right_wheel">
-            <pose>0.8 -0.5 0.3 0.43 1.5707 1.5707</pose>
+            <pose>0.8 -0.5 0.3 0 1.57079 -1.57079</pose>
             <collision name="front_right_wheel_collision">
                 <geometry>
                     <cylinder><radius>0.21</radius><length>0.1</length></cylinder>
@@ -70,7 +70,7 @@
 
         <!-- BACK RIGHT WHEEL -->
         <link name="back_right_wheel">
-            <pose>-0.87 -0.5 0.3 -0.02 1.5707 1.5707</pose>
+            <pose>-0.87 -0.5 0.3 0 1.57079 -1.57079</pose>
             <collision name="back_right_wheel_collision">
                 <geometry>
                     <cylinder><radius>0.21</radius><length>0.1</length></cylinder>
@@ -93,7 +93,7 @@
 
         <!-- Back left wheel for the car -->
         <link name="back_left_wheel">
-            <pose>-0.87 0.5 0.3 0 1.5707 1.5707</pose>
+            <pose>-0.87 0.5 0.3 0 1.57079 1.57079</pose>
             <collision name="back_left_wheel_collision">
                 <geometry>
                     <cylinder><radius>0.21</radius><length>0.1</length></cylinder>
@@ -380,7 +380,7 @@
 
         <!-- TOP LASER SENSOR -->
         <link name="top_laser">
-            <pose>0.0 0 2.0 0.0 0.0 0.0</pose>
+            <pose>0.0 0 1.0 0.0 0.0 0.0</pose>
             <inertial>
                 <mass>0.1</mass>
             </inertial>
@@ -518,8 +518,8 @@
                 <camera name='__default__'>
                   <horizontal_fov>1.047</horizontal_fov>
                   <image>
-                    <width>320</width>
-                    <height>240</height>
+                    <width>640</width>
+                    <height>480</height>
                   </image>
                   <clip>
                     <near>0.1</near>

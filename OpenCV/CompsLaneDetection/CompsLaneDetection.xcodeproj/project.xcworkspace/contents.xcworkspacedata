@@ -2,6 +2,15 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:../../../../../../../usr/local/lib/libopencv_highgui.3.1.0.dylib">
+   </FileRef>
+   <FileRef
+      location = "group:../../../../../../../usr/local/lib/libopencv_imgproc.3.1.0.dylib">
+   </FileRef>
+   <FileRef
+      location = "group:../../originalroad.bmp">
+   </FileRef>
+   <FileRef
       location = "self:CompsLaneDetection.xcodeproj">
    </FileRef>
 </Workspace>

@@ -30,9 +30,12 @@
 #include "gazebo/util/system.hh"
 #include "sdcLaserSensor.hh"
 #include "sdcGpsSensor.hh"
+#include "angle.hh"
+
 
 namespace gazebo
 {
+
     class GAZEBO_VISIBLE sdcCar : public ModelPlugin
     {
         /// \brief Constructor
@@ -68,39 +71,40 @@ namespace gazebo
 
         private: double aeroLoad;
         private: double swayForce;
-        
+
         /*
          * Begin Comps Defined Stuff
          */
         private: void Drive();
-        
+        private: void Steer();
+
+        private: void SetTargetDirection(angle direction);
+        private: void SetTargetSteeringAngle(angle a);
         private: void ApplyMovementForce(double amt);
         private: void Accel(double amt = 0.5);
         private: void Brake(double amt = 1);
-        private: void Steer(double angle);
+
         private: bool IsMovingForwards();
-        private: void CheckIfOnCollisionCourse();
-        private: void DriveStraightThenStop();
-        private: void TurnRightIfObjectAhead();
-        private: void DriveToCoordinates(double lat, double lon);
-        private: void WalledDriving();
-        private: void TurnRight();
         private: double GetSpeed();
-        private: double GetDirection();
+        private: angle GetDirection();
+
+        private: void DriveStraightThenStop();
+        private: void WalledDriving();
         private: void DriveStraightThenTurn();
-        
         private: void WaypointDriving(std::vector<math::Vector2d> waypoints);
-        private: double AngleToTarget(math::Vector2d target);
-        
+
+
+        private: angle AngleToTarget(math::Vector2d target);
+
         private: double gas; //variable that accelerates the car
         private: double brake; //variable that brakes the car and breaks your false perception of reality
-        private: double steeringAngle;
+        private: angle steeringAngle;
         private: double yaw;
         private: double lon;
-        private: double targetDirection;
+        private: angle targetDirection;
         private: int waypointProgress;
-        
-        private: double targetSteeringAngle;
+
+        private: angle targetSteeringAngle;
     };
 }
 #endif

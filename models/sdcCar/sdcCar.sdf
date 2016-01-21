@@ -183,7 +183,10 @@
             <child>gas_pedal</child>
             <axis>
                 <xyz>1 0 0</xyz>
-                <limit><lower>0</lower><upper>0.2</upper></limit>
+                <limit>
+                    <lower>0</lower>
+                    <upper>0.2</upper>
+                </limit>
             </axis>
         </joint>
 
@@ -193,7 +196,10 @@
             <child>brake_pedal</child>
             <axis>
                 <xyz>1 0 0</xyz>
-                <limit><lower>0</lower><upper>0.2</upper></limit>
+                <limit>
+                    <lower>0</lower>
+                    <upper>0.2</upper>
+                </limit>
             </axis>
         </joint>
 
@@ -203,7 +209,10 @@
             <child>steering_wheel</child>
             <axis>
                 <xyz>1 0 0</xyz>
-                <limit><lower>-7.853</lower><upper>7.853</upper></limit>
+                <limit>
+                    <lower>-7.853</lower>
+                    <upper>7.853</upper>
+                </limit>
             </axis>
         </joint>
 
@@ -223,7 +232,10 @@
             </axis2>
             <physics>
                 <ode>
-                    <limit><cfm>0.0</cfm><erp>0.9</erp></limit>
+                    <limit>
+                        <cfm>0.0</cfm>
+                        <erp>0.9</erp>
+                    </limit>
                 </ode>
             </physics>
         </joint>
@@ -232,15 +244,22 @@
         <joint type="revolute2" name="front_right_joint">
             <parent>chassis</parent>
             <child>front_right_wheel</child>
-            <axis><xyz>0 0 1</xyz>
-                <limit><lower>0</lower><upper>0</upper></limit>
+            <axis>
+                <xyz>0 0 1</xyz>
+                <limit>
+                    <lower>0</lower>
+                    <upper>0</upper>
+                </limit>
             </axis>
             <axis2>
                 <xyz>0 1 0</xyz>
             </axis2>
             <physics>
                 <ode>
-                    <limit><cfm>0.0</cfm><erp>0.9</erp></limit>
+                    <limit>
+                        <cfm>0.0</cfm>
+                        <erp>0.9</erp>
+                    </limit>
                 </ode>
             </physics>
         </joint>
@@ -249,15 +268,22 @@
         <joint type="revolute2" name="back_right_joint">
             <parent>chassis</parent>
             <child>back_right_wheel</child>
-            <axis><xyz>0 0 1</xyz>
-                <limit><lower>0</lower><upper>0</upper></limit>
+            <axis>
+                <xyz>0 0 1</xyz>
+                <limit>
+                    <lower>0</lower>
+                    <upper>0</upper>
+                </limit>
             </axis>
             <axis2>
                 <xyz>0 1 0</xyz>
             </axis2>
             <physics>
                 <ode>
-                    <limit><cfm>0.0</cfm><erp>0.9</erp></limit>
+                    <limit>
+                        <cfm>0.0</cfm>
+                        <erp>0.9</erp>
+                    </limit>
                 </ode>
             </physics>
         </joint>
@@ -267,14 +293,20 @@
             <parent>chassis</parent>
             <child>back_left_wheel</child>
             <axis><xyz>0 0 1</xyz>
-                <limit><lower>0</lower><upper>0</upper></limit>
+                <limit>
+                    <lower>0</lower>
+                    <upper>0</upper>
+                </limit>
             </axis>
             <axis2>
                 <xyz>0 1 0</xyz>
             </axis2>
             <physics>
                 <ode>
-                    <limit><cfm>0.0</cfm><erp>0.9</erp></limit>
+                    <limit>
+                        <cfm>0.0</cfm>
+                        <erp>0.9</erp>
+                    </limit>
                 </ode>
             </physics>
         </joint>

@@ -27,6 +27,7 @@ const int ARBITRARY_CUTOFF_POINT_1 = 50;
 
 const double DIRECTION_MARGIN_OF_ERROR = 0.00855;
 const double STEERING_MARGIN_OF_ERROR = 0.05;
+const int LIDAR_DETECTION_MARGIN_OF_ERROR = 2;
 
 const double STEERING_ADJUSTMENT_RATE = 0.01;
 
@@ -59,6 +60,8 @@ sdcCar::sdcCar()
 
     // Used to track waypoint driving
     this->waypointProgress = 0;
+
+    this->atIntersection = 0;
 }
 
 
@@ -422,13 +425,16 @@ void sdcCar::Drive()
 //    this->DriveToCoordinates(0.0005, 0.0005);
 
     // Combines WalledDriving with WaypointDriving;
-    if (!(sdcSensorData::IsAllInf())) {
-        this->WalledDriving();
-    } else {
-        std::vector<math::Vector2d> waypoints = {math::Vector2d(0.0005,0.000), math::Vector2d(-0.0005,0.000), math::Vector2d(-0.001,-0.001)};
-        this->WaypointDriving(waypoints);
-    }
+    // if (!(sdcSensorData::IsAllInf())) {
+    //     this->WalledDriving();
+    // } else {
+    //     std::vector<math::Vector2d> waypoints = {math::Vector2d(0.0005,0.000), math::Vector2d(-0.0005,0.000), math::Vector2d(-0.001,-0.001)};
+    //     this->WaypointDriving(waypoints);
+    // }
 
+
+    this->DriveStraightThenStop();
+    this->DetectIntersection();
     // Handles turning
     this->Steer();
 }
@@ -436,7 +442,8 @@ void sdcCar::Drive()
 /*
  * Drive from point to point in the given list
  */
-void sdcCar::WaypointDriving(std::vector<math::Vector2d> waypoints){
+void sdcCar::WaypointDriving
+(std::vector<math::Vector2d> waypoints){
     int progress = this->waypointProgress;
     //std::vector<math::Vector2d> waypoints = waypoints;
     //std::cout << progress << " / " << waypoints.size() << " " << (progress < waypoints.size()) << std::endl;
@@ -469,6 +476,7 @@ Angle sdcCar::AngleToTarget(math::Vector2d target) {
 }
 
 // Drive with walled roads
+//LIDAR 0-319 is right, 320-619 is left.
 void sdcCar::WalledDriving(){
     std::vector<double> lidar = sdcSensorData::GetLidarRays();
 //    if(lidar.size() > 0){
@@ -477,17 +485,31 @@ void sdcCar::WalledDriving(){
 //        std::cout << lidar.at(lidar.size()-1) << "\n" << std::endl;
 //    }
     this->Accel();
-
+    int rayLengths = 0;
     int weight = 0;
-    int numrays = lidar.size()/2;
-    for (int i = 0; i < numrays; ++i) {
+    int centerRight = 404;
+    int sideRight = 404;
+    int centerLeft = -404;
+    int sideLeft = -404;
+    int halfnumrays = lidar.size()/2;
+    for (int i = 0; i < halfnumrays; ++i) {
         if(!std::isinf(lidar[i])){
+            rayLengths += lidar[i];
             ++weight;
+            centerRight = i;
+            if(sideRight > i)
+                sideRight = i;
         }
         if(!std::isinf(lidar[i+320])){
+            rayLengths += lidar[i+320];
             --weight;
+            if(centerLeft <  std::abs(i-319))
+                centerLeft = std::abs(i-319);
+            sideLeft = std::abs(i-319);
         }
     }
+    //When driving down our current grid and the car stabilizes, centerRight and centerLeft are between 260-262 and drops down to 209 on intersections.
+    std::cout << "rayLengths: " << rayLengths  << "\n" << "weight: " << "\n" << weight << "\n" << "sideLeft "  << "centerLeft " << "centerRight " << "sideRight" << "\n" << sideLeft << "\t" << centerLeft << "\t" << centerRight << "\t" << sideRight << "\n" << std::endl;
     //std::cout << "Weight: ";
     //std::cout << weight << std::endl;
     //printf("Steering angle: %f\n", this->steeringAngle);
@@ -501,7 +523,7 @@ void sdcCar::WalledDriving(){
 void sdcCar::DriveStraightThenStop(){
      double targetLon = sdcSensorData::GetLongitude();
 //     printf("targetLon: %f\n", targetLon);
-     if (targetLon > 0.0005) {
+     if (targetLon > 0.001) {
          this->Brake();
      } else {
          this->Accel();
@@ -516,4 +538,71 @@ void sdcCar::DriveStraightThenTurn(){
     if (targetLon > 0.0005) {
         this->targetDirection = Angle(-PI/2);
     }
+}
+//Uses the front LIDAR sensor to detect an intersection.
+void sdcCar::DetectIntersection(){
+  std::vector<double> lidar = sdcSensorData::GetLidarRays();
+  std::vector<std::vector<int>> views;
+  std::vector<int> leftView;
+  std::vector<int> rightView;
+  int rayLengths = 0;
+  int centerRight = 404;
+  int sideRight = 404;
+  int centerLeft = -404;
+  int sideLeft = -404;
+  int numrays = lidar.size();
+  for (int i = 0; i < numrays; ++i) {
+      if(!std::isinf(lidar[i])){
+          if(i>319){
+              rayLengths += lidar[i];
+              leftView.push_back(i);
+              if(centerLeft <  std::abs(i-639))
+                  centerLeft = std::abs(i-639);
+              sideLeft = std::abs(i-639);
+
+          } else {
+              rayLengths += lidar[i];
+              rightView.push_back(i);
+              centerRight = i;
+              if(sideRight > i)
+                  sideRight = i;
+          }
+      } else {
+        if (leftView.size()!=0){
+          views.push_back(leftView);
+          leftView.clear();
+        }
+        if(rightView.size()!=0){
+          views.push_back(rightView);
+          rightView.clear();
+        }
+      }
+
+  }
+  if (leftView.size()!=0){
+    views.push_back(leftView);
+    leftView.clear();
+  }
+  if(rightView.size()!=0){
+    views.push_back(rightView);
+    rightView.clear();
+  }
+  std::cout <<"views.size(): " << views.size() << "\n" << "rayLengths: " << rayLengths  << "\n" << "sideLeft "  << "centerLeft " << "centerRight " << "sideRight" << "\n" << sideLeft << "\t" << centerLeft << "\t" << centerRight << "\t" << sideRight << std::endl;
+
+  if(this->atIntersection == 0 && views.size() == 4 && sideRight == 0 && sideLeft == 0){
+    this->atIntersection = 1;
+  } else if (this->atIntersection == 1 && views.size() > 1 && views.size() < 4){
+    this->atIntersection = 2;
+    this->SetTargetDirection(this->GetDirection() + PI/2);
+  } else if (this->atIntersection == 2 && (sideLeft != 0 || sideRight != 0)){
+    std::cout << "INTERSECTION TURN!!!!" << std::endl;
+    std::cout << "making a right turn" << std::endl;
+
+    this->atIntersection = 0;
+  }
+  std::cout << "Intersection: " << this->atIntersection << "\n" << std::endl;
+
+
+
+
 }

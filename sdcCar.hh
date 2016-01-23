@@ -87,6 +87,8 @@ namespace gazebo
         private: bool IsMovingForwards();
         private: double GetSpeed();
         private: Angle GetDirection();
+        private: void DetectIntersection();
+
 
         private: void DriveStraightThenStop();
         private: void WalledDriving();
@@ -103,6 +105,7 @@ namespace gazebo
         private: double lon;
         private: Angle targetDirection;
         private: int waypointProgress;
+        private: int atIntersection;
 
         private: double targetSteeringAmount;
     };

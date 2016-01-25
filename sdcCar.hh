@@ -94,6 +94,7 @@ namespace gazebo
         private: void WalledDriving();
         private: void DriveStraightThenTurn();
         private: void WaypointDriving(std::vector<math::Vector2d> waypoints);
+        private: void Follow();
 
 
         private: Angle AngleToTarget(math::Vector2d target);
@@ -106,6 +107,10 @@ namespace gazebo
         private: Angle targetDirection;
         private: int waypointProgress;
         private: int atIntersection;
+        private: int turning;
+        private: int maxCarSpeed;
+        private: double maxCarReverseSpeed;
+
 
         private: double targetSteeringAmount;
     };

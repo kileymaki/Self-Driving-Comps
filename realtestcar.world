@@ -16,7 +16,7 @@
     </include>
     <include>
         <uri>/models/sdcCar</uri>
-        <pose>5 102.5 0 0 0 0</pose>
+        <pose>105 205 0 0 0 0</pose>
     </include>
 
 

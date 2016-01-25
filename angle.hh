@@ -1,6 +1,7 @@
 #ifndef _Angle_hh_
 #define _Angle_hh_
 #include <math.h>
+#include <iostream>
 
 class Angle {
 public:
@@ -15,6 +16,7 @@ public:
     friend bool operator<(const Angle& a, const Angle& b);
     friend bool operator>(const Angle& a, const Angle& b);
     friend bool operator==(const Angle& a, const Angle& b);
+    friend std::ostream& operator<<(std::ostream& os, const Angle& a);
 };
 
 #endif

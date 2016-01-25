@@ -47,3 +47,8 @@ bool operator>(const Angle& a, const Angle& b){
 bool operator==(const Angle& a, const Angle& b){
   return a.angle == b.angle;
 }
+
+std::ostream& operator<<(std::ostream& os, const Angle& a){
+  os << a.angle << std::endl;
+  return os;
+}

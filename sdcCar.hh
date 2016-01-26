@@ -77,9 +77,12 @@ namespace gazebo
          */
         private: void Drive();
         private: void Steer();
+        private: void MatchTargetSpeed();
 
         private: void SetTargetDirection(Angle direction);
         private: void SetTargetSteeringAmount(double a);
+        private: void SetTargetSpeed(double s);
+
         private: void ApplyMovementForce(double amt);
         private: void Accel(double amt = 0.5);
         private: void Brake(double amt = 1);
@@ -100,19 +103,25 @@ namespace gazebo
         private: Angle AngleToTarget(math::Vector2d target);
 
         private: double gas; //variable that accelerates the car
-        private: double brake; //variable that brakes the car and breaks your false perception of reality
-        private: double steeringAmount;
+        private: double brake; //variable that brakes the car
+
         private: double yaw;
         private: double lon;
-        private: Angle targetDirection;
+
         private: int waypointProgress;
         private: int atIntersection;
-        private: int turning;
         private: int maxCarSpeed;
         private: double maxCarReverseSpeed;
 
-
+        private: bool turning;
+        private: Angle targetDirection;
         private: double targetSteeringAmount;
+        private: double steeringAmount;
+        private: double targetSpeed;
+
+        private: double estimatedSpeed;
+        private: double lastDistance;
+        private: int speedCounter;
     };
 }
 #endif

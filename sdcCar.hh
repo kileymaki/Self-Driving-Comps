@@ -39,89 +39,118 @@ namespace gazebo
     class GAZEBO_VISIBLE sdcCar : public ModelPlugin
     {
         /// \brief Constructor
-        public: sdcCar();
+         public: sdcCar();
 
-        public: virtual void Load(physics::ModelPtr _model, sdf::ElementPtr _sdf);
-        public: virtual void Init();
+         virtual void Load(physics::ModelPtr _model, sdf::ElementPtr _sdf);
+         virtual void Init();
 
-        private: void OnUpdate();
+         private: void OnUpdate();
 
-        private: void OnVelMsg(ConstPosePtr &_msg);
+         void OnVelMsg(ConstPosePtr &_msg);
 
-        private: std::vector<event::ConnectionPtr> connections;
+         std::vector<event::ConnectionPtr> connections;
 
-        private: physics::ModelPtr model;
-        private: physics::LinkPtr chassis;
-        private: std::vector<physics::JointPtr> joints;
-        private: physics::JointPtr gasJoint, brakeJoint;
-        private: physics::JointPtr steeringJoint;
+         physics::ModelPtr model;
+         physics::LinkPtr chassis;
+         std::vector<physics::JointPtr> joints;
+         physics::JointPtr gasJoint, brakeJoint;
+         physics::JointPtr steeringJoint;
 
-        private: math::Vector3 velocity;
+         math::Vector3 velocity;
 
-        private: transport::NodePtr node;
-        private: transport::SubscriberPtr velSub;
+         transport::NodePtr node;
+         transport::SubscriberPtr velSub;
 
-        private: double frontPower, rearPower;
-        private: double maxSpeed;
-        private: double wheelRadius;
+         double frontPower, rearPower;
+         double maxSpeed;
+         double wheelRadius;
 
-        private: double steeringRatio;
-        private: double tireAngleRange;
-        private: double maxGas, maxBrake;
+         double steeringRatio;
+         double tireAngleRange;
+         double maxGas, maxBrake;
 
-        private: double aeroLoad;
-        private: double swayForce;
+         double aeroLoad;
+         double swayForce;
 
         /*
          * Begin Comps Defined Stuff
          */
-        private: void Drive();
-        private: void Steer();
-        private: void MatchTargetSpeed();
-
-        private: void SetTargetDirection(Angle direction);
-        private: void SetTargetSteeringAmount(double a);
-        private: void SetTargetSpeed(double s);
-
-        private: void ApplyMovementForce(double amt);
-        private: void Accel(double amt = 0.5);
-        private: void Brake(double amt = 1);
-
-        private: bool IsMovingForwards();
-        private: double GetSpeed();
-        private: Angle GetDirection();
-        private: void DetectIntersection();
+         void frontLidarUpdate();
+         void Drive();
+         void Steer();
+         void MatchTargetSpeed();
 
 
-        private: void DriveStraightThenStop();
-        private: void WalledDriving();
-        private: void DriveStraightThenTurn();
-        private: void WaypointDriving(std::vector<math::Vector2d> waypoints);
-        private: void Follow();
+         void SetTargetDirection(Angle direction);
+         void SetTargetSteeringAmount(double a);
+         void SetTargetSpeed(double s);
+
+         void ApplyMovementForce(double amt);
+         void Accel(double amt = 0.5);
+         void Brake(double amt = 1);
+
+         bool IsMovingForwards();
+         double GetSpeed();
+         Angle GetDirection();
+         void DetectIntersection();
+         Angle AngleToTarget(math::Vector2d target);
 
 
-        private: Angle AngleToTarget(math::Vector2d target);
 
-        private: double gas; //variable that accelerates the car
-        private: double brake; //variable that brakes the car
+         void DriveStraightThenStop();
+         void WalledDriving();
+         void DriveStraightThenTurn();
+         void WaypointDriving(std::vector<math::Vector2d> waypoints);
+         void Follow();
 
-        private: double yaw;
-        private: double lon;
 
-        private: int waypointProgress;
-        private: int atIntersection;
-        private: int maxCarSpeed;
-        private: double maxCarReverseSpeed;
 
-        private: bool turning;
-        private: Angle targetDirection;
-        private: double targetSteeringAmount;
-        private: double steeringAmount;
-        private: double targetSpeed;
+         double gas; //variable that accelerates the car
+         double brake; //variable that brakes the car
 
-        private: double estimatedSpeed;
-        private: double lastDistance;
-        private: int speedCounter;
+         double yaw;
+         double lon;
+
+         int waypointProgress;
+
+         int atIntersection;
+         int maxCarSpeed;
+         double maxCarReverseSpeed;
+
+         bool turning;
+         Angle targetDirection;
+         double targetSteeringAmount;
+         double steeringAmount;
+         double targetSpeed;
+
+         double estimatedSpeed;
+         double lastDistance;
+         int speedCounter;
+         double startTime;
+         double endTime;
+
+         double x;
+         double y;
+
+         //fl stands for Front Lidar
+         std::vector<double> fl;
+         int flRayLengths;
+         int flCenterRight;
+         int flSideRight;
+         int flCenterLeft;
+         int flSideLeft;
+         int flNumRays;
+         int flWeight;
+         std::vector<std::vector<int>> flViews;
+
+    };
+
+    class Waypoint
+    {
+    public:
+      int waypointType;
+
+      Waypoint(int waypointType);
     };
 }
 #endif

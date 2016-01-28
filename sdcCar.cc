@@ -19,6 +19,7 @@
 #include "gazebo/transport/transport.hh"
 #include "sdcCar.hh"
 #include <vector>
+#include <chrono>
 
 using namespace gazebo;
 GZ_REGISTER_MODEL_PLUGIN(sdcCar)
@@ -31,8 +32,6 @@ const double STEERING_ADJUSTMENT_RATE = 0.02;
 
 const double PI = 3.14159265359;
 
-// int GRIDX = 100;
-Angle BAD_DIRECTION = PI/2;
 
 
 /////////////////////////////////////////////////
@@ -75,6 +74,10 @@ sdcCar::sdcCar()
     this->estimatedSpeed = 0.0;
     this->lastDistance = 0.0;
     this->speedCounter = 0;
+    this->startTime = 0.0;
+    this->endTime = 0.0;
+
+
 }
 
 
@@ -233,15 +236,15 @@ void sdcCar::OnUpdate()
 
     // Get the current velocity of the car
     this->velocity = this->chassis->GetWorldLinearVel();
+    this->x = this->chassis->GetWorldPose().pos.x;
+    this->y = this->chassis->GetWorldPose().pos.y;
 
     //std::cout << this->GetSpeed() << "\n";
 
     math::Pose pose = this->chassis->GetWorldPose();
     this->yaw = pose.rot.GetYaw();
 
-
-
-
+    this->frontLidarUpdate();
     this->Drive();
 
 
@@ -459,6 +462,60 @@ Angle sdcCar::GetDirection(){
     math::Vector3 velocity = this->velocity;
     return Angle(atan2(velocity.y, velocity.x));
 }
+  //Updates front LIDAR data
+void sdcCar::frontLidarUpdate(){
+  this->flViews.clear();
+  this->fl = sdcSensorData::GetLidarRays();
+  this->flRayLengths = 0;
+  this->flSideRight = 404;
+  this->flCenterRight = 404;
+  this->flCenterLeft = -404;
+  this->flSideLeft = -404;
+  this->flNumRays = this->fl.size();
+  this->flWeight = 0;
+  std::vector<int> leftView;
+  std::vector<int> rightView;
+
+  //With this loop we track the areas of view the car has.
+  for (int i = 0; i < this->flNumRays; ++i) {
+      if(!std::isinf(this->fl[i])){
+          if(i>319){
+              --this->flWeight;
+              this->flRayLengths += this->fl[i];
+              leftView.push_back(i);
+              if(this->flCenterLeft <  std::abs(i-639))
+                  this->flCenterLeft = std::abs(i-639);
+              this->flSideLeft = std::abs(i-639);
+
+          } else {
+              ++this->flWeight;
+              this->flRayLengths += this->fl[i];
+              rightView.push_back(i);
+              this->flCenterRight = i;
+              if(this->flSideRight > i)
+                  this->flSideRight = i;
+          }
+      } else {
+        if (leftView.size()!=0){
+          this->flViews.push_back(leftView);
+          leftView.clear();
+        }
+        if(rightView.size()!=0){
+          this->flViews.push_back(rightView);
+          rightView.clear();
+        }
+      }
+
+  }
+  if (leftView.size()!=0){
+    this->flViews.push_back(leftView);
+    leftView.clear();
+  }
+  if(rightView.size()!=0){
+    this->flViews.push_back(rightView);
+    rightView.clear();
+  }
+}
 
 ////////////////////////////////
 ////////////////////////////////
@@ -485,10 +542,10 @@ void sdcCar::Drive()
 
 
     // this->DriveStraightThenStop();
-    //this->WalledDriving();
-    //this->DetectIntersection();
+    this->WalledDriving();
+    this->DetectIntersection();
 
-     this->Follow();
+    // this->Follow();
     // Handles all turning
     this->Steer();
     this->MatchTargetSpeed();
@@ -498,9 +555,29 @@ void sdcCar::Drive()
     //  double data = this->chassis->GetWorldPose().pos.x / sdcSensorData::GetCurrentCoord().x;
     //  this->avg = temp + data/(this->count+1);
     //  this->count += 1;
-    // std::cout << this->chassis->GetWorldPose().pos.x << std::endl;
+
     //}
 }
+
+enum WaypointType {
+  // Waypoint to visit, lowest priority
+  WaypointType_Target,
+  // Waypoints created programmatically, should be given higher priority
+  WaypointType_DriveStraight,
+  WaypointType_TurnLeft,
+  WaypointType_TurnRight,
+  WaypointType_Stop
+};
+
+class Waypoint {
+  int waypointType;
+  math::Vector2d pos;
+
+  Waypoint(int waypointType, math::Vector2d pos) {
+    this->waypointType = WaypointType_DriveStraight;
+    this->pos = pos;
+  }
+};
 
 /*
  * Drive from point to point in the given list
@@ -540,49 +617,15 @@ Angle sdcCar::AngleToTarget(math::Vector2d target) {
 // Drive with walled roads
 //LIDAR 0-319 is right, 320-619 is left.
 void sdcCar::WalledDriving(){
-    std::vector<double> lidar = sdcSensorData::GetLidarRays();
-
-    int rayLengths = 0;
-    int weight = 0;
-    int centerRight = 404;
-    int sideRight = 404;
-    int centerLeft = -404;
-    int sideLeft = -404;
-    int halfnumrays = lidar.size()/2;
-    for (int i = 0; i < halfnumrays; ++i) {
-        if(!std::isinf(lidar[i])){
-            rayLengths += lidar[i];
-            ++weight;
-            centerRight = i;
-            if(sideRight > i)
-                sideRight = i;
-        }
-        if(!std::isinf(lidar[i+320])){
-            rayLengths += lidar[i+320];
-            --weight;
-            if(centerLeft <  std::abs(i-319))
-                centerLeft = std::abs(i-319);
-            sideLeft = std::abs(i-319);
-        }
-    }
     //When driving down our current grid and the car stabilizes, centerRight and centerLeft are between 260-262 and drops down to 209 on intersections.
-    // std::cout << "rayLengths: " << rayLengths  << "\n" << "weight: " << "\n" << weight << "\n" << "sideLeft "  << "centerLeft " << "centerRight " << "sideRight" << "\n" << sideLeft << "\t" << centerLeft << "\t" << centerRight << "\t" << sideRight << "\n" << std::endl;
-    // std::cout << "Weight: ";
-    // std::cout << weight << std::endl;
-    //printf("Steering angle: %f\n", this->steeringAngle);
     if(this->atIntersection==0){
-        // this->Accel();
-        this->SetTargetDirection(this->GetDirection() + Angle(weight*PI/320));
-    } //else if (this->GetSpeed() > this->maxCarSpeed){
-    //     this->Brake();
-    // }
+        this->SetTargetDirection(this->GetDirection() + Angle(this->flWeight*PI/320));
+    }
 }
 
 // Drive in a straight line until it passes LON: 0.000200
 void sdcCar::DriveStraightThenStop(){
-     double targetLon = sdcSensorData::GetLongitude();
-//     printf("targetLon: %f\n", targetLon);
-     if (targetLon > 0.001) {
+     if (this->x > 200) {
          this->Brake();
      } else {
          this->Accel();
@@ -590,120 +633,36 @@ void sdcCar::DriveStraightThenStop(){
 }
 
 void sdcCar::DriveStraightThenTurn(){
-    double targetLon = sdcSensorData::GetLongitude();
     Angle direction = this->GetDirection();
     this->Accel();
-    //     printf("targetLon: %f\n", targetLon);
-    if (targetLon > 0.0005) {
+    if (this->x > 100) {
         this->SetTargetDirection(Angle(-PI/2));
     }
 }
 //Uses the front LIDAR sensor to detect an intersection.
+//Based off of how many fields of view we have an what we can see we try to turn.
+//When we are almost at an intersection slow down.
 void sdcCar::DetectIntersection(){
-  std::vector<double> lidar = sdcSensorData::GetLidarRays();
-  std::vector<std::vector<int>> views;
-  std::vector<int> leftView;
-  std::vector<int> rightView;
-  int rayLengths = 0;
-  int centerRight = 404;
-  int sideRight = 404;
-  int centerLeft = -404;
-  int sideLeft = -404;
-  int numrays = lidar.size();
-  //With this loop we track the areas of view the car has.
-  for (int i = 0; i < numrays; ++i) {
-      if(!std::isinf(lidar[i])){
-          if(i>319){
-              rayLengths += lidar[i];
-              leftView.push_back(i);
-              if(centerLeft <  std::abs(i-639))
-                  centerLeft = std::abs(i-639);
-              sideLeft = std::abs(i-639);
-
-          } else {
-              rayLengths += lidar[i];
-              rightView.push_back(i);
-              centerRight = i;
-              if(sideRight > i)
-                  sideRight = i;
-          }
-      } else {
-        if (leftView.size()!=0){
-          views.push_back(leftView);
-          leftView.clear();
-        }
-        if(rightView.size()!=0){
-          views.push_back(rightView);
-          rightView.clear();
-        }
-      }
-
-  }
-  if (leftView.size()!=0){
-    views.push_back(leftView);
-    leftView.clear();
-  }
-  if(rightView.size()!=0){
-    views.push_back(rightView);
-    rightView.clear();
-  }
-  //  std::cout <<"views.size(): " << views.size() << "\n" << "rayLengths: " << rayLengths  << "\n" << "sideLeft "  << "centerLeft " << "centerRight " << "sideRight" << "\n" << sideLeft << "\t" << centerLeft << "\t" << centerRight << "\t" << sideRight << std::endl;
-
-  //Based off of how many fields of view we have an what we can see we try to turn.
-  //When we are almost at an intersection slow down.
-  if(this->atIntersection == 0 && views.size() == 4 && sideRight == 0 && sideLeft == 0){
-    this->SetTargetSpeed(1);
+  if(this->atIntersection == 0 && this->flViews.size() == 4 && this->flSideRight == 0 &&          this->flSideLeft == 0){
+    this->SetTargetSpeed(2);
     this->atIntersection = 1;
-    //std::cout <<"views.size(): " << views.size() << "\n" << "rayLengths: " << rayLengths  << "\n" << "sideLeft "  << "centerLeft " << "centerRight " << "sideRight" << "\n" << sideLeft << "\t" << centerLeft << "\t" << centerRight << "\t" << sideRight << std::endl;
-    //std::cout << "SLOW DOWN BUDDY!!!!" << std::endl;
-    //std::cout << this->GetSpeed() << std::endl;
-  }else if (this->atIntersection == 1 && views.size() > 1 && views.size() < 4 && (sideLeft != 0 && sideRight != 0)){
-      this->atIntersection = 4;
-      // std::cout << this->targetDirection << std::endl;
-      this->SetTargetDirection(BAD_DIRECTION);
-      BAD_DIRECTION = PI/2 + BAD_DIRECTION;
-      // std::cout << this->targetDirection << std::endl;
-      //std::cout <<"views.size(): " << views.size() << "\n" << "rayLengths: " << rayLengths  << "\n" << "sideLeft "  << "centerLeft " << "centerRight " << "sideRight" << "\n" << sideLeft << "\t" << centerLeft << "\t" << centerRight << "\t" << sideRight << std::endl;
-       //std::cout << "INTERSECTION TURN!!!!" << std::endl;
-       //std::cout << this->GetSpeed() << std::endl;
-      // std::cout << "Longitude: " << sdcSensorData::GetLongitude() << std::endl;
-      // std::cout << "Latitude: " << sdcSensorData::GetLatitude() << std::endl;
-      // std::fstream gridCSV;
-      // gridCSV.open("gps_units.csv", std::ios_base::app);
-      // gridCSV << "\n" << GRIDX << "," << 105 << "," << sdcSensorData::GetLongitude() << "," << sdcSensorData::GetLatitude();
-      // if (GRIDX == 400)
-      //     GRIDX = 100;
-      // else
-      //     GRIDX += 100;
-      // gridCSV.close();
-  } else if (this->atIntersection == 2 && sideRight == 0 && sideLeft == 0)
-      this->atIntersection = 3;
-  else if (this->atIntersection == 3 && sideRight != 0)
-      this->atIntersection = 4;
-  else if (this->atIntersection == 4 && this->GetDirection().angle < this->targetDirection.angle && this->GetDirection().angle > this->targetDirection.angle - PI/8){
-      //std::cout <<"views.size(): " << views.size() << "\n" << "rayLengths: " << rayLengths  << "\n" << "sideLeft "  << "centerLeft " << "centerRight " << "sideRight" << "\n" << sideLeft << "\t" << centerLeft << "\t" << centerRight << "\t" << sideRight << std::endl;
-      //std::cout << "DONE TURNING!!!!!" << std::endl;
-      //std::cout << this->GetSpeed() << std::endl;
+  }else if (this->atIntersection == 1 && this->flViews.size() > 1 && this->flViews.size() < 4 && (this->flSideLeft != 0 && this->flSideRight != 0)){
+      this->atIntersection = 2;
+      this->SetTargetDirection(this->GetDirection() + PI/2);
+  } else if (this->atIntersection == 2 && (this->GetDirection() - this->targetDirection).withinMargin(PI/8)){
       this->SetTargetSpeed(6);
       this->atIntersection = 0;
   }
-
-
-    // this->atIntersection = 0;
-
-  // std::cout << "Intersection: " << this->atIntersection << "\n" << std::endl;
 }
 
 
 // Car follows an object directly in front of it and slows down to stop when it starts to get close
 void sdcCar::Follow() {
-  std::vector<double> lidar = sdcSensorData::GetLidarRays();
-  int numrays = lidar.size();
-
   std::vector<std::pair<int,int>> objectsInView;
   int lastIndex = -1;
-  for(int i = 0; i < numrays; i++) {
-    if(!std::isinf(lidar[i])){
+
+  for(int i = 0; i < this->flNumRays; i++) {
+    if(!std::isinf(this->fl[i])){
       if (lastIndex < 0) {
         lastIndex = i;
       }
@@ -714,17 +673,17 @@ void sdcCar::Follow() {
       }
     }
     if(lastIndex > 0){
-      objectsInView.push_back(std::make_pair(lastIndex, numrays-1));
+      objectsInView.push_back(std::make_pair(lastIndex, this->flNumRays-1));
     }
   }
   //std::cout << objectsInView[0].first << "   " << objectsInView[0].second << std::endl;
   //std::cout << typeid(objectsInView[0].first).name() << std::endl;
 
 
-  if(numrays == 0) return;
+  if(this->flNumRays == 0) return;
   this->SetTargetSpeed(5);
   for(int i = 315; i < 326; i++){
-    if (!std::isinf(lidar[i]) && (lidar[i] <= 10)) {
+    if (!std::isinf(this->fl[i]) && (this->fl[i] <= 10)) {
       this->SetTargetSpeed(1);
       break;
     }

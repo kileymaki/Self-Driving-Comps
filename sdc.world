@@ -1,49 +1,49 @@
 <?xml version="1.0"?>
 <sdf version="1.4">
     <world name="default">
-        
+
         <!-- Ground Plane -->
         <include>
             <uri>model://ground_plane</uri>
         </include>
-        
+
         <include>
             <uri>model://sun</uri>
         </include>
-        
+
         <include>
             <uri>/models/sdcCar</uri>
         </include>
-        
+
         <gui>
             <camera name="default_camera">
                 <pose>10 -40 10 0 0.2 1.5</pose>
             </camera>
         </gui>
-        
+
         <model name="box">
-            <pose>10 10 0.5 0 0 0</pose>
+            <pose>5 0 0.5 0 0 0</pose>
             <link name="link">
                 <collision name="collision">
                     <geometry>
                         <box>
-                            <size>20 1 1</size>
+                            <size>1 1 1</size>
                         </box>
                     </geometry>
                 </collision>
-                
+
                 <visual name="visual">
                     <geometry>
                         <box>
-                            <size>20 1 1</size>
+                            <size>1 1 1</size>
                         </box>
                     </geometry>
                 </visual>
             </link>
-            
-<!--            <plugin name="model_push" filename="build/libsdcBox.so"/>-->
+
+            <plugin name="model_push" filename="build/libsdcBox.so"/>
         </model>
-        
+
         <model name="box2">
             <pose>20 -20 0.5 0 0 0</pose>
             <link name="link">
@@ -54,7 +54,7 @@
                         </box>
                     </geometry>
                 </collision>
-                
+
                 <visual name="visual">
                     <geometry>
                         <box>
@@ -63,10 +63,10 @@
                     </geometry>
                 </visual>
             </link>
-            
+
 <!--            <plugin name="model_pull" filename="build/libsdcBox.so"/>-->
         </model>
-        
+
         <model name="box3">
             <pose>20 -10 0.5 0 0 0</pose>
             <link name="link">
@@ -77,7 +77,7 @@
                         </box>
                     </geometry>
                 </collision>
-                
+
                 <visual name="visual">
                     <geometry>
                         <box>

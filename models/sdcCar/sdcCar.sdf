@@ -1,5 +1,6 @@
 <?xml version="1.0" ?>
 <sdf version="1.4">
+
     <model name="car">
         <!-- CHASSIS -->
         <link name="chassis">
@@ -311,63 +312,63 @@
             </physics>
         </joint>
 
-        <!-- FRONT LASER SENSOR -->
-        <link name="front_laser">
-            <pose>1.0 0 0.4 0 0 0</pose>
-            <inertial>
-                <mass>0.1</mass>
-            </inertial>
-            <visual name="front_laser_visual">
-                <geometry>
-                    <mesh>
-                        <uri>model://hokuyo/meshes/hokuyo.dae</uri>
-                    </mesh>
-                </geometry>
-            </visual>
-            <collision name="front_laser_collision-base">
-                <pose>0 0 -0.0145 0 0 0</pose>
-                <geometry>
-                    <box>
-                        <size>0.05 0.05 0.041</size>
-                    </box>
-                </geometry>
-            </collision>
-            <collision name="front_laser_collision-top">
-                <pose>0 0 0.0205 0 0 0</pose>
-                <geometry>
-                    <cylinder>
-                        <radius>0.021</radius>
-                        <length>0.029</length>
-                    </cylinder>
-                </geometry>
-            </collision>
-            <sensor name="front_laser" type="ray">
-                <pose>0.01 0 0.0175 0 -0 0</pose>
-                <ray>
-                    <scan>
-                        <horizontal>
-                            <samples>640</samples>
-                            <resolution>1</resolution>
-                            <min_angle>-1.39626</min_angle>
-                            <max_angle>1.39626</max_angle>
-                        </horizontal>
-                    </scan>
-                    <range>
-                        <min>0.08</min>
-                        <max>20</max>
-                        <resolution>0.01</resolution>
-                    </range>
-                </ray>
-                <plugin name="sdcLaserSensor" filename="build/libsdcLaserSensor.so" />
-                <always_on>1</always_on>
-                <update_rate>30</update_rate>
-                <visualize>false</visualize>
-            </sensor>
-        </link>
+          <!-- FRONT LASER SENSOR -->
+        <link name="front_lidar">
+              <pose>1.0 0 0.4 0 0 0</pose>
+              <inertial>
+                  <mass>0.1</mass>
+              </inertial>
+              <visual name="front_lidar_visual">
+                  <geometry>
+                      <mesh>
+                          <uri>model://hokuyo/meshes/hokuyo.dae</uri>
+                      </mesh>
+                  </geometry>
+              </visual>
+              <collision name="front_lidar_collision-base">
+                  <pose>0 0 -0.0145 0 0 0</pose>
+                  <geometry>
+                      <box>
+                          <size>0.05 0.05 0.041</size>
+                      </box>
+                  </geometry>
+              </collision>
+              <collision name="front_lidar_collision-top">
+                  <pose>0 0 0.0205 0 0 0</pose>
+                  <geometry>
+                      <cylinder>
+                          <radius>0.021</radius>
+                          <length>0.029</length>
+                      </cylinder>
+                  </geometry>
+              </collision>
+              <sensor name="front_lidar" type="ray">
+                  <pose>0.01 0 0.0175 0 -0 0</pose>
+                  <ray>
+                      <scan>
+                          <horizontal>
+                              <samples>640</samples>
+                              <resolution>1</resolution>
+                              <min_angle>-1.39626</min_angle>
+                              <max_angle>1.39626</max_angle>
+                          </horizontal>
+                      </scan>
+                      <range>
+                          <min>0.08</min>
+                          <max>20</max>
+                          <resolution>0.01</resolution>
+                      </range>
+                  </ray>
+                  <plugin name="sdcLaserSensor" filename="build/libsdcLaserSensor.so" />
+                  <always_on>1</always_on>
+                  <update_rate>30</update_rate>
+                  <visualize>true</visualize>
+              </sensor>
+            </link>
 
         <!-- JOINT BETWEEN THE FRONT LASER SENSOR AND CAR -->
-        <joint name="front_laser_joint" type="revolute">
-            <child>front_laser</child>
+        <joint name="front_lidar_joint" type="revolute">
+            <child>front_lidar</child>
             <parent>chassis</parent>
             <axis>
                 <xyz>0 0 1</xyz>
@@ -498,6 +499,206 @@
             </sensor>
         </link>
 
+        <!-- JOINT BETWEEN THE TOP LASER SENSOR AND CAR -->
+        <joint name="top_laser_joint" type="revolute">
+            <child>top_laser</child>
+            <parent>chassis</parent>
+            <axis>
+                <xyz>0 0 1</xyz>
+                <limit>
+                    <upper>0</upper>
+                    <lower>0</lower>
+                </limit>
+            </axis>
+        </joint>
+
+
+
+        <!-- SIDE SENSORS (PSEUDO-RADAR) -->
+        <link name="side_right_sensors">
+            <pose>0.0 -0.55 0.4 0.0 0.0 0.0</pose>
+            <inertial>
+                <mass>0.1</mass>
+            </inertial>
+            <visual name="side_right_sensors_visual">
+                <geometry>
+                    <mesh>
+                        <uri>model://hokuyo/meshes/hokuyo.dae</uri>
+                    </mesh>
+                </geometry>
+            </visual>
+            <collision name="side_right_sensors_collision-base">
+                <pose>0 0 -0.0145 0 0 0</pose>
+                <geometry>
+                    <box>
+                        <size>0.05 0.05 0.041</size>
+                    </box>
+                </geometry>
+            </collision>
+            <collision name="side_right_sensors_collision-top">
+                <pose>0 0 0.0205 0 0 0</pose>
+                <geometry>
+                    <cylinder>
+                        <radius>0.021</radius>
+                        <length>0.029</length>
+                    </cylinder>
+                </geometry>
+            </collision>
+            <sensor name="side_right_front_laser" type="ray">
+                <pose>0.4 -0.02 0.0 0 0.0 -1.5708</pose>
+                <ray>
+                    <scan>
+                        <horizontal>
+                            <samples>160</samples>
+                            <resolution>1</resolution>
+                            <min_angle>-1.3</min_angle>
+                            <max_angle>1.3</max_angle>
+                        </horizontal>
+                    </scan>
+                    <range>
+                        <min>0.08</min>
+                        <max>0.8</max>
+                        <resolution>0.01</resolution>
+                    </range>
+                </ray>
+                <plugin name="sdcSideRightSensor" filename="build/libsdcSideRightSensor.so" />
+                <always_on>1</always_on>
+                <update_rate>30</update_rate>
+                <visualize>true</visualize>
+            </sensor>
+            <sensor name="side_right_back_laser" type="ray">
+                <pose>-0.6 -0.02 0.0 0 0.0 -1.5708</pose>
+                <ray>
+                    <scan>
+                        <horizontal>
+                            <samples>160</samples>
+                            <resolution>1</resolution>
+                            <min_angle>-1.3</min_angle>
+                            <max_angle>1.3</max_angle>
+                        </horizontal>
+                    </scan>
+                    <range>
+                        <min>0.08</min>
+                        <max>0.8</max>
+                        <resolution>0.01</resolution>
+                    </range>
+                </ray>
+                <plugin name="sdcSideRightSensor" filename="build/libsdcSideRightSensor.so" />
+                <always_on>1</always_on>
+                <update_rate>30</update_rate>
+                <visualize>true</visualize>
+            </sensor>
+        </link>
+
+        <!-- JOINT BETWEEN THE TOP LASER SENSOR AND CAR -->
+        <joint name="side_right_sensor_joint" type="revolute">
+            <child>side_right_sensors</child>
+            <parent>chassis</parent>
+            <axis>
+                <xyz>0 0 1</xyz>
+                <limit>
+                    <upper>0</upper>
+                    <lower>0</lower>
+                </limit>
+            </axis>
+        </joint>
+
+        <link name="side_left_sensors">
+            <pose>0.0 0.55 0.4 0.0 0.0 0.0</pose>
+            <inertial>
+                <mass>0.1</mass>
+            </inertial>
+            <visual name="side_left_sensors_visual">
+                <geometry>
+                    <mesh>
+                        <uri>model://hokuyo/meshes/hokuyo.dae</uri>
+                    </mesh>
+                </geometry>
+            </visual>
+            <collision name="side_left_sensors_collision-base">
+                <pose>0 0 -0.0145 0 0 0</pose>
+                <geometry>
+                    <box>
+                        <size>0.05 0.05 0.041</size>
+                    </box>
+                </geometry>
+            </collision>
+            <collision name="side_left_sensors_collision-top">
+                <pose>0 0 0.0205 0 0 0</pose>
+                <geometry>
+                    <cylinder>
+                        <radius>0.021</radius>
+                        <length>0.029</length>
+                    </cylinder>
+                </geometry>
+            </collision>
+            <sensor name="side_left_front_laser" type="ray">
+                <pose>0.4 0.02 0.0 0 0.0 1.5708</pose>
+                <ray>
+                    <scan>
+                        <horizontal>
+                            <samples>160</samples>
+                            <resolution>1</resolution>
+                            <min_angle>-1.3</min_angle>
+                            <max_angle>1.3</max_angle>
+                        </horizontal>
+                    </scan>
+                    <range>
+                        <min>0.08</min>
+                        <max>0.8</max>
+                        <resolution>0.01</resolution>
+                    </range>
+                </ray>
+                <plugin name="sdcSideLeftSensor" filename="build/libsdcSideLeftSensor.so" />
+                <always_on>1</always_on>
+                <update_rate>30</update_rate>
+                <visualize>true</visualize>
+            </sensor>
+            <sensor name="side_left_back_laser" type="ray">
+                <pose>-0.6 0.02 0.0 0 0.0 1.5708</pose>
+                <ray>
+                    <scan>
+                        <horizontal>
+                            <samples>160</samples>
+                            <resolution>1</resolution>
+                            <min_angle>-1.3</min_angle>
+                            <max_angle>1.3</max_angle>
+                        </horizontal>
+                    </scan>
+                    <range>
+                        <min>0.08</min>
+                        <max>0.8</max>
+                        <resolution>0.01</resolution>
+                    </range>
+                </ray>
+                <plugin name="sdcSideLeftSensor" filename="build/libsdcSideLeftSensor.so" />
+                <always_on>1</always_on>
+                <update_rate>30</update_rate>
+                <visualize>true</visualize>
+            </sensor>
+        </link>
+
+        <!-- JOINT BETWEEN THE TOP LASER SENSOR AND CAR -->
+        <joint name="side_left_sensor_joint" type="revolute">
+            <child>side_left_sensors</child>
+            <parent>chassis</parent>
+            <axis>
+                <xyz>0 0 1</xyz>
+                <limit>
+                    <upper>0</upper>
+                    <lower>0</lower>
+                </limit>
+            </axis>
+        </joint>
+
+
+
+
+
+        <!-- END SIDE SENSORS -->
+
+
+
         <!-- STEREO CAMERA -->
         <link name='camera::link'>
               <pose>0.32091 -0 1.2 0 0.262543 0</pose>
@@ -512,11 +713,16 @@
                   <iyz>0</iyz>
                 </inertia>
               </inertial>
+
               <self_collide>0</self_collide>
               <kinematic>0</kinematic>
+
               <sensor name='camera' type='multicamera'>
                 <always_on>1</always_on>
                 <update_rate>30</update_rate>
+                <visualize>1</visualize>
+                <topic>comps_car_camera</topic>
+
                 <camera name="left">
                   <pose>0 0.2 0 0 0 0</pose>
                   <horizontal_fov>1.047</horizontal_fov>
@@ -528,7 +734,11 @@
                     <near>0.1</near>
                     <far>100</far>
                   </clip>
+                  <save enabled="False">
+                   <path>/Users/selfcar/Desktop/Self-Driving-Comps/comps_camera_recordings/</path>
+                  </save>
                 </camera>
+
                 <camera name="right">
                   <pose>0 -0.2 0 0 0 0</pose>
                   <horizontal_fov>1.047</horizontal_fov>
@@ -540,9 +750,15 @@
                     <near>0.1</near>
                     <far>100</far>
                   </clip>
+                  <save enabled="False">
+                   <path>/Users/selfcar/Desktop/Self-Driving-Comps/comps_camera_recordings/</path>
+                  </save>
                 </camera>
-                <visualize>1</visualize>
+
+                <plugin name="sdcCameraSensor" filename="build/libsdcCameraSensor.so" />
+
               </sensor>
+
               <visual name='visual'>
                 <geometry>
                   <box>
@@ -556,52 +772,6 @@
                 <cast_shadows>1</cast_shadows>
                 <transparency>0</transparency>
               </visual>
-              <collision name='collision'>
-                <laser_retro>0</laser_retro>
-                <max_contacts>10</max_contacts>
-                <pose>0 0 0 0 -0 0</pose>
-                <geometry>
-                  <box>
-                    <size>0.1 0.1 0.1</size>
-                  </box>
-                </geometry>
-                <surface>
-                  <friction>
-                    <ode>
-                      <mu>1</mu>
-                      <mu2>1</mu2>
-                      <fdir1>0 0 0</fdir1>
-                      <slip1>0</slip1>
-                      <slip2>0</slip2>
-                    </ode>
-                  </friction>
-                  <bounce>
-                    <restitution_coefficient>0</restitution_coefficient>
-                    <threshold>1e+06</threshold>
-                  </bounce>
-                  <contact>
-                    <collide_without_contact>0</collide_without_contact>
-                    <collide_without_contact_bitmask>1</collide_without_contact_bitmask>
-                    <collide_bitmask>1</collide_bitmask>
-                    <ode>
-                      <soft_cfm>0</soft_cfm>
-                      <soft_erp>0.2</soft_erp>
-                      <kp>1e+13</kp>
-                      <kd>1</kd>
-                      <max_vel>0.01</max_vel>
-                      <min_depth>0</min_depth>
-                    </ode>
-                    <bullet>
-                      <split_impulse>1</split_impulse>
-                      <split_impulse_penetration_threshold>-0.01</split_impulse_penetration_threshold>
-                      <soft_cfm>0</soft_cfm>
-                      <soft_erp>0.2</soft_erp>
-                      <kp>1e+13</kp>
-                      <kd>1</kd>
-                    </bullet>
-                  </contact>
-                </surface>
-              </collision>
         </link>
 
 
@@ -639,21 +809,6 @@
           </physics>
         </joint>
 
-
-        <!-- JOINT BETWEEN THE TOP LASER SENSOR AND CAR -->
-        <joint name="top_laser_joint" type="revolute">
-            <child>top_laser</child>
-            <parent>chassis</parent>
-            <axis>
-                <xyz>0 0 1</xyz>
-                <limit>
-                    <upper>0</upper>
-                    <lower>0</lower>
-                </limit>
-            </axis>
-        </joint>
-
-
         <!-- GPS SENSOR -->
         <link name="gps">
             <pose>0.0 0.0 1.0 0 0 0</pose>
@@ -685,11 +840,10 @@
                 </geometry>
             </collision>
             <sensor name="gps" type="gps">
-                <pose>0.01 0 0.0175 0 0 0</pose>
+                <pose>0.0 0 0.0 0 0 0</pose>
                 <plugin name="sdcGpsSensor" filename="build/libsdcGpsSensor.so" />
                 <always_on>1</always_on>
                 <update_rate>30</update_rate>
-                <visualize>true</visualize>
             </sensor>
         </link>
 

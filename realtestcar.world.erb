@@ -93,20 +93,70 @@
         name3 = 'intersection_' + x.to_s + '_' + y.to_s
 %>
 
-    <%="<road name='#{name1}'>" %>
-        <width>10</width>
-        <point><%= asphalt_positions[x]-50%> <%= asphalt_positions[y]-45%> .005</point>
-        <point><%= asphalt_positions[x]-50%> <%= asphalt_positions[y]+45%> .005</point>
-    </road>
-    <%="<road name='#{name2}'>" %>
-        <width>10</width>
-        <point><%= asphalt_positions[x]-45%> <%= asphalt_positions[y]-50%> .005</point>
-        <point><%= asphalt_positions[x]+45%> <%= asphalt_positions[y]-50%> .005</point>
-    </road>
+
+    <%="<model name='#{name1}'>" %>
+
+      <pose><%= asphalt_positions[x]-50%> <%= asphalt_positions[y]%> 0 0 0 1.5707</pose>
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        <material>
+            <script>
+                <uri>model://comps_road/materials/scripts</uri>
+                <uri>model://comps_road/materials/textures</uri>
+                <name>comps_road</name>
+            </script>
+        </material>
+      </visual>
+    </link>
+  </model>
+
+
+    <%="<model name='#{name2}'>" %>
+      <pose><%= asphalt_positions[x]%> <%= asphalt_positions[y]-50%> 0 0 0 0</pose>
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        <material>
+            <script>
+                <uri>model://comps_road/materials/scripts</uri>
+                <uri>model://comps_road/materials/textures</uri>
+                <name>comps_road</name>
+            </script>
+        </material>
+      </visual>
+    </link>
+  </model>
     <%="<road name='#{name3}'>" %>
         <width>10</width>
-        <point><%= asphalt_positions[x]-55%> <%= asphalt_positions[y]-50%> .005</point>
-        <point><%= asphalt_positions[x]-45%> <%= asphalt_positions[y]-50%> .005</point>
+        <point><%= asphalt_positions[x]-55%> <%= asphalt_positions[y]-50%> .1</point>
+        <point><%= asphalt_positions[x]-45%> <%= asphalt_positions[y]-50%> .1</point>
         <material>
             <script>
                 <uri>file://media/materials/scripts/gazebo.material</uri>

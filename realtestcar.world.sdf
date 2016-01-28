@@ -16,9 +16,9 @@
     </include>
     <include>
         <uri>/models/sdcCar</uri>
-        <pose>5 5 0 0 0 0</pose>
+        <pose>105 205 0 0 0 0</pose>
     </include>
-  
+
 
 
 
@@ -53,7 +53,7 @@
 
 
   <model name='asphalt_plane_1_0'>
-    <pose>155 55 0 0 0 0</pose>
+    <pose>160 55 0 0 0 0</pose>
     <static>true</static>
     <link name="link">
       <collision name="collision">
@@ -83,7 +83,7 @@
 
 
   <model name='asphalt_plane_2_0'>
-    <pose>255 55 0 0 0 0</pose>
+    <pose>265 55 0 0 0 0</pose>
     <static>true</static>
     <link name="link">
       <collision name="collision">
@@ -113,7 +113,7 @@
 
 
   <model name='asphalt_plane_3_0'>
-    <pose>355 55 0 0 0 0</pose>
+    <pose>370 55 0 0 0 0</pose>
     <static>true</static>
     <link name="link">
       <collision name="collision">
@@ -143,7 +143,7 @@
 
 
   <model name='asphalt_plane_4_0'>
-    <pose>455 55 0 0 0 0</pose>
+    <pose>475 55 0 0 0 0</pose>
     <static>true</static>
     <link name="link">
       <collision name="collision">
@@ -173,7 +173,7 @@
 
 
   <model name='asphalt_plane_0_1'>
-    <pose>55 155 0 0 0 0</pose>
+    <pose>55 160 0 0 0 0</pose>
     <static>true</static>
     <link name="link">
       <collision name="collision">
@@ -203,7 +203,7 @@
 
 
   <model name='asphalt_plane_1_1'>
-    <pose>155 155 0 0 0 0</pose>
+    <pose>160 160 0 0 0 0</pose>
     <static>true</static>
     <link name="link">
       <collision name="collision">
@@ -233,7 +233,7 @@
 
 
   <model name='asphalt_plane_2_1'>
-    <pose>255 155 0 0 0 0</pose>
+    <pose>265 160 0 0 0 0</pose>
     <static>true</static>
     <link name="link">
       <collision name="collision">
@@ -263,7 +263,7 @@
 
 
   <model name='asphalt_plane_3_1'>
-    <pose>355 155 0 0 0 0</pose>
+    <pose>370 160 0 0 0 0</pose>
     <static>true</static>
     <link name="link">
       <collision name="collision">
@@ -293,7 +293,7 @@
 
 
   <model name='asphalt_plane_4_1'>
-    <pose>455 155 0 0 0 0</pose>
+    <pose>475 160 0 0 0 0</pose>
     <static>true</static>
     <link name="link">
       <collision name="collision">
@@ -323,7 +323,7 @@
 
 
   <model name='asphalt_plane_0_2'>
-    <pose>55 255 0 0 0 0</pose>
+    <pose>55 265 0 0 0 0</pose>
     <static>true</static>
     <link name="link">
       <collision name="collision">
@@ -353,7 +353,7 @@
 
 
   <model name='asphalt_plane_1_2'>
-    <pose>155 255 0 0 0 0</pose>
+    <pose>160 265 0 0 0 0</pose>
     <static>true</static>
     <link name="link">
       <collision name="collision">
@@ -383,7 +383,7 @@
 
 
   <model name='asphalt_plane_2_2'>
-    <pose>255 255 0 0 0 0</pose>
+    <pose>265 265 0 0 0 0</pose>
     <static>true</static>
     <link name="link">
       <collision name="collision">
@@ -413,7 +413,7 @@
 
 
   <model name='asphalt_plane_3_2'>
-    <pose>355 255 0 0 0 0</pose>
+    <pose>370 265 0 0 0 0</pose>
     <static>true</static>
     <link name="link">
       <collision name="collision">
@@ -443,7 +443,7 @@
 
 
   <model name='asphalt_plane_4_2'>
-    <pose>455 255 0 0 0 0</pose>
+    <pose>475 265 0 0 0 0</pose>
     <static>true</static>
     <link name="link">
       <collision name="collision">
@@ -473,7 +473,7 @@
 
 
   <model name='asphalt_plane_0_3'>
-    <pose>55 355 0 0 0 0</pose>
+    <pose>55 370 0 0 0 0</pose>
     <static>true</static>
     <link name="link">
       <collision name="collision">
@@ -503,7 +503,7 @@
 
 
   <model name='asphalt_plane_1_3'>
-    <pose>155 355 0 0 0 0</pose>
+    <pose>160 370 0 0 0 0</pose>
     <static>true</static>
     <link name="link">
       <collision name="collision">
@@ -533,7 +533,7 @@
 
 
   <model name='asphalt_plane_2_3'>
-    <pose>255 355 0 0 0 0</pose>
+    <pose>265 370 0 0 0 0</pose>
     <static>true</static>
     <link name="link">
       <collision name="collision">
@@ -563,7 +563,7 @@
 
 
   <model name='asphalt_plane_3_3'>
-    <pose>355 355 0 0 0 0</pose>
+    <pose>370 370 0 0 0 0</pose>
     <static>true</static>
     <link name="link">
       <collision name="collision">
@@ -593,7 +593,7 @@
 
 
   <model name='asphalt_plane_4_3'>
-    <pose>455 355 0 0 0 0</pose>
+    <pose>475 370 0 0 0 0</pose>
     <static>true</static>
     <link name="link">
       <collision name="collision">
@@ -623,7 +623,7 @@
 
 
   <model name='asphalt_plane_0_4'>
-    <pose>55 455 0 0 0 0</pose>
+    <pose>55 475 0 0 0 0</pose>
     <static>true</static>
     <link name="link">
       <collision name="collision">
@@ -653,7 +653,7 @@
 
 
   <model name='asphalt_plane_1_4'>
-    <pose>155 455 0 0 0 0</pose>
+    <pose>160 475 0 0 0 0</pose>
     <static>true</static>
     <link name="link">
       <collision name="collision">
@@ -683,7 +683,7 @@
 
 
   <model name='asphalt_plane_2_4'>
-    <pose>255 455 0 0 0 0</pose>
+    <pose>265 475 0 0 0 0</pose>
     <static>true</static>
     <link name="link">
       <collision name="collision">
@@ -713,7 +713,7 @@
 
 
   <model name='asphalt_plane_3_4'>
-    <pose>355 455 0 0 0 0</pose>
+    <pose>370 475 0 0 0 0</pose>
     <static>true</static>
     <link name="link">
       <collision name="collision">
@@ -743,7 +743,7 @@
 
 
   <model name='asphalt_plane_4_4'>
-    <pose>455 455 0 0 0 0</pose>
+    <pose>475 475 0 0 0 0</pose>
     <static>true</static>
     <link name="link">
       <collision name="collision">
@@ -799,18 +799,18 @@
 
     <road name='road_1_1_0'>
         <width>10</width>
-        <point>105 10 .005</point>
-        <point>105 100 .005</point>
+        <point>110 10 .005</point>
+        <point>110 100 .005</point>
     </road>
     <road name='road_2_1_0'>
         <width>10</width>
-        <point>110 5 .005</point>
-        <point>200 5 .005</point>
+        <point>115 5 .005</point>
+        <point>205 5 .005</point>
     </road>
     <road name='intersection_1_0'>
         <width>10</width>
-        <point>100 5 .005</point>
-        <point>110 5 .005</point>
+        <point>105 5 .005</point>
+        <point>115 5 .005</point>
         <material>
             <script>
                 <uri>file://media/materials/scripts/gazebo.material</uri>
@@ -822,18 +822,18 @@
 
     <road name='road_1_2_0'>
         <width>10</width>
-        <point>205 10 .005</point>
-        <point>205 100 .005</point>
+        <point>215 10 .005</point>
+        <point>215 100 .005</point>
     </road>
     <road name='road_2_2_0'>
         <width>10</width>
-        <point>210 5 .005</point>
-        <point>300 5 .005</point>
+        <point>220 5 .005</point>
+        <point>310 5 .005</point>
     </road>
     <road name='intersection_2_0'>
         <width>10</width>
-        <point>200 5 .005</point>
         <point>210 5 .005</point>
+        <point>220 5 .005</point>
         <material>
             <script>
                 <uri>file://media/materials/scripts/gazebo.material</uri>
@@ -845,18 +845,18 @@
 
     <road name='road_1_3_0'>
         <width>10</width>
-        <point>305 10 .005</point>
-        <point>305 100 .005</point>
+        <point>320 10 .005</point>
+        <point>320 100 .005</point>
     </road>
     <road name='road_2_3_0'>
         <width>10</width>
-        <point>310 5 .005</point>
-        <point>400 5 .005</point>
+        <point>325 5 .005</point>
+        <point>415 5 .005</point>
     </road>
     <road name='intersection_3_0'>
         <width>10</width>
-        <point>300 5 .005</point>
-        <point>310 5 .005</point>
+        <point>315 5 .005</point>
+        <point>325 5 .005</point>
         <material>
             <script>
                 <uri>file://media/materials/scripts/gazebo.material</uri>
@@ -868,18 +868,18 @@
 
     <road name='road_1_4_0'>
         <width>10</width>
-        <point>405 10 .005</point>
-        <point>405 100 .005</point>
+        <point>425 10 .005</point>
+        <point>425 100 .005</point>
     </road>
     <road name='road_2_4_0'>
         <width>10</width>
-        <point>410 5 .005</point>
-        <point>500 5 .005</point>
+        <point>430 5 .005</point>
+        <point>520 5 .005</point>
     </road>
     <road name='intersection_4_0'>
         <width>10</width>
-        <point>400 5 .005</point>
-        <point>410 5 .005</point>
+        <point>420 5 .005</point>
+        <point>430 5 .005</point>
         <material>
             <script>
                 <uri>file://media/materials/scripts/gazebo.material</uri>
@@ -891,18 +891,18 @@
 
     <road name='road_1_0_1'>
         <width>10</width>
-        <point>5 110 .005</point>
-        <point>5 200 .005</point>
+        <point>5 115 .005</point>
+        <point>5 205 .005</point>
     </road>
     <road name='road_2_0_1'>
         <width>10</width>
-        <point>10 105 .005</point>
-        <point>100 105 .005</point>
+        <point>10 110 .005</point>
+        <point>100 110 .005</point>
     </road>
     <road name='intersection_0_1'>
         <width>10</width>
-        <point>0 105 .005</point>
-        <point>10 105 .005</point>
+        <point>0 110 .005</point>
+        <point>10 110 .005</point>
         <material>
             <script>
                 <uri>file://media/materials/scripts/gazebo.material</uri>
@@ -914,18 +914,18 @@
 
     <road name='road_1_1_1'>
         <width>10</width>
-        <point>105 110 .005</point>
-        <point>105 200 .005</point>
+        <point>110 115 .005</point>
+        <point>110 205 .005</point>
     </road>
     <road name='road_2_1_1'>
         <width>10</width>
-        <point>110 105 .005</point>
-        <point>200 105 .005</point>
+        <point>115 110 .005</point>
+        <point>205 110 .005</point>
     </road>
     <road name='intersection_1_1'>
         <width>10</width>
-        <point>100 105 .005</point>
-        <point>110 105 .005</point>
+        <point>105 110 .005</point>
+        <point>115 110 .005</point>
         <material>
             <script>
                 <uri>file://media/materials/scripts/gazebo.material</uri>
@@ -937,18 +937,18 @@
 
     <road name='road_1_2_1'>
         <width>10</width>
-        <point>205 110 .005</point>
-        <point>205 200 .005</point>
+        <point>215 115 .005</point>
+        <point>215 205 .005</point>
     </road>
     <road name='road_2_2_1'>
         <width>10</width>
-        <point>210 105 .005</point>
-        <point>300 105 .005</point>
+        <point>220 110 .005</point>
+        <point>310 110 .005</point>
     </road>
     <road name='intersection_2_1'>
         <width>10</width>
-        <point>200 105 .005</point>
-        <point>210 105 .005</point>
+        <point>210 110 .005</point>
+        <point>220 110 .005</point>
         <material>
             <script>
                 <uri>file://media/materials/scripts/gazebo.material</uri>
@@ -960,18 +960,18 @@
 
     <road name='road_1_3_1'>
         <width>10</width>
-        <point>305 110 .005</point>
-        <point>305 200 .005</point>
+        <point>320 115 .005</point>
+        <point>320 205 .005</point>
     </road>
     <road name='road_2_3_1'>
         <width>10</width>
-        <point>310 105 .005</point>
-        <point>400 105 .005</point>
+        <point>325 110 .005</point>
+        <point>415 110 .005</point>
     </road>
     <road name='intersection_3_1'>
         <width>10</width>
-        <point>300 105 .005</point>
-        <point>310 105 .005</point>
+        <point>315 110 .005</point>
+        <point>325 110 .005</point>
         <material>
             <script>
                 <uri>file://media/materials/scripts/gazebo.material</uri>
@@ -983,18 +983,18 @@
 
     <road name='road_1_4_1'>
         <width>10</width>
-        <point>405 110 .005</point>
-        <point>405 200 .005</point>
+        <point>425 115 .005</point>
+        <point>425 205 .005</point>
     </road>
     <road name='road_2_4_1'>
         <width>10</width>
-        <point>410 105 .005</point>
-        <point>500 105 .005</point>
+        <point>430 110 .005</point>
+        <point>520 110 .005</point>
     </road>
     <road name='intersection_4_1'>
         <width>10</width>
-        <point>400 105 .005</point>
-        <point>410 105 .005</point>
+        <point>420 110 .005</point>
+        <point>430 110 .005</point>
         <material>
             <script>
                 <uri>file://media/materials/scripts/gazebo.material</uri>
@@ -1006,18 +1006,18 @@
 
     <road name='road_1_0_2'>
         <width>10</width>
-        <point>5 210 .005</point>
-        <point>5 300 .005</point>
+        <point>5 220 .005</point>
+        <point>5 310 .005</point>
     </road>
     <road name='road_2_0_2'>
         <width>10</width>
-        <point>10 205 .005</point>
-        <point>100 205 .005</point>
+        <point>10 215 .005</point>
+        <point>100 215 .005</point>
     </road>
     <road name='intersection_0_2'>
         <width>10</width>
-        <point>0 205 .005</point>
-        <point>10 205 .005</point>
+        <point>0 215 .005</point>
+        <point>10 215 .005</point>
         <material>
             <script>
                 <uri>file://media/materials/scripts/gazebo.material</uri>
@@ -1029,18 +1029,18 @@
 
     <road name='road_1_1_2'>
         <width>10</width>
-        <point>105 210 .005</point>
-        <point>105 300 .005</point>
+        <point>110 220 .005</point>
+        <point>110 310 .005</point>
     </road>
     <road name='road_2_1_2'>
         <width>10</width>
-        <point>110 205 .005</point>
-        <point>200 205 .005</point>
+        <point>115 215 .005</point>
+        <point>205 215 .005</point>
     </road>
     <road name='intersection_1_2'>
         <width>10</width>
-        <point>100 205 .005</point>
-        <point>110 205 .005</point>
+        <point>105 215 .005</point>
+        <point>115 215 .005</point>
         <material>
             <script>
                 <uri>file://media/materials/scripts/gazebo.material</uri>
@@ -1052,18 +1052,18 @@
 
     <road name='road_1_2_2'>
         <width>10</width>
-        <point>205 210 .005</point>
-        <point>205 300 .005</point>
+        <point>215 220 .005</point>
+        <point>215 310 .005</point>
     </road>
     <road name='road_2_2_2'>
         <width>10</width>
-        <point>210 205 .005</point>
-        <point>300 205 .005</point>
+        <point>220 215 .005</point>
+        <point>310 215 .005</point>
     </road>
     <road name='intersection_2_2'>
         <width>10</width>
-        <point>200 205 .005</point>
-        <point>210 205 .005</point>
+        <point>210 215 .005</point>
+        <point>220 215 .005</point>
         <material>
             <script>
                 <uri>file://media/materials/scripts/gazebo.material</uri>
@@ -1075,18 +1075,18 @@
 
     <road name='road_1_3_2'>
         <width>10</width>
-        <point>305 210 .005</point>
-        <point>305 300 .005</point>
+        <point>320 220 .005</point>
+        <point>320 310 .005</point>
     </road>
     <road name='road_2_3_2'>
         <width>10</width>
-        <point>310 205 .005</point>
-        <point>400 205 .005</point>
+        <point>325 215 .005</point>
+        <point>415 215 .005</point>
     </road>
     <road name='intersection_3_2'>
         <width>10</width>
-        <point>300 205 .005</point>
-        <point>310 205 .005</point>
+        <point>315 215 .005</point>
+        <point>325 215 .005</point>
         <material>
             <script>
                 <uri>file://media/materials/scripts/gazebo.material</uri>
@@ -1098,18 +1098,18 @@
 
     <road name='road_1_4_2'>
         <width>10</width>
-        <point>405 210 .005</point>
-        <point>405 300 .005</point>
+        <point>425 220 .005</point>
+        <point>425 310 .005</point>
     </road>
     <road name='road_2_4_2'>
         <width>10</width>
-        <point>410 205 .005</point>
-        <point>500 205 .005</point>
+        <point>430 215 .005</point>
+        <point>520 215 .005</point>
     </road>
     <road name='intersection_4_2'>
         <width>10</width>
-        <point>400 205 .005</point>
-        <point>410 205 .005</point>
+        <point>420 215 .005</point>
+        <point>430 215 .005</point>
         <material>
             <script>
                 <uri>file://media/materials/scripts/gazebo.material</uri>
@@ -1121,18 +1121,18 @@
 
     <road name='road_1_0_3'>
         <width>10</width>
-        <point>5 310 .005</point>
-        <point>5 400 .005</point>
+        <point>5 325 .005</point>
+        <point>5 415 .005</point>
     </road>
     <road name='road_2_0_3'>
         <width>10</width>
-        <point>10 305 .005</point>
-        <point>100 305 .005</point>
+        <point>10 320 .005</point>
+        <point>100 320 .005</point>
     </road>
     <road name='intersection_0_3'>
         <width>10</width>
-        <point>0 305 .005</point>
-        <point>10 305 .005</point>
+        <point>0 320 .005</point>
+        <point>10 320 .005</point>
         <material>
             <script>
                 <uri>file://media/materials/scripts/gazebo.material</uri>
@@ -1144,18 +1144,18 @@
 
     <road name='road_1_1_3'>
         <width>10</width>
-        <point>105 310 .005</point>
-        <point>105 400 .005</point>
+        <point>110 325 .005</point>
+        <point>110 415 .005</point>
     </road>
     <road name='road_2_1_3'>
         <width>10</width>
-        <point>110 305 .005</point>
-        <point>200 305 .005</point>
+        <point>115 320 .005</point>
+        <point>205 320 .005</point>
     </road>
     <road name='intersection_1_3'>
         <width>10</width>
-        <point>100 305 .005</point>
-        <point>110 305 .005</point>
+        <point>105 320 .005</point>
+        <point>115 320 .005</point>
         <material>
             <script>
                 <uri>file://media/materials/scripts/gazebo.material</uri>
@@ -1167,18 +1167,18 @@
 
     <road name='road_1_2_3'>
         <width>10</width>
-        <point>205 310 .005</point>
-        <point>205 400 .005</point>
+        <point>215 325 .005</point>
+        <point>215 415 .005</point>
     </road>
     <road name='road_2_2_3'>
         <width>10</width>
-        <point>210 305 .005</point>
-        <point>300 305 .005</point>
+        <point>220 320 .005</point>
+        <point>310 320 .005</point>
     </road>
     <road name='intersection_2_3'>
         <width>10</width>
-        <point>200 305 .005</point>
-        <point>210 305 .005</point>
+        <point>210 320 .005</point>
+        <point>220 320 .005</point>
         <material>
             <script>
                 <uri>file://media/materials/scripts/gazebo.material</uri>
@@ -1190,18 +1190,18 @@
 
     <road name='road_1_3_3'>
         <width>10</width>
-        <point>305 310 .005</point>
-        <point>305 400 .005</point>
+        <point>320 325 .005</point>
+        <point>320 415 .005</point>
     </road>
     <road name='road_2_3_3'>
         <width>10</width>
-        <point>310 305 .005</point>
-        <point>400 305 .005</point>
+        <point>325 320 .005</point>
+        <point>415 320 .005</point>
     </road>
     <road name='intersection_3_3'>
         <width>10</width>
-        <point>300 305 .005</point>
-        <point>310 305 .005</point>
+        <point>315 320 .005</point>
+        <point>325 320 .005</point>
         <material>
             <script>
                 <uri>file://media/materials/scripts/gazebo.material</uri>
@@ -1213,18 +1213,18 @@
 
     <road name='road_1_4_3'>
         <width>10</width>
-        <point>405 310 .005</point>
-        <point>405 400 .005</point>
+        <point>425 325 .005</point>
+        <point>425 415 .005</point>
     </road>
     <road name='road_2_4_3'>
         <width>10</width>
-        <point>410 305 .005</point>
-        <point>500 305 .005</point>
+        <point>430 320 .005</point>
+        <point>520 320 .005</point>
     </road>
     <road name='intersection_4_3'>
         <width>10</width>
-        <point>400 305 .005</point>
-        <point>410 305 .005</point>
+        <point>420 320 .005</point>
+        <point>430 320 .005</point>
         <material>
             <script>
                 <uri>file://media/materials/scripts/gazebo.material</uri>
@@ -1236,18 +1236,18 @@
 
     <road name='road_1_0_4'>
         <width>10</width>
-        <point>5 410 .005</point>
-        <point>5 500 .005</point>
+        <point>5 430 .005</point>
+        <point>5 520 .005</point>
     </road>
     <road name='road_2_0_4'>
         <width>10</width>
-        <point>10 405 .005</point>
-        <point>100 405 .005</point>
+        <point>10 425 .005</point>
+        <point>100 425 .005</point>
     </road>
     <road name='intersection_0_4'>
         <width>10</width>
-        <point>0 405 .005</point>
-        <point>10 405 .005</point>
+        <point>0 425 .005</point>
+        <point>10 425 .005</point>
         <material>
             <script>
                 <uri>file://media/materials/scripts/gazebo.material</uri>
@@ -1259,18 +1259,18 @@
 
     <road name='road_1_1_4'>
         <width>10</width>
-        <point>105 410 .005</point>
-        <point>105 500 .005</point>
+        <point>110 430 .005</point>
+        <point>110 520 .005</point>
     </road>
     <road name='road_2_1_4'>
         <width>10</width>
-        <point>110 405 .005</point>
-        <point>200 405 .005</point>
+        <point>115 425 .005</point>
+        <point>205 425 .005</point>
     </road>
     <road name='intersection_1_4'>
         <width>10</width>
-        <point>100 405 .005</point>
-        <point>110 405 .005</point>
+        <point>105 425 .005</point>
+        <point>115 425 .005</point>
         <material>
             <script>
                 <uri>file://media/materials/scripts/gazebo.material</uri>
@@ -1282,18 +1282,18 @@
 
     <road name='road_1_2_4'>
         <width>10</width>
-        <point>205 410 .005</point>
-        <point>205 500 .005</point>
+        <point>215 430 .005</point>
+        <point>215 520 .005</point>
     </road>
     <road name='road_2_2_4'>
         <width>10</width>
-        <point>210 405 .005</point>
-        <point>300 405 .005</point>
+        <point>220 425 .005</point>
+        <point>310 425 .005</point>
     </road>
     <road name='intersection_2_4'>
         <width>10</width>
-        <point>200 405 .005</point>
-        <point>210 405 .005</point>
+        <point>210 425 .005</point>
+        <point>220 425 .005</point>
         <material>
             <script>
                 <uri>file://media/materials/scripts/gazebo.material</uri>
@@ -1305,18 +1305,18 @@
 
     <road name='road_1_3_4'>
         <width>10</width>
-        <point>305 410 .005</point>
-        <point>305 500 .005</point>
+        <point>320 430 .005</point>
+        <point>320 520 .005</point>
     </road>
     <road name='road_2_3_4'>
         <width>10</width>
-        <point>310 405 .005</point>
-        <point>400 405 .005</point>
+        <point>325 425 .005</point>
+        <point>415 425 .005</point>
     </road>
     <road name='intersection_3_4'>
         <width>10</width>
-        <point>300 405 .005</point>
-        <point>310 405 .005</point>
+        <point>315 425 .005</point>
+        <point>325 425 .005</point>
         <material>
             <script>
                 <uri>file://media/materials/scripts/gazebo.material</uri>
@@ -1328,18 +1328,18 @@
 
     <road name='road_1_4_4'>
         <width>10</width>
-        <point>405 410 .005</point>
-        <point>405 500 .005</point>
+        <point>425 430 .005</point>
+        <point>425 520 .005</point>
     </road>
     <road name='road_2_4_4'>
         <width>10</width>
-        <point>410 405 .005</point>
-        <point>500 405 .005</point>
+        <point>430 425 .005</point>
+        <point>520 425 .005</point>
     </road>
     <road name='intersection_4_4'>
         <width>10</width>
-        <point>400 405 .005</point>
-        <point>410 405 .005</point>
+        <point>420 425 .005</point>
+        <point>430 425 .005</point>
         <material>
             <script>
                 <uri>file://media/materials/scripts/gazebo.material</uri>

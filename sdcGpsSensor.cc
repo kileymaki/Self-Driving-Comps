@@ -18,17 +18,17 @@ void sdcGpsSensor::Load(sensors::SensorPtr _sensor, sdf::ElementPtr /*_sdf*/){
     // Get the parent sensor.
     this->parentSensor =
     boost::dynamic_pointer_cast<sensors::GpsSensor>(_sensor);
-    
+
     // Make sure the parent sensor is valid.
     if (!this->parentSensor)
     {
         gzerr << "Couldn't find a gps\n";
         return;
     }
-    
+
     // Connect to the sensor update event.
     this->updateConnection = this->parentSensor->ConnectUpdated(boost::bind(&sdcGpsSensor::OnUpdate, this));
-    
+
     // Make sure the parent sensor is active.
     this->parentSensor->SetActive(true);
 }
@@ -37,11 +37,11 @@ void sdcGpsSensor::Load(sensors::SensorPtr _sensor, sdf::ElementPtr /*_sdf*/){
 void sdcGpsSensor::OnUpdate(){
     math::Angle lat = this->parentSensor->Latitude();
     math::Angle lon = this->parentSensor->Longitude();
-    
+
     math::Vector2d coordinate = math::Vector2d(lon.Degree(),lat.Degree());
     //printf("2D LAT:\t%f\n", coordinate[0]);
     //printf("2D LON:\t%f\n\n", coordinate[1]);
-    
+
     //printf("LAT:\t%f\nLON:\t%f\n\n",lat.Degree(), lon.Degree());
     //sdcSensorData::UpdateGPS(&lat, &lon);
     sdcSensorData::UpdateGPS(coordinate);

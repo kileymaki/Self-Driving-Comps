@@ -774,20 +774,70 @@
 
 
 
-    <road name='road_1_0_0'>
-        <width>10</width>
-        <point>5 10 .005</point>
-        <point>5 100 .005</point>
-    </road>
-    <road name='road_2_0_0'>
-        <width>10</width>
-        <point>10 5 .005</point>
-        <point>100 5 .005</point>
-    </road>
+
+    <model name='road_1_0_0'>
+
+      <pose>5 55 0 0 0 1.5707</pose>
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        <material>
+            <script>
+                <uri>model://comps_road/materials/scripts</uri>
+                <uri>model://comps_road/materials/textures</uri>
+                <name>comps_road</name>
+            </script>
+        </material>
+      </visual>
+    </link>
+  </model>
+
+
+    <model name='road_2_0_0'>
+      <pose>55 5 0 0 0 0</pose>
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        <material>
+            <script>
+                <uri>model://comps_road/materials/scripts</uri>
+                <uri>model://comps_road/materials/textures</uri>
+                <name>comps_road</name>
+            </script>
+        </material>
+      </visual>
+    </link>
+  </model>
     <road name='intersection_0_0'>
         <width>10</width>
-        <point>0 5 .005</point>
-        <point>10 5 .005</point>
+        <point>0 5 .1</point>
+        <point>10 5 .1</point>
         <material>
             <script>
                 <uri>file://media/materials/scripts/gazebo.material</uri>
@@ -797,20 +847,70 @@
     </road>
 
 
-    <road name='road_1_1_0'>
-        <width>10</width>
-        <point>105 10 .005</point>
-        <point>105 100 .005</point>
-    </road>
-    <road name='road_2_1_0'>
-        <width>10</width>
-        <point>110 5 .005</point>
-        <point>200 5 .005</point>
-    </road>
+
+    <model name='road_1_1_0'>
+
+      <pose>105 55 0 0 0 1.5707</pose>
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        <material>
+            <script>
+                <uri>model://comps_road/materials/scripts</uri>
+                <uri>model://comps_road/materials/textures</uri>
+                <name>comps_road</name>
+            </script>
+        </material>
+      </visual>
+    </link>
+  </model>
+
+
+    <model name='road_2_1_0'>
+      <pose>155 5 0 0 0 0</pose>
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        <material>
+            <script>
+                <uri>model://comps_road/materials/scripts</uri>
+                <uri>model://comps_road/materials/textures</uri>
+                <name>comps_road</name>
+            </script>
+        </material>
+      </visual>
+    </link>
+  </model>
     <road name='intersection_1_0'>
         <width>10</width>
-        <point>100 5 .005</point>
-        <point>110 5 .005</point>
+        <point>100 5 .1</point>
+        <point>110 5 .1</point>
         <material>
             <script>
                 <uri>file://media/materials/scripts/gazebo.material</uri>
@@ -820,20 +920,70 @@
     </road>
 
 
-    <road name='road_1_2_0'>
-        <width>10</width>
-        <point>205 10 .005</point>
-        <point>205 100 .005</point>
-    </road>
-    <road name='road_2_2_0'>
-        <width>10</width>
-        <point>210 5 .005</point>
-        <point>300 5 .005</point>
-    </road>
+
+    <model name='road_1_2_0'>
+
+      <pose>205 55 0 0 0 1.5707</pose>
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        <material>
+            <script>
+                <uri>model://comps_road/materials/scripts</uri>
+                <uri>model://comps_road/materials/textures</uri>
+                <name>comps_road</name>
+            </script>
+        </material>
+      </visual>
+    </link>
+  </model>
+
+
+    <model name='road_2_2_0'>
+      <pose>255 5 0 0 0 0</pose>
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        <material>
+            <script>
+                <uri>model://comps_road/materials/scripts</uri>
+                <uri>model://comps_road/materials/textures</uri>
+                <name>comps_road</name>
+            </script>
+        </material>
+      </visual>
+    </link>
+  </model>
     <road name='intersection_2_0'>
         <width>10</width>
-        <point>200 5 .005</point>
-        <point>210 5 .005</point>
+        <point>200 5 .1</point>
+        <point>210 5 .1</point>
         <material>
             <script>
                 <uri>file://media/materials/scripts/gazebo.material</uri>
@@ -843,20 +993,70 @@
     </road>
 
 
-    <road name='road_1_3_0'>
-        <width>10</width>
-        <point>305 10 .005</point>
-        <point>305 100 .005</point>
-    </road>
-    <road name='road_2_3_0'>
-        <width>10</width>
-        <point>310 5 .005</point>
-        <point>400 5 .005</point>
-    </road>
+
+    <model name='road_1_3_0'>
+
+      <pose>305 55 0 0 0 1.5707</pose>
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        <material>
+            <script>
+                <uri>model://comps_road/materials/scripts</uri>
+                <uri>model://comps_road/materials/textures</uri>
+                <name>comps_road</name>
+            </script>
+        </material>
+      </visual>
+    </link>
+  </model>
+
+
+    <model name='road_2_3_0'>
+      <pose>355 5 0 0 0 0</pose>
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        <material>
+            <script>
+                <uri>model://comps_road/materials/scripts</uri>
+                <uri>model://comps_road/materials/textures</uri>
+                <name>comps_road</name>
+            </script>
+        </material>
+      </visual>
+    </link>
+  </model>
     <road name='intersection_3_0'>
         <width>10</width>
-        <point>300 5 .005</point>
-        <point>310 5 .005</point>
+        <point>300 5 .1</point>
+        <point>310 5 .1</point>
         <material>
             <script>
                 <uri>file://media/materials/scripts/gazebo.material</uri>
@@ -866,20 +1066,70 @@
     </road>
 
 
-    <road name='road_1_4_0'>
-        <width>10</width>
-        <point>405 10 .005</point>
-        <point>405 100 .005</point>
-    </road>
-    <road name='road_2_4_0'>
-        <width>10</width>
-        <point>410 5 .005</point>
-        <point>500 5 .005</point>
-    </road>
+
+    <model name='road_1_4_0'>
+
+      <pose>405 55 0 0 0 1.5707</pose>
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        <material>
+            <script>
+                <uri>model://comps_road/materials/scripts</uri>
+                <uri>model://comps_road/materials/textures</uri>
+                <name>comps_road</name>
+            </script>
+        </material>
+      </visual>
+    </link>
+  </model>
+
+
+    <model name='road_2_4_0'>
+      <pose>455 5 0 0 0 0</pose>
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        <material>
+            <script>
+                <uri>model://comps_road/materials/scripts</uri>
+                <uri>model://comps_road/materials/textures</uri>
+                <name>comps_road</name>
+            </script>
+        </material>
+      </visual>
+    </link>
+  </model>
     <road name='intersection_4_0'>
         <width>10</width>
-        <point>400 5 .005</point>
-        <point>410 5 .005</point>
+        <point>400 5 .1</point>
+        <point>410 5 .1</point>
         <material>
             <script>
                 <uri>file://media/materials/scripts/gazebo.material</uri>
@@ -889,20 +1139,70 @@
     </road>
 
 
-    <road name='road_1_0_1'>
-        <width>10</width>
-        <point>5 110 .005</point>
-        <point>5 200 .005</point>
-    </road>
-    <road name='road_2_0_1'>
-        <width>10</width>
-        <point>10 105 .005</point>
-        <point>100 105 .005</point>
-    </road>
+
+    <model name='road_1_0_1'>
+
+      <pose>5 155 0 0 0 1.5707</pose>
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        <material>
+            <script>
+                <uri>model://comps_road/materials/scripts</uri>
+                <uri>model://comps_road/materials/textures</uri>
+                <name>comps_road</name>
+            </script>
+        </material>
+      </visual>
+    </link>
+  </model>
+
+
+    <model name='road_2_0_1'>
+      <pose>55 105 0 0 0 0</pose>
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        <material>
+            <script>
+                <uri>model://comps_road/materials/scripts</uri>
+                <uri>model://comps_road/materials/textures</uri>
+                <name>comps_road</name>
+            </script>
+        </material>
+      </visual>
+    </link>
+  </model>
     <road name='intersection_0_1'>
         <width>10</width>
-        <point>0 105 .005</point>
-        <point>10 105 .005</point>
+        <point>0 105 .1</point>
+        <point>10 105 .1</point>
         <material>
             <script>
                 <uri>file://media/materials/scripts/gazebo.material</uri>
@@ -912,20 +1212,70 @@
     </road>
 
 
-    <road name='road_1_1_1'>
-        <width>10</width>
-        <point>105 110 .005</point>
-        <point>105 200 .005</point>
-    </road>
-    <road name='road_2_1_1'>
-        <width>10</width>
-        <point>110 105 .005</point>
-        <point>200 105 .005</point>
-    </road>
+
+    <model name='road_1_1_1'>
+
+      <pose>105 155 0 0 0 1.5707</pose>
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        <material>
+            <script>
+                <uri>model://comps_road/materials/scripts</uri>
+                <uri>model://comps_road/materials/textures</uri>
+                <name>comps_road</name>
+            </script>
+        </material>
+      </visual>
+    </link>
+  </model>
+
+
+    <model name='road_2_1_1'>
+      <pose>155 105 0 0 0 0</pose>
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        <material>
+            <script>
+                <uri>model://comps_road/materials/scripts</uri>
+                <uri>model://comps_road/materials/textures</uri>
+                <name>comps_road</name>
+            </script>
+        </material>
+      </visual>
+    </link>
+  </model>
     <road name='intersection_1_1'>
         <width>10</width>
-        <point>100 105 .005</point>
-        <point>110 105 .005</point>
+        <point>100 105 .1</point>
+        <point>110 105 .1</point>
         <material>
             <script>
                 <uri>file://media/materials/scripts/gazebo.material</uri>
@@ -935,20 +1285,70 @@
     </road>
 
 
-    <road name='road_1_2_1'>
-        <width>10</width>
-        <point>205 110 .005</point>
-        <point>205 200 .005</point>
-    </road>
-    <road name='road_2_2_1'>
-        <width>10</width>
-        <point>210 105 .005</point>
-        <point>300 105 .005</point>
-    </road>
+
+    <model name='road_1_2_1'>
+
+      <pose>205 155 0 0 0 1.5707</pose>
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        <material>
+            <script>
+                <uri>model://comps_road/materials/scripts</uri>
+                <uri>model://comps_road/materials/textures</uri>
+                <name>comps_road</name>
+            </script>
+        </material>
+      </visual>
+    </link>
+  </model>
+
+
+    <model name='road_2_2_1'>
+      <pose>255 105 0 0 0 0</pose>
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        <material>
+            <script>
+                <uri>model://comps_road/materials/scripts</uri>
+                <uri>model://comps_road/materials/textures</uri>
+                <name>comps_road</name>
+            </script>
+        </material>
+      </visual>
+    </link>
+  </model>
     <road name='intersection_2_1'>
         <width>10</width>
-        <point>200 105 .005</point>
-        <point>210 105 .005</point>
+        <point>200 105 .1</point>
+        <point>210 105 .1</point>
         <material>
             <script>
                 <uri>file://media/materials/scripts/gazebo.material</uri>
@@ -958,20 +1358,70 @@
     </road>
 
 
-    <road name='road_1_3_1'>
-        <width>10</width>
-        <point>305 110 .005</point>
-        <point>305 200 .005</point>
-    </road>
-    <road name='road_2_3_1'>
-        <width>10</width>
-        <point>310 105 .005</point>
-        <point>400 105 .005</point>
-    </road>
+
+    <model name='road_1_3_1'>
+
+      <pose>305 155 0 0 0 1.5707</pose>
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        <material>
+            <script>
+                <uri>model://comps_road/materials/scripts</uri>
+                <uri>model://comps_road/materials/textures</uri>
+                <name>comps_road</name>
+            </script>
+        </material>
+      </visual>
+    </link>
+  </model>
+
+
+    <model name='road_2_3_1'>
+      <pose>355 105 0 0 0 0</pose>
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        <material>
+            <script>
+                <uri>model://comps_road/materials/scripts</uri>
+                <uri>model://comps_road/materials/textures</uri>
+                <name>comps_road</name>
+            </script>
+        </material>
+      </visual>
+    </link>
+  </model>
     <road name='intersection_3_1'>
         <width>10</width>
-        <point>300 105 .005</point>
-        <point>310 105 .005</point>
+        <point>300 105 .1</point>
+        <point>310 105 .1</point>
         <material>
             <script>
                 <uri>file://media/materials/scripts/gazebo.material</uri>
@@ -981,20 +1431,70 @@
     </road>
 
 
-    <road name='road_1_4_1'>
-        <width>10</width>
-        <point>405 110 .005</point>
-        <point>405 200 .005</point>
-    </road>
-    <road name='road_2_4_1'>
-        <width>10</width>
-        <point>410 105 .005</point>
-        <point>500 105 .005</point>
-    </road>
+
+    <model name='road_1_4_1'>
+
+      <pose>405 155 0 0 0 1.5707</pose>
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        <material>
+            <script>
+                <uri>model://comps_road/materials/scripts</uri>
+                <uri>model://comps_road/materials/textures</uri>
+                <name>comps_road</name>
+            </script>
+        </material>
+      </visual>
+    </link>
+  </model>
+
+
+    <model name='road_2_4_1'>
+      <pose>455 105 0 0 0 0</pose>
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        <material>
+            <script>
+                <uri>model://comps_road/materials/scripts</uri>
+                <uri>model://comps_road/materials/textures</uri>
+                <name>comps_road</name>
+            </script>
+        </material>
+      </visual>
+    </link>
+  </model>
     <road name='intersection_4_1'>
         <width>10</width>
-        <point>400 105 .005</point>
-        <point>410 105 .005</point>
+        <point>400 105 .1</point>
+        <point>410 105 .1</point>
         <material>
             <script>
                 <uri>file://media/materials/scripts/gazebo.material</uri>
@@ -1004,20 +1504,70 @@
     </road>
 
 
-    <road name='road_1_0_2'>
-        <width>10</width>
-        <point>5 210 .005</point>
-        <point>5 300 .005</point>
-    </road>
-    <road name='road_2_0_2'>
-        <width>10</width>
-        <point>10 205 .005</point>
-        <point>100 205 .005</point>
-    </road>
+
+    <model name='road_1_0_2'>
+
+      <pose>5 255 0 0 0 1.5707</pose>
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        <material>
+            <script>
+                <uri>model://comps_road/materials/scripts</uri>
+                <uri>model://comps_road/materials/textures</uri>
+                <name>comps_road</name>
+            </script>
+        </material>
+      </visual>
+    </link>
+  </model>
+
+
+    <model name='road_2_0_2'>
+      <pose>55 205 0 0 0 0</pose>
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        <material>
+            <script>
+                <uri>model://comps_road/materials/scripts</uri>
+                <uri>model://comps_road/materials/textures</uri>
+                <name>comps_road</name>
+            </script>
+        </material>
+      </visual>
+    </link>
+  </model>
     <road name='intersection_0_2'>
         <width>10</width>
-        <point>0 205 .005</point>
-        <point>10 205 .005</point>
+        <point>0 205 .1</point>
+        <point>10 205 .1</point>
         <material>
             <script>
                 <uri>file://media/materials/scripts/gazebo.material</uri>
@@ -1027,20 +1577,70 @@
     </road>
 
 
-    <road name='road_1_1_2'>
-        <width>10</width>
-        <point>105 210 .005</point>
-        <point>105 300 .005</point>
-    </road>
-    <road name='road_2_1_2'>
-        <width>10</width>
-        <point>110 205 .005</point>
-        <point>200 205 .005</point>
-    </road>
+
+    <model name='road_1_1_2'>
+
+      <pose>105 255 0 0 0 1.5707</pose>
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        <material>
+            <script>
+                <uri>model://comps_road/materials/scripts</uri>
+                <uri>model://comps_road/materials/textures</uri>
+                <name>comps_road</name>
+            </script>
+        </material>
+      </visual>
+    </link>
+  </model>
+
+
+    <model name='road_2_1_2'>
+      <pose>155 205 0 0 0 0</pose>
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        <material>
+            <script>
+                <uri>model://comps_road/materials/scripts</uri>
+                <uri>model://comps_road/materials/textures</uri>
+                <name>comps_road</name>
+            </script>
+        </material>
+      </visual>
+    </link>
+  </model>
     <road name='intersection_1_2'>
         <width>10</width>
-        <point>100 205 .005</point>
-        <point>110 205 .005</point>
+        <point>100 205 .1</point>
+        <point>110 205 .1</point>
         <material>
             <script>
                 <uri>file://media/materials/scripts/gazebo.material</uri>
@@ -1050,20 +1650,70 @@
     </road>
 
 
-    <road name='road_1_2_2'>
-        <width>10</width>
-        <point>205 210 .005</point>
-        <point>205 300 .005</point>
-    </road>
-    <road name='road_2_2_2'>
-        <width>10</width>
-        <point>210 205 .005</point>
-        <point>300 205 .005</point>
-    </road>
+
+    <model name='road_1_2_2'>
+
+      <pose>205 255 0 0 0 1.5707</pose>
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        <material>
+            <script>
+                <uri>model://comps_road/materials/scripts</uri>
+                <uri>model://comps_road/materials/textures</uri>
+                <name>comps_road</name>
+            </script>
+        </material>
+      </visual>
+    </link>
+  </model>
+
+
+    <model name='road_2_2_2'>
+      <pose>255 205 0 0 0 0</pose>
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        <material>
+            <script>
+                <uri>model://comps_road/materials/scripts</uri>
+                <uri>model://comps_road/materials/textures</uri>
+                <name>comps_road</name>
+            </script>
+        </material>
+      </visual>
+    </link>
+  </model>
     <road name='intersection_2_2'>
         <width>10</width>
-        <point>200 205 .005</point>
-        <point>210 205 .005</point>
+        <point>200 205 .1</point>
+        <point>210 205 .1</point>
         <material>
             <script>
                 <uri>file://media/materials/scripts/gazebo.material</uri>
@@ -1073,20 +1723,70 @@
     </road>
 
 
-    <road name='road_1_3_2'>
-        <width>10</width>
-        <point>305 210 .005</point>
-        <point>305 300 .005</point>
-    </road>
-    <road name='road_2_3_2'>
-        <width>10</width>
-        <point>310 205 .005</point>
-        <point>400 205 .005</point>
-    </road>
+
+    <model name='road_1_3_2'>
+
+      <pose>305 255 0 0 0 1.5707</pose>
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        <material>
+            <script>
+                <uri>model://comps_road/materials/scripts</uri>
+                <uri>model://comps_road/materials/textures</uri>
+                <name>comps_road</name>
+            </script>
+        </material>
+      </visual>
+    </link>
+  </model>
+
+
+    <model name='road_2_3_2'>
+      <pose>355 205 0 0 0 0</pose>
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        <material>
+            <script>
+                <uri>model://comps_road/materials/scripts</uri>
+                <uri>model://comps_road/materials/textures</uri>
+                <name>comps_road</name>
+            </script>
+        </material>
+      </visual>
+    </link>
+  </model>
     <road name='intersection_3_2'>
         <width>10</width>
-        <point>300 205 .005</point>
-        <point>310 205 .005</point>
+        <point>300 205 .1</point>
+        <point>310 205 .1</point>
         <material>
             <script>
                 <uri>file://media/materials/scripts/gazebo.material</uri>
@@ -1096,20 +1796,70 @@
     </road>
 
 
-    <road name='road_1_4_2'>
-        <width>10</width>
-        <point>405 210 .005</point>
-        <point>405 300 .005</point>
-    </road>
-    <road name='road_2_4_2'>
-        <width>10</width>
-        <point>410 205 .005</point>
-        <point>500 205 .005</point>
-    </road>
+
+    <model name='road_1_4_2'>
+
+      <pose>405 255 0 0 0 1.5707</pose>
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        <material>
+            <script>
+                <uri>model://comps_road/materials/scripts</uri>
+                <uri>model://comps_road/materials/textures</uri>
+                <name>comps_road</name>
+            </script>
+        </material>
+      </visual>
+    </link>
+  </model>
+
+
+    <model name='road_2_4_2'>
+      <pose>455 205 0 0 0 0</pose>
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        <material>
+            <script>
+                <uri>model://comps_road/materials/scripts</uri>
+                <uri>model://comps_road/materials/textures</uri>
+                <name>comps_road</name>
+            </script>
+        </material>
+      </visual>
+    </link>
+  </model>
     <road name='intersection_4_2'>
         <width>10</width>
-        <point>400 205 .005</point>
-        <point>410 205 .005</point>
+        <point>400 205 .1</point>
+        <point>410 205 .1</point>
         <material>
             <script>
                 <uri>file://media/materials/scripts/gazebo.material</uri>
@@ -1119,20 +1869,70 @@
     </road>
 
 
-    <road name='road_1_0_3'>
-        <width>10</width>
-        <point>5 310 .005</point>
-        <point>5 400 .005</point>
-    </road>
-    <road name='road_2_0_3'>
-        <width>10</width>
-        <point>10 305 .005</point>
-        <point>100 305 .005</point>
-    </road>
+
+    <model name='road_1_0_3'>
+
+      <pose>5 355 0 0 0 1.5707</pose>
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        <material>
+            <script>
+                <uri>model://comps_road/materials/scripts</uri>
+                <uri>model://comps_road/materials/textures</uri>
+                <name>comps_road</name>
+            </script>
+        </material>
+      </visual>
+    </link>
+  </model>
+
+
+    <model name='road_2_0_3'>
+      <pose>55 305 0 0 0 0</pose>
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        <material>
+            <script>
+                <uri>model://comps_road/materials/scripts</uri>
+                <uri>model://comps_road/materials/textures</uri>
+                <name>comps_road</name>
+            </script>
+        </material>
+      </visual>
+    </link>
+  </model>
     <road name='intersection_0_3'>
         <width>10</width>
-        <point>0 305 .005</point>
-        <point>10 305 .005</point>
+        <point>0 305 .1</point>
+        <point>10 305 .1</point>
         <material>
             <script>
                 <uri>file://media/materials/scripts/gazebo.material</uri>
@@ -1142,20 +1942,70 @@
     </road>
 
 
-    <road name='road_1_1_3'>
-        <width>10</width>
-        <point>105 310 .005</point>
-        <point>105 400 .005</point>
-    </road>
-    <road name='road_2_1_3'>
-        <width>10</width>
-        <point>110 305 .005</point>
-        <point>200 305 .005</point>
-    </road>
+
+    <model name='road_1_1_3'>
+
+      <pose>105 355 0 0 0 1.5707</pose>
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        <material>
+            <script>
+                <uri>model://comps_road/materials/scripts</uri>
+                <uri>model://comps_road/materials/textures</uri>
+                <name>comps_road</name>
+            </script>
+        </material>
+      </visual>
+    </link>
+  </model>
+
+
+    <model name='road_2_1_3'>
+      <pose>155 305 0 0 0 0</pose>
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        <material>
+            <script>
+                <uri>model://comps_road/materials/scripts</uri>
+                <uri>model://comps_road/materials/textures</uri>
+                <name>comps_road</name>
+            </script>
+        </material>
+      </visual>
+    </link>
+  </model>
     <road name='intersection_1_3'>
         <width>10</width>
-        <point>100 305 .005</point>
-        <point>110 305 .005</point>
+        <point>100 305 .1</point>
+        <point>110 305 .1</point>
         <material>
             <script>
                 <uri>file://media/materials/scripts/gazebo.material</uri>
@@ -1165,20 +2015,70 @@
     </road>
 
 
-    <road name='road_1_2_3'>
-        <width>10</width>
-        <point>205 310 .005</point>
-        <point>205 400 .005</point>
-    </road>
-    <road name='road_2_2_3'>
-        <width>10</width>
-        <point>210 305 .005</point>
-        <point>300 305 .005</point>
-    </road>
+
+    <model name='road_1_2_3'>
+
+      <pose>205 355 0 0 0 1.5707</pose>
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        <material>
+            <script>
+                <uri>model://comps_road/materials/scripts</uri>
+                <uri>model://comps_road/materials/textures</uri>
+                <name>comps_road</name>
+            </script>
+        </material>
+      </visual>
+    </link>
+  </model>
+
+
+    <model name='road_2_2_3'>
+      <pose>255 305 0 0 0 0</pose>
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        <material>
+            <script>
+                <uri>model://comps_road/materials/scripts</uri>
+                <uri>model://comps_road/materials/textures</uri>
+                <name>comps_road</name>
+            </script>
+        </material>
+      </visual>
+    </link>
+  </model>
     <road name='intersection_2_3'>
         <width>10</width>
-        <point>200 305 .005</point>
-        <point>210 305 .005</point>
+        <point>200 305 .1</point>
+        <point>210 305 .1</point>
         <material>
             <script>
                 <uri>file://media/materials/scripts/gazebo.material</uri>
@@ -1188,20 +2088,70 @@
     </road>
 
 
-    <road name='road_1_3_3'>
-        <width>10</width>
-        <point>305 310 .005</point>
-        <point>305 400 .005</point>
-    </road>
-    <road name='road_2_3_3'>
-        <width>10</width>
-        <point>310 305 .005</point>
-        <point>400 305 .005</point>
-    </road>
+
+    <model name='road_1_3_3'>
+
+      <pose>305 355 0 0 0 1.5707</pose>
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        <material>
+            <script>
+                <uri>model://comps_road/materials/scripts</uri>
+                <uri>model://comps_road/materials/textures</uri>
+                <name>comps_road</name>
+            </script>
+        </material>
+      </visual>
+    </link>
+  </model>
+
+
+    <model name='road_2_3_3'>
+      <pose>355 305 0 0 0 0</pose>
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        <material>
+            <script>
+                <uri>model://comps_road/materials/scripts</uri>
+                <uri>model://comps_road/materials/textures</uri>
+                <name>comps_road</name>
+            </script>
+        </material>
+      </visual>
+    </link>
+  </model>
     <road name='intersection_3_3'>
         <width>10</width>
-        <point>300 305 .005</point>
-        <point>310 305 .005</point>
+        <point>300 305 .1</point>
+        <point>310 305 .1</point>
         <material>
             <script>
                 <uri>file://media/materials/scripts/gazebo.material</uri>
@@ -1211,20 +2161,70 @@
     </road>
 
 
-    <road name='road_1_4_3'>
-        <width>10</width>
-        <point>405 310 .005</point>
-        <point>405 400 .005</point>
-    </road>
-    <road name='road_2_4_3'>
-        <width>10</width>
-        <point>410 305 .005</point>
-        <point>500 305 .005</point>
-    </road>
+
+    <model name='road_1_4_3'>
+
+      <pose>405 355 0 0 0 1.5707</pose>
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        <material>
+            <script>
+                <uri>model://comps_road/materials/scripts</uri>
+                <uri>model://comps_road/materials/textures</uri>
+                <name>comps_road</name>
+            </script>
+        </material>
+      </visual>
+    </link>
+  </model>
+
+
+    <model name='road_2_4_3'>
+      <pose>455 305 0 0 0 0</pose>
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        <material>
+            <script>
+                <uri>model://comps_road/materials/scripts</uri>
+                <uri>model://comps_road/materials/textures</uri>
+                <name>comps_road</name>
+            </script>
+        </material>
+      </visual>
+    </link>
+  </model>
     <road name='intersection_4_3'>
         <width>10</width>
-        <point>400 305 .005</point>
-        <point>410 305 .005</point>
+        <point>400 305 .1</point>
+        <point>410 305 .1</point>
         <material>
             <script>
                 <uri>file://media/materials/scripts/gazebo.material</uri>
@@ -1234,20 +2234,70 @@
     </road>
 
 
-    <road name='road_1_0_4'>
-        <width>10</width>
-        <point>5 410 .005</point>
-        <point>5 500 .005</point>
-    </road>
-    <road name='road_2_0_4'>
-        <width>10</width>
-        <point>10 405 .005</point>
-        <point>100 405 .005</point>
-    </road>
+
+    <model name='road_1_0_4'>
+
+      <pose>5 455 0 0 0 1.5707</pose>
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        <material>
+            <script>
+                <uri>model://comps_road/materials/scripts</uri>
+                <uri>model://comps_road/materials/textures</uri>
+                <name>comps_road</name>
+            </script>
+        </material>
+      </visual>
+    </link>
+  </model>
+
+
+    <model name='road_2_0_4'>
+      <pose>55 405 0 0 0 0</pose>
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        <material>
+            <script>
+                <uri>model://comps_road/materials/scripts</uri>
+                <uri>model://comps_road/materials/textures</uri>
+                <name>comps_road</name>
+            </script>
+        </material>
+      </visual>
+    </link>
+  </model>
     <road name='intersection_0_4'>
         <width>10</width>
-        <point>0 405 .005</point>
-        <point>10 405 .005</point>
+        <point>0 405 .1</point>
+        <point>10 405 .1</point>
         <material>
             <script>
                 <uri>file://media/materials/scripts/gazebo.material</uri>
@@ -1257,20 +2307,70 @@
     </road>
 
 
-    <road name='road_1_1_4'>
-        <width>10</width>
-        <point>105 410 .005</point>
-        <point>105 500 .005</point>
-    </road>
-    <road name='road_2_1_4'>
-        <width>10</width>
-        <point>110 405 .005</point>
-        <point>200 405 .005</point>
-    </road>
+
+    <model name='road_1_1_4'>
+
+      <pose>105 455 0 0 0 1.5707</pose>
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        <material>
+            <script>
+                <uri>model://comps_road/materials/scripts</uri>
+                <uri>model://comps_road/materials/textures</uri>
+                <name>comps_road</name>
+            </script>
+        </material>
+      </visual>
+    </link>
+  </model>
+
+
+    <model name='road_2_1_4'>
+      <pose>155 405 0 0 0 0</pose>
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        <material>
+            <script>
+                <uri>model://comps_road/materials/scripts</uri>
+                <uri>model://comps_road/materials/textures</uri>
+                <name>comps_road</name>
+            </script>
+        </material>
+      </visual>
+    </link>
+  </model>
     <road name='intersection_1_4'>
         <width>10</width>
-        <point>100 405 .005</point>
-        <point>110 405 .005</point>
+        <point>100 405 .1</point>
+        <point>110 405 .1</point>
         <material>
             <script>
                 <uri>file://media/materials/scripts/gazebo.material</uri>
@@ -1280,20 +2380,70 @@
     </road>
 
 
-    <road name='road_1_2_4'>
-        <width>10</width>
-        <point>205 410 .005</point>
-        <point>205 500 .005</point>
-    </road>
-    <road name='road_2_2_4'>
-        <width>10</width>
-        <point>210 405 .005</point>
-        <point>300 405 .005</point>
-    </road>
+
+    <model name='road_1_2_4'>
+
+      <pose>205 455 0 0 0 1.5707</pose>
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        <material>
+            <script>
+                <uri>model://comps_road/materials/scripts</uri>
+                <uri>model://comps_road/materials/textures</uri>
+                <name>comps_road</name>
+            </script>
+        </material>
+      </visual>
+    </link>
+  </model>
+
+
+    <model name='road_2_2_4'>
+      <pose>255 405 0 0 0 0</pose>
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        <material>
+            <script>
+                <uri>model://comps_road/materials/scripts</uri>
+                <uri>model://comps_road/materials/textures</uri>
+                <name>comps_road</name>
+            </script>
+        </material>
+      </visual>
+    </link>
+  </model>
     <road name='intersection_2_4'>
         <width>10</width>
-        <point>200 405 .005</point>
-        <point>210 405 .005</point>
+        <point>200 405 .1</point>
+        <point>210 405 .1</point>
         <material>
             <script>
                 <uri>file://media/materials/scripts/gazebo.material</uri>
@@ -1303,20 +2453,70 @@
     </road>
 
 
-    <road name='road_1_3_4'>
-        <width>10</width>
-        <point>305 410 .005</point>
-        <point>305 500 .005</point>
-    </road>
-    <road name='road_2_3_4'>
-        <width>10</width>
-        <point>310 405 .005</point>
-        <point>400 405 .005</point>
-    </road>
+
+    <model name='road_1_3_4'>
+
+      <pose>305 455 0 0 0 1.5707</pose>
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        <material>
+            <script>
+                <uri>model://comps_road/materials/scripts</uri>
+                <uri>model://comps_road/materials/textures</uri>
+                <name>comps_road</name>
+            </script>
+        </material>
+      </visual>
+    </link>
+  </model>
+
+
+    <model name='road_2_3_4'>
+      <pose>355 405 0 0 0 0</pose>
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        <material>
+            <script>
+                <uri>model://comps_road/materials/scripts</uri>
+                <uri>model://comps_road/materials/textures</uri>
+                <name>comps_road</name>
+            </script>
+        </material>
+      </visual>
+    </link>
+  </model>
     <road name='intersection_3_4'>
         <width>10</width>
-        <point>300 405 .005</point>
-        <point>310 405 .005</point>
+        <point>300 405 .1</point>
+        <point>310 405 .1</point>
         <material>
             <script>
                 <uri>file://media/materials/scripts/gazebo.material</uri>
@@ -1326,20 +2526,70 @@
     </road>
 
 
-    <road name='road_1_4_4'>
-        <width>10</width>
-        <point>405 410 .005</point>
-        <point>405 500 .005</point>
-    </road>
-    <road name='road_2_4_4'>
-        <width>10</width>
-        <point>410 405 .005</point>
-        <point>500 405 .005</point>
-    </road>
+
+    <model name='road_1_4_4'>
+
+      <pose>405 455 0 0 0 1.5707</pose>
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        <material>
+            <script>
+                <uri>model://comps_road/materials/scripts</uri>
+                <uri>model://comps_road/materials/textures</uri>
+                <name>comps_road</name>
+            </script>
+        </material>
+      </visual>
+    </link>
+  </model>
+
+
+    <model name='road_2_4_4'>
+      <pose>455 405 0 0 0 0</pose>
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>90 10 .1</size>
+            </box>
+          </geometry>
+        <material>
+            <script>
+                <uri>model://comps_road/materials/scripts</uri>
+                <uri>model://comps_road/materials/textures</uri>
+                <name>comps_road</name>
+            </script>
+        </material>
+      </visual>
+    </link>
+  </model>
     <road name='intersection_4_4'>
         <width>10</width>
-        <point>400 405 .005</point>
-        <point>410 405 .005</point>
+        <point>400 405 .1</point>
+        <point>410 405 .1</point>
         <material>
             <script>
                 <uri>file://media/materials/scripts/gazebo.material</uri>

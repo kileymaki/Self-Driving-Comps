@@ -32,8 +32,20 @@ Angle operator+(const Angle& a, const Angle& b){
   return Angle(a.angle + b.angle);
 }
 
- Angle operator-(const Angle& a, const Angle& b){
+Angle operator+(const Angle& a, const double& b){
+  return Angle(a.angle + b);
+}
+
+Angle operator+(const double& a, const Angle& b){
+  return Angle(a + b.angle);
+}
+
+Angle operator-(const Angle& a, const Angle& b){
   return Angle(a.angle - b.angle);
+}
+
+Angle operator-(const Angle& a, const double& b){
+ return Angle(a.angle - b);
 }
 
 bool operator<(const Angle& a, const Angle& b){

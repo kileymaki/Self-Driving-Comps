@@ -21,13 +21,13 @@ std::vector<double>* sdcSensorData::forwardLidarRays = new std::vector<double>()
 std::vector<double>* sdcSensorData::backwardLidarRays = new std::vector<double>();
 
 void sdcSensorData::UpdateLidar(math::Angle minAngle, double angleResolution, std::vector<double>* newRays){
-    
+
     lidarRays = newRays;
-    
+
     unsigned int rayCount = lidarRays->size();
-    
+
     rayRange = (*lidarRays)[320];
-    
+
     isAllInfVar = true;
     anglesNotAtInf->clear();
     for (unsigned int i = 0; i < rayCount; ++i)
@@ -69,6 +69,7 @@ double sdcSensorData::GetRangeInFront(){
     return rayRange;
 }
 
+
 // New gps system using 2d vector
 math::Vector2d sdcSensorData::coordinate;
 
@@ -97,7 +98,7 @@ math::Angle* sdcSensorData::lon = new math::Angle(0);
  lat = newLat;
  lon = newLon;
  }
- 
+
 double sdcSensorData::GetLongitude(){
     return lon->Degree();
 }

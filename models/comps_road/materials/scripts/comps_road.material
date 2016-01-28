@@ -1,0 +1,15 @@
+material comps_road
+{
+	receive_shadows off
+	technique
+	{
+		pass
+		{
+			texture_unit
+			{
+				texture road.png
+				scale 1 .1
+			}
+		}
+	}
+}

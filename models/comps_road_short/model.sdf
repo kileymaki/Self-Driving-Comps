@@ -1,12 +1,12 @@
 <?xml version="1.0" ?>
-<sdf version="1.4">
+<sdf version="1.5">
   <model name="comps_road">
     <static>true</static>
     <link name="link">
       <collision name="collision">
         <geometry>
           <box>
-            <size>20 20 .1</size>
+            <size>5 5 0.1</size>
           </box>
         </geometry>
       </collision>
@@ -14,14 +14,14 @@
         <cast_shadows>false</cast_shadows>
         <geometry>
           <box>
-            <size>20 20 .1</size>
+            <size>5 5 0.1</size>
           </box>
         </geometry>
         <material>
           <script>
             <uri>model://comps_road/materials/scripts</uri>
             <uri>model://comps_road/materials/textures</uri>
-            <name>vrc/asphalt</name>
+            <name>comps_road</name>
           </script>
         </material>
       </visual>

@@ -72,8 +72,9 @@ sdcCar::sdcCar()
 
     // Used to estimate speed of followed object
     this->estimatedSpeed = 0.0;
-    this->lastDistance = 0.0;
-    this->speedCounter = 0;
+    this->lastPosition = 0.0;
+    this->currentPosition = 0.0;
+    this->speedCounter = 0.0;
     this->startTime = 0.0;
     this->endTime = 0.0;
 
@@ -658,6 +659,7 @@ void sdcCar::DetectIntersection(){
 
 // Car follows an object directly in front of it and slows down to stop when it starts to get close
 void sdcCar::Follow() {
+  using namespace std::chrono;
   std::vector<std::pair<int,int>> objectsInView;
   int lastIndex = -1;
 
@@ -679,15 +681,30 @@ void sdcCar::Follow() {
   //std::cout << objectsInView[0].first << "   " << objectsInView[0].second << std::endl;
   //std::cout << typeid(objectsInView[0].first).name() << std::endl;
 
+  high_resolution_clock::time_point t1 = high_resolution_clock::now();
+  system_clock::time_point sysTime = system_clock::now();
+  time_t tt;
+  tt = system_clock::to_time_t ( sysTime );
+  std::cout << "System time: " << ctime(&tt);
+
+
 
   if(this->flNumRays == 0) return;
   this->SetTargetSpeed(5);
+  std::vector<double> closestPoint;
   for(int i = 315; i < 326; i++){
+    closestPoint.push_back(fl[i]);
+    //std::cout << closestPoint[0] << std::endl;
     if (!std::isinf(this->fl[i]) && (this->fl[i] <= 10)) {
+      this->lastPosition = closestPoint[0];
       this->SetTargetSpeed(1);
       break;
     }
   }
+
+  high_resolution_clock::time_point t2 = high_resolution_clock::now();
+  duration<double> time_span = duration_cast<duration<double>>(t2 - t1);
+  //std::cout << "Time elapsed: " << time_span.count() << std::endl;
 
   // for (int i = 0; i < numrays; ++i) {
   //   if (i >= 315 && i <= 325 && std::isinf(lidar[i])) {

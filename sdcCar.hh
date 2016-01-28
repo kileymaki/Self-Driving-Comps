@@ -124,7 +124,8 @@ namespace gazebo
          double targetSpeed;
 
          double estimatedSpeed;
-         double lastDistance;
+         double lastPosition;
+         double currentPosition;
          int speedCounter;
          double startTime;
          double endTime;

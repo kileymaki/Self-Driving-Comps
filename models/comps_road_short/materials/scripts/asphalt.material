@@ -1,4 +1,4 @@
-material vrc/asphalt
+material comps_road
 {
 	technique
 	{

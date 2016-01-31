@@ -44,21 +44,24 @@ void sdcCameraSensor::Load(sensors::SensorPtr _sensor, sdf::ElementPtr /*_sdf*/)
 // Called by the world update start event
 void sdcCameraSensor::OnUpdate(){
   printf("\n\n");
+
   // Kappa
-  std::cout << this->parentSensor->GetImageHeight(0)*this->parentSensor->GetImageWidth(0) << std::endl;
-  const unsigned char * img = this->parentSensor->GetImageData(0);
-  // ResidentSleeper
-  std::string image = std::string(reinterpret_cast<const char*>(this->parentSensor->GetImageData(0)));
+  const unsigned char* img = this->parentSensor->GetImageData(0);
 
-  Mat frame;
-  frame = Mat(this->parentSensor->GetImageHeight(0), this->parentSensor->GetImageWidth(0), CV_8UC1, this);
+  Mat frame = Mat(this->parentSensor->GetImageHeight(0), this->parentSensor->GetImageWidth(0), CV_8UC3, const_cast<unsigned char*>(img));
+  //frame.setTo(_InputArray(img));
 
-  namedWindow("MyWindow", CV_WINDOW_AUTOSIZE);
-  imshow("MyWindow", frame);
+  namedWindow("MyWindow1", CV_WINDOW_AUTOSIZE);
+  imshow("MyWindow1", frame);
   //waitKey(0);
-  destroyWindow("MyWindow");
+  //destroyWindow("MyWindow");
 
-  // PogChamp
-  printf("%lu\n",image.size());
+  const unsigned char* img2 = this->parentSensor->GetImageData(1);
+
+  Mat frame2 = Mat(this->parentSensor->GetImageHeight(1), this->parentSensor->GetImageWidth(1), CV_8UC3, const_cast<unsigned char*>(img2));
+  //frame.setTo(_InputArray(img));
+
+  namedWindow("MyWindow2", CV_WINDOW_AUTOSIZE);
+  imshow("MyWindow2", frame2);
 
 }

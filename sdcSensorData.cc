@@ -10,63 +10,147 @@
 
 using namespace gazebo;
 
-bool sdcSensorData::isAllInfVar = true;
-std::vector<double>* sdcSensorData::anglesNotAtInf = new std::vector<double>();
-double sdcSensorData::rayRange = std::numeric_limits<double>::infinity();
+bool sdcSensorData::frontIsAllInfVar = true;
+std::vector<double>* sdcSensorData::frontAnglesNotAtInf = new std::vector<double>();
+double sdcSensorData::frontRayRange = std::numeric_limits<double>::infinity();
 
-std::vector<double>* sdcSensorData::lidarRays = new std::vector<double>();
+bool sdcSensorData::leftIsAllInfVar = true;
+std::vector<double>* sdcSensorData::leftAnglesNotAtInf = new std::vector<double>();
+double sdcSensorData::leftRayRange = std::numeric_limits<double>::infinity();
+
+bool sdcSensorData::rightIsAllInfVar = true;
+std::vector<double>* sdcSensorData::rightAnglesNotAtInf = new std::vector<double>();
+double sdcSensorData::rightRayRange = std::numeric_limits<double>::infinity();
+
+bool sdcSensorData::forwardIsAllInfVar = true;
+std::vector<double>* sdcSensorData::forwardAnglesNotAtInf = new std::vector<double>();
+double sdcSensorData::forwardRayRange = std::numeric_limits<double>::infinity();
+
+bool sdcSensorData::backwardIsAllInfVar = true;
+std::vector<double>* sdcSensorData::backwardAnglesNotAtInf = new std::vector<double>();
+double sdcSensorData::backwardRayRange = std::numeric_limits<double>::infinity();
+
+std::vector<double>* sdcSensorData::frontLidarRays = new std::vector<double>();
 std::vector<double>* sdcSensorData::leftLidarRays = new std::vector<double>();
 std::vector<double>* sdcSensorData::rightLidarRays = new std::vector<double>();
 std::vector<double>* sdcSensorData::forwardLidarRays = new std::vector<double>();
 std::vector<double>* sdcSensorData::backwardLidarRays = new std::vector<double>();
 
-void sdcSensorData::UpdateLidar(math::Angle minAngle, double angleResolution, std::vector<double>* newRays){
+void sdcSensorData::UpdateFrontLidar(math::Angle minAngle, double angleResolution, std::vector<double>* newRays){
 
-    lidarRays = newRays;
+    frontLidarRays = newRays;
 
-    unsigned int rayCount = lidarRays->size();
+    unsigned int frontRayCount = frontLidarRays->size();
 
-    rayRange = (*lidarRays)[320];
+    frontRayRange = (*frontLidarRays)[320];
 
-    isAllInfVar = true;
-    anglesNotAtInf->clear();
-    for (unsigned int i = 0; i < rayCount; ++i)
+    frontIsAllInfVar = true;
+    frontAnglesNotAtInf->clear();
+    for (unsigned int i = 0; i < frontRayCount; ++i)
     {
-        if(!std::isinf((*lidarRays)[i])){
-            isAllInfVar = false;
-            anglesNotAtInf->push_back(minAngle.operator+(*new math::Angle(i*angleResolution)).Radian());
+        if(!std::isinf((*frontLidarRays)[i])){
+            frontIsAllInfVar = false;
+            frontAnglesNotAtInf->push_back(minAngle.operator+(*new math::Angle(i*angleResolution)).Radian());
         }
     }
 }
 
 void sdcSensorData::UpdateLeftLidar(math::Angle minAngle, double angleResolution, std::vector<double>* newRays){
     leftLidarRays = newRays;
+
+    unsigned int leftRayCount = leftLidarRays->size();
+
+    leftRayRange = (*leftLidarRays)[320];
+
+    leftIsAllInfVar = true;
+    leftAnglesNotAtInf->clear();
+    for (unsigned int i = 0; i < leftRayCount; ++i)
+    {
+        if(!std::isinf((*leftLidarRays)[i])){
+            leftIsAllInfVar = false;
+            leftAnglesNotAtInf->push_back(minAngle.operator+(*new math::Angle(i*angleResolution)).Radian());
+        }
+    }
 }
 void sdcSensorData::UpdateRightLidar(math::Angle minAngle, double angleResolution, std::vector<double>* newRays){
     rightLidarRays = newRays;
+
+    unsigned int rightRayCount = rightLidarRays->size();
+
+    rightRayRange = (*rightLidarRays)[320];
+
+    rightIsAllInfVar = true;
+    rightAnglesNotAtInf->clear();
+    for (unsigned int i = 0; i < rightRayCount; ++i)
+    {
+        if(!std::isinf((*rightLidarRays)[i])){
+            rightIsAllInfVar = false;
+            rightAnglesNotAtInf->push_back(minAngle.operator+(*new math::Angle(i*angleResolution)).Radian());
+        }
+    }
 }
 void sdcSensorData::UpdateForwardLidar(math::Angle minAngle, double angleResolution, std::vector<double>* newRays){
     forwardLidarRays = newRays;
+
+    forwardLidarRays = newRays;
+
+    unsigned int forwardRayCount = forwardLidarRays->size();
+
+    forwardRayRange = (*forwardLidarRays)[320];
+
+    forwardIsAllInfVar = true;
+    forwardAnglesNotAtInf->clear();
+    for (unsigned int i = 0; i < forwardRayCount; ++i)
+    {
+        if(!std::isinf((*forwardLidarRays)[i])){
+            forwardIsAllInfVar = false;
+            forwardAnglesNotAtInf->push_back(minAngle.operator+(*new math::Angle(i*angleResolution)).Radian());
+        }
+    }
 }
 void sdcSensorData::UpdateBackwardLidar(math::Angle minAngle, double angleResolution, std::vector<double>* newRays){
     backwardLidarRays = newRays;
+
+    unsigned int backwardRayCount = backwardLidarRays->size();
+
+    backwardRayRange = (*backwardLidarRays)[320];
+
+    backwardIsAllInfVar = true;
+    backwardAnglesNotAtInf->clear();
+    for (unsigned int i = 0; i < backwardRayCount; ++i)
+    {
+        if(!std::isinf((*backwardLidarRays)[i])){
+            backwardIsAllInfVar = false;
+            backwardAnglesNotAtInf->push_back(minAngle.operator+(*new math::Angle(i*angleResolution)).Radian());
+        }
+    }
 }
 
-bool sdcSensorData::IsAllInf(){
-    return isAllInfVar;
+bool sdcSensorData::FrontIsAllInf(){
+    return frontIsAllInfVar;
 }
 
-std::vector<double>* sdcSensorData::GetNonInfAngles(){
-    return anglesNotAtInf;
+std::vector<double>* sdcSensorData::FrontGetNonInfAngles(){
+    return frontAnglesNotAtInf;
 }
 
-std::vector<double> sdcSensorData::GetLidarRays(){
-    std::vector<double> lidarRaysCopy = (*lidarRays);
-    return lidarRaysCopy;
+std::vector<double> sdcSensorData::GetFrontLidarRays(){
+    std::vector<double> frontLidarRaysCopy = (*frontLidarRays);
+    return frontLidarRaysCopy;
+}
+
+std::vector<double> sdcSensorData::GetTopLidarRays(){
+    std::vector<double> topLidarRaysCopy;
+
+    topLidarRaysCopy.insert(topLidarRaysCopy.end(),forwardLidarRays->begin(),forwardLidarRays->end());
+    topLidarRaysCopy.insert(topLidarRaysCopy.end(),rightLidarRays->begin(),rightLidarRays->end());
+    topLidarRaysCopy.insert(topLidarRaysCopy.end(),backwardLidarRays->begin(),backwardLidarRays->end());
+    topLidarRaysCopy.insert(topLidarRaysCopy.end(),leftLidarRays->begin(),leftLidarRays->end());
+    return topLidarRaysCopy;
 }
 
 double sdcSensorData::GetRangeInFront(){
-    return rayRange;
+    return frontRayRange;
 }
 
 

@@ -16,8 +16,11 @@
 #include <gazebo/common/common.hh>
 #include <stdio.h>
 #include <vector>
+#include <iostream>
 
 #include "sdcSensorData.hh"
+#include "opencv2/highgui/highgui.hpp"
+#include "opencv2/imgproc/imgproc.hpp"
 
 namespace gazebo
 {

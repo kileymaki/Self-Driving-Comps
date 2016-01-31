@@ -429,7 +429,7 @@
                 <plugin name="sdcTopLaserSensor" filename="build/libsdcTopLaserSensor.so" />
                 <always_on>1</always_on>
                 <update_rate>30</update_rate>
-                <visualize>false</visualize>
+                <visualize>true</visualize>
             </sensor>
             <sensor name="top_forward_laser" type="ray">
                 <pose>0.01 0 0.0175 0 0.18 0</pose>
@@ -451,7 +451,7 @@
                 <plugin name="sdcTopLaserSensor" filename="build/libsdcTopLaserSensor.so" />
                 <always_on>1</always_on>
                 <update_rate>30</update_rate>
-                <visualize>false</visualize>
+                <visualize>true</visualize>
             </sensor>
             <sensor name="top_backward_laser" type="ray">
                 <pose>0.01 0 0.0175 0 0.18 3.14159</pose>
@@ -473,7 +473,7 @@
                 <plugin name="sdcTopLaserSensor" filename="build/libsdcTopLaserSensor.so" />
                 <always_on>1</always_on>
                 <update_rate>30</update_rate>
-                <visualize>false</visualize>
+                <visualize>true</visualize>
             </sensor>
             <sensor name="top_right_laser" type="ray">
                 <pose>0.01 0 0.0175 0 0.18 -1.5708</pose>
@@ -495,7 +495,7 @@
                 <plugin name="sdcTopLaserSensor" filename="build/libsdcTopLaserSensor.so" />
                 <always_on>1</always_on>
                 <update_rate>30</update_rate>
-                <visualize>false</visualize>
+                <visualize>true</visualize>
             </sensor>
         </link>
 

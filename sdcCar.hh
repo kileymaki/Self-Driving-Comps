@@ -23,6 +23,7 @@
 
 #include <string>
 #include <vector>
+#include <chrono>
 
 #include "gazebo/common/Plugin.hh"
 #include "gazebo/physics/physics.hh"
@@ -79,6 +80,8 @@ namespace gazebo
          void Drive();
          void Steer();
          void MatchTargetSpeed();
+         void topLidarUpdate();
+         void topForwardLidarUpdate(std::vector<double> rays);
 
 
          void SetTargetDirection(Angle direction);
@@ -123,12 +126,13 @@ namespace gazebo
          double steeringAmount;
          double targetSpeed;
 
+         // for Follow
          double estimatedSpeed;
          double lastPosition;
          double currentPosition;
          int speedCounter;
-         double startTime;
-         double endTime;
+         std::chrono::high_resolution_clock::time_point startTime;
+         std::chrono::high_resolution_clock::time_point endTime;
 
          double x;
          double y;
@@ -143,6 +147,45 @@ namespace gazebo
          int flNumRays;
          int flWeight;
          std::vector<std::vector<int>> flViews;
+
+         //tl stands for Top Lidar
+         std::vector<double> tl;
+
+         int tlForwardRayLengths;
+         int tlForwardCenterRight;
+         int tlForwardSideRight;
+         int tlForwardCenterLeft;
+         int tlForwardSideLeft;
+         int tlForwardNumRays;
+         int tlForwardWeight;
+         std::vector<std::vector<int>> tlForwardViews;
+
+         int tlRightRayLengths;
+         int tlRightCenterRight;
+         int tlRightSideRight;
+         int tlRightCenterLeft;
+         int tlRightSideLeft;
+         int tlRightNumRays;
+         int tlRightWeight;
+         std::vector<std::vector<int>> tlRightViews;
+
+         int tlBackwardRayLengths;
+         int tlBackwardCenterRight;
+         int tlBackwardSideRight;
+         int tlBackwardCenterLeft;
+         int tlBackwardSideLeft;
+         int tlBackwardNumRays;
+         int tlBackwardWeight;
+         std::vector<std::vector<int>> tlBackwardViews;
+
+         int tlLeftRayLengths;
+         int tlLeftCenterRight;
+         int tlLeftSideRight;
+         int tlLeftCenterLeft;
+         int tlLeftSideLeft;
+         int tlLeftNumRays;
+         int tlLeftWeight;
+         std::vector<std::vector<int>> tlLeftViews;
 
     };
 

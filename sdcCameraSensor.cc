@@ -5,10 +5,15 @@
 #include <gazebo/common/common.hh>
 #include <stdio.h>
 #include <vector>
+#include <iostream>
+#include "opencv2/highgui/highgui.hpp"
+#include "opencv2/imgproc/imgproc.hpp"
 
 #include "sdcCameraSensor.hh"
 
 using namespace gazebo;
+using namespace cv;
+
 // Register this plugin with the simulator
 GZ_REGISTER_SENSOR_PLUGIN(sdcCameraSensor)
 
@@ -41,9 +46,17 @@ void sdcCameraSensor::OnUpdate(){
   printf("\n\n");
   // Kappa
   std::cout << this->parentSensor->GetImageHeight(0)*this->parentSensor->GetImageWidth(0) << std::endl;
-
+  const unsigned char * img = this->parentSensor->GetImageData(0);
   // ResidentSleeper
   std::string image = std::string(reinterpret_cast<const char*>(this->parentSensor->GetImageData(0)));
+
+  Mat frame;
+  frame = Mat(this->parentSensor->GetImageHeight(0), this->parentSensor->GetImageWidth(0), CV_16UC1, this);
+
+  namedWindow("MyWindow", CV_WINDOW_AUTOSIZE);
+  imshow("MyWindow", frame);
+  waitKey(0);
+  destroyWindow("MyWindow");
 
   // PogChamp
   printf("%lu\n",image.size());

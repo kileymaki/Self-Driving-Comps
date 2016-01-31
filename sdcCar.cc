@@ -75,8 +75,8 @@ sdcCar::sdcCar()
     this->lastPosition = 0.0;
     this->currentPosition = 0.0;
     this->speedCounter = 0.0;
-    this->startTime = 0.0;
-    this->endTime = 0.0;
+    this->startTime = std::chrono::high_resolution_clock::time_point();
+    this->endTime = std::chrono::high_resolution_clock::time_point();
 
 
 }
@@ -463,10 +463,55 @@ Angle sdcCar::GetDirection(){
     math::Vector3 velocity = this->velocity;
     return Angle(atan2(velocity.y, velocity.x));
 }
-  //Updates front LIDAR data
+    //Updates Top LIDAR data
+void sdcCar::topLidarUpdate(){
+    this->tl = sdcSensorData::GetTopLidarRays();
+    sdcCar::topForwardLidarUpdate(this->tl);
+}
+void sdcCar::topForwardLidarUpdate(std::vector<double> rays){
+    this->tlForwardViews.clear();
+    this->tlForwardRayLengths = 0;
+    this->tlForwardSideRight = 404;
+    this->tlForwardCenterRight = 404;
+    this->tlForwardCenterLeft = -404;
+    this->tlForwardSideLeft = -404;
+    this->tlForwardNumRays = this->tl.size();
+    this->tlForwardWeight = 0;
+
+}
+//     this->tlRightViews.clear();
+//     this->tlRightRayLengths = 0;
+//     this->tlRightSideRight = 404;
+//     this->tlRightCenterRight = 404;
+//     this->tlRightCenterLeft = -404;
+//     this->tlRightSideLeft = -404;
+//     this->tlRightNumRays = this->tl.size();
+//     this->tlRightWeight = 0;
+//
+//     this->tlBackwardViews.clear();
+//     this->tlBackwardRayLengths = 0;
+//     this->tlBackwardSideRight = 404;
+//     this->tlBackwardCenterRight = 404;
+//     this->tlBackwardCenterLeft = -404;
+//     this->tlBackwardSideLeft = -404;
+//     this->tlBackwardNumRays = this->tl.size();
+//     this->tlBackwardWeight = 0;
+//
+//     this->tlLeftViews.clear();
+//     this->tlLeftRayLengths = 0;
+//     this->tlLeftSideRight = 404;
+//     this->tlLeftCenterRight = 404;
+//     this->tlLeftCenterLeft = -404;
+//     this->tlLeftSideLeft = -404;
+//     this->tlLeftNumRays = this->tl.size();
+//     this->tlLeftWeight = 0;
+//     std::vector<int> leftView;
+//     std::vector<int> rightView;
+// }
+  //Updates Front LIDAR data
 void sdcCar::frontLidarUpdate(){
   this->flViews.clear();
-  this->fl = sdcSensorData::GetLidarRays();
+  this->fl = sdcSensorData::GetFrontLidarRays();
   this->flRayLengths = 0;
   this->flSideRight = 404;
   this->flCenterRight = 404;
@@ -543,13 +588,13 @@ void sdcCar::Drive()
 
 
     // this->DriveStraightThenStop();
-    this->WalledDriving();
-    this->DetectIntersection();
+    // this->WalledDriving();
+    // this->DetectIntersection();
 
     // this->Follow();
     // Handles all turning
     this->Steer();
-    this->MatchTargetSpeed();
+    // this->MatchTargetSpeed();
 
     //if(!std::isinf(sdcSensorData::GetCurrentCoord().x)) {
     //  double temp = (this->avg*this->count)/(this->count+1);
@@ -682,29 +727,49 @@ void sdcCar::Follow() {
   //std::cout << typeid(objectsInView[0].first).name() << std::endl;
 
   high_resolution_clock::time_point t1 = high_resolution_clock::now();
-  system_clock::time_point sysTime = system_clock::now();
-  time_t tt;
-  tt = system_clock::to_time_t ( sysTime );
-  std::cout << "System time: " << ctime(&tt);
+  startTime = t1;
 
+  // system_clock::time_point sysTime = system_clock::now();
+  // time_t tt;
+  // tt = system_clock::to_time_t ( sysTime );
+  // std::cout << "System time: " << ctime(&tt);
 
 
   if(this->flNumRays == 0) return;
   this->SetTargetSpeed(5);
   std::vector<double> closestPoint;
+  // for(int i = 315; i < 326; i++){
+  //   speedCounter++;
+  //   closestPoint.push_back(fl[i]);
+  //   //std::cout << closestPoint[0] << std::endl;
+  //   if (!std::isinf(this->fl[i]) && (this->fl[i] <= 10)) {
+  //     this->lastPosition = closestPoint[0];
+  //     this->SetTargetSpeed(1);
+  //     break;
+  //   }
+  // }
+
+  high_resolution_clock::time_point t2 = high_resolution_clock::now();
+  // if(speedCounter >= 100000){
+  //   endTime = t2;
+  //   duration<double> time_span = duration_cast<duration<double>>(endTime - startTime);
+  //   std::cout << "Time elapsed: " << time_span.count() << std::endl;
+  // }
+
   for(int i = 315; i < 326; i++){
-    closestPoint.push_back(fl[i]);
-    //std::cout << closestPoint[0] << std::endl;
-    if (!std::isinf(this->fl[i]) && (this->fl[i] <= 10)) {
-      this->lastPosition = closestPoint[0];
-      this->SetTargetSpeed(1);
+    if (!std::isinf(this->fl[i]) && (this->fl[i] <= 20) && (this->fl[i] > 10)) {
+      lastPosition = this->fl[i];
       break;
+    } if (!std::isinf(this->fl[i]) && (this->fl[i] <= 10)) {
+        currentPosition = this->fl[i];
+        endTime = t2;
+        duration<double> time_span = duration_cast<duration<double>>(endTime - startTime);
+        estimatedSpeed = (currentPosition - lastPosition) / (time_span.count() * 1000000);
+        this->SetTargetSpeed(estimatedSpeed);
+        break;
     }
   }
 
-  high_resolution_clock::time_point t2 = high_resolution_clock::now();
-  duration<double> time_span = duration_cast<duration<double>>(t2 - t1);
-  //std::cout << "Time elapsed: " << time_span.count() << std::endl;
 
   // for (int i = 0; i < numrays; ++i) {
   //   if (i >= 315 && i <= 325 && std::isinf(lidar[i])) {

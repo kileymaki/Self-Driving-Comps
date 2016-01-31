@@ -43,5 +43,5 @@ void sdcLaserSensor::OnUpdate(){
     for (unsigned int i = 0; i < this->parentSensor->GetRayCount(); ++i){
         rays->push_back(this->parentSensor->GetRange(i));
     }
-    sdcSensorData::UpdateLidar(this->parentSensor->AngleMin(), this->parentSensor->GetAngleResolution(), rays);
+    sdcSensorData::UpdateFrontLidar(this->parentSensor->AngleMin(), this->parentSensor->GetAngleResolution(), rays);
 }

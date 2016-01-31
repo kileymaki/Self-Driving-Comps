@@ -22,21 +22,34 @@ namespace gazebo
     class sdcSensorData
     {
         // Lidar variables and methods
-        public: static bool IsAllInf();
-        public: static std::vector<double>* GetNonInfAngles();
-        public: static std::vector<double> GetLidarRays();
+        public: static bool FrontIsAllInf();
+        public: static std::vector<double>* FrontGetNonInfAngles();
+        public: static std::vector<double> GetFrontLidarRays();
         public: static double GetRangeInFront();
-        private: static double rayRange;
-        private: static bool isAllInfVar;
-        private: static std::vector<double>* anglesNotAtInf;
+        public: static std::vector<double> GetTopLidarRays();
+        private: static double frontRayRange;
+        private: static bool frontIsAllInfVar;
+        private: static std::vector<double>* frontAnglesNotAtInf;
+        private: static double leftRayRange;
+        private: static bool leftIsAllInfVar;
+        private: static std::vector<double>* leftAnglesNotAtInf;
+        private: static double rightRayRange;
+        private: static bool rightIsAllInfVar;
+        private: static std::vector<double>* rightAnglesNotAtInf;
+        private: static double forwardRayRange;
+        private: static bool forwardIsAllInfVar;
+        private: static std::vector<double>* forwardAnglesNotAtInf;
+        private: static double backwardRayRange;
+        private: static bool backwardIsAllInfVar;
+        private: static std::vector<double>* backwardAnglesNotAtInf;
 
-        private: static std::vector<double>* lidarRays;
+        private: static std::vector<double>* frontLidarRays;
         private: static std::vector<double>* leftLidarRays;
         private: static std::vector<double>* rightLidarRays;
         private: static std::vector<double>* forwardLidarRays;
         private: static std::vector<double>* backwardLidarRays;
 
-        public: static void UpdateLidar(math::Angle minAngle, double angleResolution, std::vector<double>* newRays);
+        public: static void UpdateFrontLidar(math::Angle minAngle, double angleResolution, std::vector<double>* newRays);
         public: static void UpdateLeftLidar(math::Angle minAngle, double angleResolution, std::vector<double>* newRays);
         public: static void UpdateRightLidar(math::Angle minAngle, double angleResolution, std::vector<double>* newRays);
         public: static void UpdateForwardLidar(math::Angle minAngle, double angleResolution, std::vector<double>* newRays);

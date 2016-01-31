@@ -51,11 +51,11 @@ void sdcCameraSensor::OnUpdate(){
   std::string image = std::string(reinterpret_cast<const char*>(this->parentSensor->GetImageData(0)));
 
   Mat frame;
-  frame = Mat(this->parentSensor->GetImageHeight(0), this->parentSensor->GetImageWidth(0), CV_16UC1, this);
+  frame = Mat(this->parentSensor->GetImageHeight(0), this->parentSensor->GetImageWidth(0), CV_8UC1, this);
 
   namedWindow("MyWindow", CV_WINDOW_AUTOSIZE);
   imshow("MyWindow", frame);
-  waitKey(0);
+  //waitKey(0);
   destroyWindow("MyWindow");
 
   // PogChamp

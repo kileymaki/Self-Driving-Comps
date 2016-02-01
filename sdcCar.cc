@@ -87,63 +87,37 @@ void sdcCar::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
 {
   this->model = _model;
 
+  this->chassis = this->model->GetLink(_sdf->Get<std::string>("chassis"));
+
   this->joints[0] = this->model->GetJoint(_sdf->Get<std::string>("front_left"));
   this->joints[1] = this->model->GetJoint(_sdf->Get<std::string>("front_right"));
   this->joints[2] = this->model->GetJoint(_sdf->Get<std::string>("back_left"));
   this->joints[3] = this->model->GetJoint(_sdf->Get<std::string>("back_right"));
-
-  this->joints[0]->SetParam("suspension_erp", 0, 0.15);
-  this->joints[0]->SetParam("suspension_cfm", 0, 0.01);
-
-  this->joints[1]->SetParam("suspension_erp", 0, 0.15);
-  this->joints[1]->SetParam("suspension_cfm", 0, 0.01);
-
-  this->joints[2]->SetParam("suspension_erp", 0, 0.15);
-  this->joints[2]->SetParam("suspension_cfm", 0, 0.01);
-
-  this->joints[3]->SetParam("suspension_erp", 0, 0.15);
-  this->joints[3]->SetParam("suspension_cfm", 0, 0.01);
 
   this->maxSpeed = _sdf->Get<double>("max_speed");
   this->aeroLoad = _sdf->Get<double>("aero_load");
   this->tireAngleRange = _sdf->Get<double>("tire_angle_range");
   this->frontPower = _sdf->Get<double>("front_power");
   this->rearPower = _sdf->Get<double>("rear_power");
+  this->wheelRadius = _sdf->Get<double>("wheel_radius");
 
-  this->connections.push_back(event::Events::ConnectWorldUpdateBegin(
-          boost::bind(&sdcCar::OnUpdate, this)));
+  this->connections.push_back(event::Events::ConnectWorldUpdateBegin(boost::bind(&sdcCar::OnUpdate, this)));
 }
 
 /////////////////////////////////////////////////
 void sdcCar::Init()
 {
-  this->chassis = this->joints[0]->GetParent();
-
-  // This assumes that the largest dimension of the wheel is the diameter
-  physics::EntityPtr parent = boost::dynamic_pointer_cast<physics::Entity>(
-      this->joints[0]->GetChild());
-  math::Box bb = parent->GetBoundingBox();
-  this->wheelRadius = bb.GetSize().GetMax() * 0.5;
-
   // Compute the angle ratio between the steering wheel and the tires
   this->steeringRatio = STEERING_RANGE / this->tireAngleRange;
-
-  printf("SteeringRatio[%f] MaxGas[%f]\n", this->steeringRatio, this->maxGas);
 }
 
 /////////////////////////////////////////////////
 void sdcCar::OnUpdate()
 {
-
-    // Get the steering angle
-    //  double steeringAngle = this->steeringJoint->GetAngle(0).Radian();
-
     // Get the current velocity of the car
     this->velocity = this->chassis->GetWorldLinearVel();
     this->x = this->chassis->GetWorldPose().pos.x;
     this->y = this->chassis->GetWorldPose().pos.y;
-
-    //std::cout << this->GetSpeed() << "\n";
 
     math::Pose pose = this->chassis->GetWorldPose();
     this->yaw = pose.rot.GetYaw();
@@ -153,72 +127,71 @@ void sdcCar::OnUpdate()
 
 
 
-  // Compute the angle of the front wheels.
-  double wheelAngle = this->steeringAmount / this->steeringRatio;
+    // Compute the angle of the front wheels.
+    double wheelAngle = this->steeringAmount / this->steeringRatio;
 
-  // double idleSpeed = 0.5;
+    // double idleSpeed = 0.5;
 
-  // Compute the rotational velocity of the wheels
-  double jointVel = (std::max(0.0, this->gas-this->brake) * this->maxSpeed) /
+    // Compute the rotational velocity of the wheels
+    double jointVel = (std::max(0.0, this->gas-this->brake) * this->maxSpeed) /
                     this->wheelRadius;
 
-  // Set velocity and max force for each wheel
-  this->joints[0]->SetVelocityLimit(1, -jointVel);
-  this->joints[0]->SetForce(1, -(this->gas + this->brake) * this->frontPower);
+    // Set velocity and max force for each wheel
+    this->joints[0]->SetVelocityLimit(1, -jointVel);
+    this->joints[0]->SetForce(1, -(this->gas + this->brake) * this->frontPower);
 
-  this->joints[1]->SetVelocityLimit(1, -jointVel);
-  this->joints[1]->SetForce(1, -(this->gas + this->brake) * this->frontPower);
+    this->joints[1]->SetVelocityLimit(1, -jointVel);
+    this->joints[1]->SetForce(1, -(this->gas + this->brake) * this->frontPower);
 
-  this->joints[2]->SetVelocityLimit(1, -jointVel);
-  this->joints[2]->SetForce(1, -(this->gas + this->brake) * this->rearPower);
+    this->joints[2]->SetVelocityLimit(1, -jointVel);
+    this->joints[2]->SetForce(1, -(this->gas + this->brake) * this->rearPower);
 
-  this->joints[3]->SetVelocityLimit(1, -jointVel);
-  this->joints[3]->SetForce(1, -(this->gas + this->brake) * this->rearPower);
+    this->joints[3]->SetVelocityLimit(1, -jointVel);
+    this->joints[3]->SetForce(1, -(this->gas + this->brake) * this->rearPower);
 
-  // Set the front-left wheel angle
-  this->joints[0]->SetLowStop(0, wheelAngle);
-  this->joints[0]->SetHighStop(0, wheelAngle);
-  this->joints[0]->SetLowStop(0, wheelAngle);
-  this->joints[0]->SetHighStop(0, wheelAngle);
+    // Set the front-left wheel angle
+    this->joints[0]->SetLowStop(0, wheelAngle);
+    this->joints[0]->SetHighStop(0, wheelAngle);
+    this->joints[0]->SetLowStop(0, wheelAngle);
+    this->joints[0]->SetHighStop(0, wheelAngle);
 
-  // Set the front-right wheel angle
-  this->joints[1]->SetHighStop(0, wheelAngle);
-  this->joints[1]->SetLowStop(0, wheelAngle);
-  this->joints[1]->SetHighStop(0, wheelAngle);
-  this->joints[1]->SetLowStop(0, wheelAngle);
+    // Set the front-right wheel angle
+    this->joints[1]->SetHighStop(0, wheelAngle);
+    this->joints[1]->SetLowStop(0, wheelAngle);
+    this->joints[1]->SetHighStop(0, wheelAngle);
+    this->joints[1]->SetLowStop(0, wheelAngle);
 
-  //  aerodynamics
-  this->chassis->AddForce(
-      math::Vector3(0, 0, this->aeroLoad * this->velocity.GetSquaredLength()));
+    //  aerodynamics
+    this->chassis->AddForce(math::Vector3(0, 0, this->aeroLoad * this->velocity.GetSquaredLength()));
 
-  // Sway bars
-  math::Vector3 bodyPoint;
-  math::Vector3 hingePoint;
-  math::Vector3 axis;
+    // Sway bars
+    math::Vector3 bodyPoint;
+    math::Vector3 hingePoint;
+    math::Vector3 axis;
 
-  for (int ix = 0; ix < 4; ++ix)
-  {
-    hingePoint = this->joints[ix]->GetAnchor(0);
-    bodyPoint = this->joints[ix]->GetAnchor(1);
-
-    axis = this->joints[ix]->GetGlobalAxis(0).Round();
-    double displacement = (bodyPoint - hingePoint).Dot(axis);
-
-    float amt = displacement * this->swayForce;
-    if (displacement > 0)
+    for (int ix = 0; ix < 4; ++ix)
     {
-      if (amt > 15)
-        amt = 15;
+        hingePoint = this->joints[ix]->GetAnchor(0);
+        bodyPoint = this->joints[ix]->GetAnchor(1);
 
-      math::Pose p = this->joints[ix]->GetChild()->GetWorldPose();
-      this->joints[ix]->GetChild()->AddForce(axis * -amt);
-      this->chassis->AddForceAtWorldPosition(axis * amt, p.pos);
+        axis = this->joints[ix]->GetGlobalAxis(0).Round();
+        double displacement = (bodyPoint - hingePoint).Dot(axis);
 
-      p = this->joints[ix^1]->GetChild()->GetWorldPose();
-      this->joints[ix^1]->GetChild()->AddForce(axis * amt);
-      this->chassis->AddForceAtWorldPosition(axis * -amt, p.pos);
+        float amt = displacement * this->swayForce;
+        if (displacement > 0)
+        {
+            if (amt > 15)
+                amt = 15;
+
+            math::Pose p = this->joints[ix]->GetChild()->GetWorldPose();
+            this->joints[ix]->GetChild()->AddForce(axis * -amt);
+            this->chassis->AddForceAtWorldPosition(axis * amt, p.pos);
+
+            p = this->joints[ix^1]->GetChild()->GetWorldPose();
+            this->joints[ix^1]->GetChild()->AddForce(axis * amt);
+            this->chassis->AddForceAtWorldPosition(axis * -amt, p.pos);
+        }
     }
-  }
 }
 
 /////////////////////////////////////////////////

@@ -135,6 +135,10 @@
                         <cfm>0.0</cfm>
                         <erp>0.9</erp>
                     </limit>
+                    <suspension>
+                        <cfm>0.01</cfm>
+                        <erp>0.15</erp>
+                    </suspension>
                 </ode>
             </physics>
         </joint>
@@ -159,6 +163,10 @@
                         <cfm>0.0</cfm>
                         <erp>0.9</erp>
                     </limit>
+                    <suspension>
+                        <cfm>0.01</cfm>
+                        <erp>0.15</erp>
+                    </suspension>
                 </ode>
             </physics>
         </joint>
@@ -183,6 +191,10 @@
                         <cfm>0.0</cfm>
                         <erp>0.9</erp>
                     </limit>
+                    <suspension>
+                        <cfm>0.01</cfm>
+                        <erp>0.15</erp>
+                    </suspension>
                 </ode>
             </physics>
         </joint>
@@ -206,6 +218,10 @@
                         <cfm>0.0</cfm>
                         <erp>0.9</erp>
                     </limit>
+                    <suspension>
+                        <cfm>0.01</cfm>
+                        <erp>0.15</erp>
+                    </suspension>
                 </ode>
             </physics>
         </joint>
@@ -488,7 +504,6 @@
             </sensor>
         </link>
 
-        <!-- JOINT BETWEEN THE TOP LASER SENSOR AND CAR -->
         <joint name="side_right_sensor_joint" type="revolute">
             <child>side_right_sensors</child>
             <parent>chassis</parent>
@@ -588,8 +603,6 @@
                 </limit>
             </axis>
         </joint>
-
-
 
 
 
@@ -766,12 +779,10 @@
             <front_right>front_right_joint</front_right>
             <back_left>back_left_joint</back_left>
             <back_right>back_right_joint</back_right>
-            <!-- Joint which controls the gas -->
-            <gas>gas_joint</gas>
-            <!-- Joint which controls the gas -->
-            <brake>brake_joint</brake>
-            <!-- Joint which controls the steering -->
-            <steering>steering_joint</steering>
+            <!-- This is the chassis -->
+            <chassis>chassis</chassis>
+            <!-- Radius of the wheel (DO NOT CHANGE UNLESS YOU ALSO CHANGE THE ACTUAL PARAMETER ABOVE PLS) -->
+            <wheel_radius>0.21</wheel_radius>
             <!-- Power is multiplied by "gas" to determine force applied to wheels -->
             <front_power>10</front_power>
             <rear_power>10</rear_power>

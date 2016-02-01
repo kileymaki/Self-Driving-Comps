@@ -466,7 +466,7 @@ void sdcCar::Drive()
     // this->WalledDriving();
     this->DetectIntersection();
 
-    // this->Follow();
+    this->Follow();
     // Handles all turning
     this->Steer();
     this->MatchTargetSpeed();
@@ -583,6 +583,8 @@ void sdcCar::Follow() {
   std::vector<std::pair<int,int>> objectsInView;
   int lastIndex = -1;
 
+  //std::cout << this->model->GetWorld()->GetIterations() << std::endl;
+
   for(int i = 0; i < this->flNumRays; i++) {
     if(!std::isinf(this->fl[i])){
       if (lastIndex < 0) {
@@ -600,19 +602,13 @@ void sdcCar::Follow() {
   }
   //std::cout << objectsInView[0].first << "   " << objectsInView[0].second << std::endl;
   //std::cout << typeid(objectsInView[0].first).name() << std::endl;
-
-  high_resolution_clock::time_point t1 = high_resolution_clock::now();
-  startTime = t1;
-
-  // system_clock::time_point sysTime = system_clock::now();
-  // time_t tt;
-  // tt = system_clock::to_time_t ( sysTime );
-  // std::cout << "System time: " << ctime(&tt);
-
+  //
+  // high_resolution_clock::time_point t1 = high_resolution_clock::now();
+  // startTime = t1;
 
   if(this->flNumRays == 0) return;
-  this->SetTargetSpeed(5);
-  std::vector<double> closestPoint;
+
+  //std::vector<double> closestPoint;
   // for(int i = 315; i < 326; i++){
   //   speedCounter++;
   //   closestPoint.push_back(fl[i]);
@@ -624,33 +620,42 @@ void sdcCar::Follow() {
   //   }
   // }
 
-  high_resolution_clock::time_point t2 = high_resolution_clock::now();
+  //high_resolution_clock::time_point t2 = high_resolution_clock::now();
   // if(speedCounter >= 100000){
   //   endTime = t2;
   //   duration<double> time_span = duration_cast<duration<double>>(endTime - startTime);
   //   std::cout << "Time elapsed: " << time_span.count() << std::endl;
   // }
 
-  for(int i = 315; i < 326; i++){
-    if (!std::isinf(this->fl[i]) && (this->fl[i] <= 20) && (this->fl[i] > 10)) {
-      lastPosition = this->fl[i];
-      break;
-    } if (!std::isinf(this->fl[i]) && (this->fl[i] <= 10)) {
-        currentPosition = this->fl[i];
-        endTime = t2;
-        duration<double> time_span = duration_cast<duration<double>>(endTime - startTime);
-        estimatedSpeed = (currentPosition - lastPosition) / (time_span.count() * 1000000);
-        this->SetTargetSpeed(estimatedSpeed);
-        break;
-    }
-  }
-
-
-  // for (int i = 0; i < numrays; ++i) {
-  //   if (i >= 315 && i <= 325 && std::isinf(lidar[i])) {
-  //     this->SetTargetSpeed(6);
-  //   } else if (!std::isinf(lidar[i]) && (lidar[i] <= 10)) {
-  //     this->SetTargetSpeed(0);
+  // for(int i = 315; i < 326; i++){
+  //   if (!std::isinf(this->fl[i]) && (this->fl[i] <= 20) && (this->fl[i] > 10)) {
+  //
+  //     lastPosition = this->fl[i];
+  //     break;
+  //   } if (!std::isinf(this->fl[i]) && (this->fl[i] <= 10)) {
+  //       currentPosition = this->fl[i];
+  //       endTime = t2;
+  //       duration<double> time_span = duration_cast<duration<double>>(endTime - startTime);
+  //       estimatedSpeed = (currentPosition - lastPosition) / (time_span.count() * 1000000);
+  //       this->SetTargetSpeed(estimatedSpeed);
+  //       break;
   //   }
   // }
+
+
+  double distance = fl[320];
+  if(std::isinf(distance)){
+      lastPosition = 20.0;
+      estimatedSpeed = fmin(6, estimatedSpeed+.01);
+  } else {
+      double deltaDistance = distance - lastPosition;
+      lastPosition = distance;
+      double estimatedSpeedData = deltaDistance * 1000 + this->GetSpeed();
+      double alpha = (distance * .0025) + .05;
+      estimatedSpeed = fmin(6, (alpha * estimatedSpeedData) + ((1 - alpha) * estimatedSpeed));
+  }
+  this->SetTargetSpeed(estimatedSpeed);
+  std::cout << estimatedSpeed << std::endl;
+
+
 }

@@ -71,7 +71,7 @@ void sdcCameraSensor::OnUpdate(){
       float rho= (*it)[0];   // first element is distance rho
       float theta= (*it)[1]; // second element is angle theta
       // point of intersection of the line with first row
-      if (theta < 1.5 || theta > 19.*PI/20.) {
+      //if (theta < 1.5 || theta > 1.7) {
       Point pt1(rho/cos(theta),0);
       // point of intersection of the line with last row
       Point pt2((rho-result.rows*sin(theta))/cos(theta),result.rows);
@@ -79,7 +79,7 @@ void sdcCameraSensor::OnUpdate(){
       line(result, pt1, pt2, Scalar(255), 3);
       line(imageROI, pt1, pt2, Scalar(255), 3);
     //   std::cout << "line: (" << rho << "," << theta << ")\n";
-      }
+      //}
       ++it;
   }
 

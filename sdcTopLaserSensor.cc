@@ -38,7 +38,7 @@ void sdcTopLaserSensor::Load(sensors::SensorPtr _sensor, sdf::ElementPtr /*_sdf*
 
 // Called by the world update start event
 void sdcTopLaserSensor::OnUpdate(){
-    std::cout << this->parentSensor->GetName() << std::endl;
+    //std::cout << this->parentSensor->GetName() << std::endl;
     std::vector<double>* rays = new std::vector<double>();
     for (unsigned int i = 0; i < this->parentSensor->GetRayCount(); ++i){
         rays->push_back(this->parentSensor->GetRange(i));

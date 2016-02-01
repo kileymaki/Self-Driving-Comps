@@ -48,20 +48,47 @@ void sdcCameraSensor::OnUpdate(){
   // Kappa
   const unsigned char* img = this->parentSensor->GetImageData(0);
 
-  Mat frame = Mat(this->parentSensor->GetImageHeight(0), this->parentSensor->GetImageWidth(0), CV_8UC3, const_cast<unsigned char*>(img));
+  Mat image = Mat(this->parentSensor->GetImageHeight(0), this->parentSensor->GetImageWidth(0), CV_8UC3, const_cast<unsigned char*>(img));
+  Mat imageROI = image(cv::Rect(0, image.rows/2, image.cols, image.rows/2));
+  // Canny algorithm
+  Mat contours;
+  Canny(imageROI,contours,50,350);
+  Mat contoursInv;
+  threshold(contours,contoursInv,128,255,THRESH_BINARY_INV);
+
+  float PI = 3.14159;
+  std::vector<Vec2f> lines;
+  HoughLines(contours,lines,1,PI/180, 100);
+  Mat result(contours.rows,contours.cols,CV_8U,Scalar(255));
+  image.copyTo(result);
+
+  // Draw the limes
+  std::vector<Vec2f>::const_iterator it= lines.begin();
+  Mat hough(imageROI.size(),CV_8U,Scalar(0));
+
+  while (it!=lines.end()) {
+      float rho= (*it)[0];   // first element is distance rho
+      float theta= (*it)[1]; // second element is angle theta
+      // point of intersection of the line with first row
+      //if (theta < PI/20. || theta > 19.*PI/20.) {
+      Point pt1(rho/cos(theta),0);
+      // point of intersection of the line with last row
+      Point pt2((rho-result.rows*sin(theta))/cos(theta),result.rows);
+      // draw a white line
+      line(result, pt1, pt2, Scalar(255), 3);
+      line(imageROI, pt1, pt2, Scalar(255), 3);
+      //}
+      ++it;
+  }
+
+  namedWindow("Lane Detection", CV_WINDOW_AUTOSIZE);
+  imshow("Lane Detection", image);
+  waitKey(4);
+
+  //const unsigned char* img2 = this->parentSensor->GetImageData(1);
+  //Mat frame2 = Mat(this->parentSensor->GetImageHeight(1), this->parentSensor->GetImageWidth(1), CV_8UC3, const_cast<unsigned char*>(img2));
   //frame.setTo(_InputArray(img));
-
-  namedWindow("MyWindow1", CV_WINDOW_AUTOSIZE);
-  imshow("MyWindow1", frame);
-  //waitKey(0);
-  //destroyWindow("MyWindow");
-
-  const unsigned char* img2 = this->parentSensor->GetImageData(1);
-
-  Mat frame2 = Mat(this->parentSensor->GetImageHeight(1), this->parentSensor->GetImageWidth(1), CV_8UC3, const_cast<unsigned char*>(img2));
-  //frame.setTo(_InputArray(img));
-
-  namedWindow("MyWindow2", CV_WINDOW_AUTOSIZE);
-  imshow("MyWindow2", frame2);
+  //namedWindow("MyWindow2", CV_WINDOW_AUTOSIZE);
+  //imshow("MyWindow2", frame2);
 
 }

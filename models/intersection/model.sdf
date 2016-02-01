@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <sdf version="1.5">
-  <model name="comps_road">
+  <model name="intersection">
     <static>true</static>
     <link name="link">
       <collision name="collision">
@@ -19,9 +19,9 @@
         </geometry>
         <material>
           <script>
-            <uri>model://comps_road/materials/scripts</uri>
-            <uri>model://comps_road/materials/textures</uri>
-            <name>comps_road</name>
+            <uri>model://intersection/materials/scripts</uri>
+            <uri>model://intersection/materials/textures</uri>
+            <name>intersection</name>
           </script>
         </material>
       </visual>

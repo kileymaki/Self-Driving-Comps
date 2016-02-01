@@ -5,17 +5,10 @@ include_directories(${GAZEBO_INCLUDE_DIRS})
 link_directories(${GAZEBO_LIBRARY_DIRS})
 
 find_package(OpenCV REQUIRED)
-include_directories(${OPENCV_INCLUDE_DIRS})
-#link_directories(${OPENCV_LIBRARY_DIRS})
-
-MESSAGE(WARNING ${GAZEBO_LIBRARIES})
-MESSAGE(WARNING ${OpenCV_LIBS})
-MESSAGE(WARNING ${OPENCV_INCLUDE_DIRS})
-MESSAGE(WARNING ${OPENCV_LIBRARY_DIRS})
-MESSAGE(WARNING ${OPENCV_LIBS})
+include_directories(${OpenCV_INCLUDE_DIRS})
+# link_directories(${OpenCV_LIBS}) Spits out error messages, and also doesn't seem necessary to work
 
 list(APPEND CMAKE_CXX_FLAGS "${GAZEBO_CXX_FLAGS}")
-
 
 add_library(sdcBox SHARED sdcBox.cpp)
 target_link_libraries(sdcBox ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})

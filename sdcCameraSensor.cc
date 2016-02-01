@@ -43,13 +43,14 @@ void sdcCameraSensor::Load(sensors::SensorPtr _sensor, sdf::ElementPtr /*_sdf*/)
 
 // Called by the world update start event
 void sdcCameraSensor::OnUpdate(){
-  printf("\n\n");
+  // printf("\n\n");
 
   // Kappa
   const unsigned char* img = this->parentSensor->GetImageData(0);
 
   Mat image = Mat(this->parentSensor->GetImageHeight(0), this->parentSensor->GetImageWidth(0), CV_8UC3, const_cast<unsigned char*>(img));
   Mat imageROI = image(cv::Rect(0, image.rows/2, image.cols, image.rows/2));
+
   // Canny algorithm
   Mat contours;
   Canny(imageROI,contours,50,350);
@@ -70,14 +71,15 @@ void sdcCameraSensor::OnUpdate(){
       float rho= (*it)[0];   // first element is distance rho
       float theta= (*it)[1]; // second element is angle theta
       // point of intersection of the line with first row
-      //if (theta < PI/20. || theta > 19.*PI/20.) {
+      if (theta < 1.5 || theta > 19.*PI/20.) {
       Point pt1(rho/cos(theta),0);
       // point of intersection of the line with last row
       Point pt2((rho-result.rows*sin(theta))/cos(theta),result.rows);
       // draw a white line
       line(result, pt1, pt2, Scalar(255), 3);
       line(imageROI, pt1, pt2, Scalar(255), 3);
-      //}
+    //   std::cout << "line: (" << rho << "," << theta << ")\n";
+      }
       ++it;
   }
 

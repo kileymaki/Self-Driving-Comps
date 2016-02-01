@@ -32,6 +32,8 @@ const double STEERING_ADJUSTMENT_RATE = 0.02;
 
 const double PI = 3.14159265359;
 
+// How much we can turn the "steering wheel"
+const double STEERING_RANGE = 5 * PI;
 
 
 /////////////////////////////////////////////////
@@ -77,8 +79,6 @@ sdcCar::sdcCar()
     this->speedCounter = 0.0;
     this->startTime = std::chrono::high_resolution_clock::time_point();
     this->endTime = std::chrono::high_resolution_clock::time_point();
-
-
 }
 
 
@@ -86,38 +86,11 @@ sdcCar::sdcCar()
 void sdcCar::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
 {
   this->model = _model;
-  // this->physics = this->model->GetWorld()->GetPhysicsEngine();
 
   this->joints[0] = this->model->GetJoint(_sdf->Get<std::string>("front_left"));
-  if (!this->joints[0])
-  {
-    gzerr << "Unable to find joint: front_left\n";
-    return;
-  }
-
-  this->joints[1] = this->model->GetJoint(
-      _sdf->Get<std::string>("front_right"));
-
-  if (!this->joints[1])
-  {
-    gzerr << "Unable to find joint: front_right\n";
-    return;
-  }
-
+  this->joints[1] = this->model->GetJoint(_sdf->Get<std::string>("front_right"));
   this->joints[2] = this->model->GetJoint(_sdf->Get<std::string>("back_left"));
-  if (!this->joints[2])
-  {
-    gzerr << "Unable to find joint: back_left\n";
-    return;
-  }
-
-
   this->joints[3] = this->model->GetJoint(_sdf->Get<std::string>("back_right"));
-  if (!this->joints[3])
-  {
-    gzerr << "Unable to find joint: back_right\n";
-    return;
-  }
 
   this->joints[0]->SetParam("suspension_erp", 0, 0.15);
   this->joints[0]->SetParam("suspension_cfm", 0, 0.01);
@@ -131,53 +104,6 @@ void sdcCar::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
   this->joints[3]->SetParam("suspension_erp", 0, 0.15);
   this->joints[3]->SetParam("suspension_cfm", 0, 0.01);
 
-  this->gasJoint = this->model->GetJoint(_sdf->Get<std::string>("gas"));
-  this->brakeJoint = this->model->GetJoint(_sdf->Get<std::string>("brake"));
-  this->steeringJoint = this->model->GetJoint(
-      _sdf->Get<std::string>("steering"));
-
-  if (!this->gasJoint)
-  {
-    gzerr << "Unable to find gas joint["
-          << _sdf->Get<std::string>("gas") << "]\n";
-    return;
-  }
-
-  if (!this->steeringJoint)
-  {
-    gzerr << "Unable to find steering joint["
-          << _sdf->Get<std::string>("steering") << "]\n";
-    return;
-  }
-
-  if (!this->joints[0])
-  {
-    gzerr << "Unable to find front_left joint["
-          << _sdf->GetElement("front_left") << "]\n";
-    return;
-  }
-
-  if (!this->joints[1])
-  {
-    gzerr << "Unable to find front_right joint["
-          << _sdf->GetElement("front_right") << "]\n";
-    return;
-  }
-
-  if (!this->joints[2])
-  {
-    gzerr << "Unable to find back_left joint["
-          << _sdf->GetElement("back_left") << "]\n";
-    return;
-  }
-
-  if (!this->joints[3])
-  {
-    gzerr << "Unable to find back_right joint["
-          << _sdf->GetElement("back_right") << "]\n";
-    return;
-  }
-
   this->maxSpeed = _sdf->Get<double>("max_speed");
   this->aeroLoad = _sdf->Get<double>("aero_load");
   this->tireAngleRange = _sdf->Get<double>("tire_angle_range");
@@ -186,12 +112,6 @@ void sdcCar::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
 
   this->connections.push_back(event::Events::ConnectWorldUpdateBegin(
           boost::bind(&sdcCar::OnUpdate, this)));
-
-  this->node = transport::NodePtr(new transport::Node());
-  this->node->Init(this->model->GetWorld()->GetName());
-
-  this->velSub = this->node->Subscribe(std::string("~/") +
-      this->model->GetName() + "/vel_cmd", &sdcCar::OnVelMsg, this);
 }
 
 /////////////////////////////////////////////////
@@ -205,32 +125,15 @@ void sdcCar::Init()
   math::Box bb = parent->GetBoundingBox();
   this->wheelRadius = bb.GetSize().GetMax() * 0.5;
 
-  // The total range the steering wheel can rotate
-  double steeringRange = this->steeringJoint->GetHighStop(0).Radian() -
-                         this->steeringJoint->GetLowStop(0).Radian();
-
   // Compute the angle ratio between the steering wheel and the tires
-  this->steeringRatio = steeringRange / this->tireAngleRange;
+  this->steeringRatio = STEERING_RANGE / this->tireAngleRange;
 
-  // Maximum gas is the upper limit of the gas joint
-  this->maxGas = this->gasJoint->GetHighStop(0).Radian();
-
-  // Maximum brake is the upper limit of the gas joint
-  this->maxBrake = this->gasJoint->GetHighStop(0).Radian();
-
-  printf("SteeringRation[%f] MaxGas[%f]\n", this->steeringRatio, this->maxGas);
+  printf("SteeringRatio[%f] MaxGas[%f]\n", this->steeringRatio, this->maxGas);
 }
 
 /////////////////////////////////////////////////
 void sdcCar::OnUpdate()
 {
-  // Get the normalized gas and brake amount
-//  double gas = this->gasJoint->GetAngle(0).Radian() / this->maxGas;
-//  double brake = this->brakeJoint->GetAngle(0).Radian() / this->maxBrake;
-
-  // A little force to push back on the pedals
-//  this->gasJoint->SetForce(0, -0.1);
-    //  this->brakeJoint->SetForce(0, -0.1);
 
     // Get the steering angle
     //  double steeringAngle = this->steeringJoint->GetAngle(0).Radian();
@@ -247,8 +150,6 @@ void sdcCar::OnUpdate()
 
     this->frontLidarUpdate();
     this->Drive();
-
-
 
 
 
@@ -321,8 +222,10 @@ void sdcCar::OnUpdate()
 }
 
 /////////////////////////////////////////////////
-void sdcCar::OnVelMsg(ConstPosePtr &/*_msg*/)
-{}
+void sdcCar::OnVelMsg(ConstPosePtr &_msg)
+{
+    std::cout << "Hello?\t" << _msg << std::endl;
+}
 
 /*
  * Both Accel and Brake call ApplyMovementForce
@@ -551,7 +454,6 @@ void sdcCar::frontLidarUpdate(){
           rightView.clear();
         }
       }
-
   }
   if (leftView.size()!=0){
     this->flViews.push_back(leftView);
@@ -589,12 +491,12 @@ void sdcCar::Drive()
 
     // this->DriveStraightThenStop();
     // this->WalledDriving();
-    // this->DetectIntersection();
+    this->DetectIntersection();
 
     // this->Follow();
     // Handles all turning
     this->Steer();
-    // this->MatchTargetSpeed();
+    this->MatchTargetSpeed();
 
     //if(!std::isinf(sdcSensorData::GetCurrentCoord().x)) {
     //  double temp = (this->avg*this->count)/(this->count+1);
@@ -689,7 +591,7 @@ void sdcCar::DriveStraightThenTurn(){
 //Based off of how many fields of view we have an what we can see we try to turn.
 //When we are almost at an intersection slow down.
 void sdcCar::DetectIntersection(){
-  if(this->atIntersection == 0 && this->flViews.size() == 4 && this->flSideRight == 0 &&          this->flSideLeft == 0){
+  if(this->atIntersection == 0 && this->flViews.size() == 4 && this->flSideRight == 0 && this->flSideLeft == 0){
     this->SetTargetSpeed(2);
     this->atIntersection = 1;
   }else if (this->atIntersection == 1 && this->flViews.size() > 1 && this->flViews.size() < 4 && (this->flSideLeft != 0 && this->flSideRight != 0)){

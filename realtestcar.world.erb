@@ -153,6 +153,7 @@
       </visual>
     </link>
   </model>
+  <!--
     <%="<road name='#{name3}'>" %>
         <width>10</width>
         <point><%= asphalt_positions[x]-55%> <%= asphalt_positions[y]-50%> .1</point>
@@ -163,7 +164,35 @@
                 <name>Gazebo/Footway</name>
             </script>
         </material>
-    </road>
+    </road>-->
+    <%="<model name='#{name3}'>" %>
+      <pose><%= asphalt_positions[x]-50%> <%= asphalt_positions[y]-50%> 0 0 0 0</pose>
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>10 10 .1</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>10 10 .1</size>
+            </box>
+          </geometry>
+        <material>
+            <script>
+                <uri>model://intersection/materials/scripts</uri>
+                <uri>model://intersection/materials/textures</uri>
+                <name>intersection</name>
+            </script>
+        </material>
+      </visual>
+    </link>
+  </model>
 <%  end %>
 
   </world>

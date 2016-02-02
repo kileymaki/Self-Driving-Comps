@@ -19,7 +19,7 @@
 #include "gazebo/transport/transport.hh"
 #include "sdcCar.hh"
 #include <vector>
-#include <chrono>
+#include <exception>
 
 using namespace gazebo;
 GZ_REGISTER_MODEL_PLUGIN(sdcCar)
@@ -34,6 +34,13 @@ const double PI = 3.14159265359;
 
 // How much we can turn the "steering wheel"
 const double STEERING_RANGE = 5 * PI;
+
+const Angle NORTH = Angle(PI/2);
+const Angle SOUTH = Angle(3*PI/2);
+const Angle WEST = Angle(PI);
+const Angle EAST = Angle(0);
+
+std::vector<double> turningVector;
 
 
 /////////////////////////////////////////////////
@@ -57,7 +64,7 @@ sdcCar::sdcCar()
     this->gas = 0.0;
     this->brake = 0.0;
 
-    this->maxCarSpeed = 6;
+    this->maxCarSpeed = 5;
     this->maxCarReverseSpeed = -10;
 
     this->steeringAmount = 0.0;
@@ -65,7 +72,7 @@ sdcCar::sdcCar()
     this->targetDirection = Angle(0.0);
     this->turning = false;
 
-    this->targetSpeed = 6;
+    this->targetSpeed = 5;
 
     // Used to track waypoint driving
     this->waypointProgress = 0;
@@ -266,7 +273,7 @@ void sdcCar::Steer(){
     // If the car needs to turn, set the target steering amount
     if (!directionAngleChange.withinMargin(DIRECTION_MARGIN_OF_ERROR)) {
         // Angle proposedSteeringAngle = Angle(7*pow(sin(std::abs(directionAngleChange.angle)/2)-1,3)+7);
-        double proposedSteeringAmount = fmax(fmin(-7*tan(directionAngleChange.angle/-2), 7), -7)*2;
+        double proposedSteeringAmount = fmax(fmin(-7*tan(directionAngleChange.angle/-2), 7), -7)*8;
         this->SetTargetSteeringAmount(proposedSteeringAmount);
     }
 
@@ -463,13 +470,14 @@ void sdcCar::Drive()
 
 
     // this->DriveStraightThenStop();
-    // this->WalledDriving();
+    this->WalledDriving();
     this->DetectIntersection();
-
-    this->Follow();
+    // this->Follow();
     // Handles all turning
     this->Steer();
-    this->MatchTargetSpeed();
+    if(this->atIntersection != 3){
+        this->MatchTargetSpeed();
+    }
 
     //if(!std::isinf(sdcSensorData::GetCurrentCoord().x)) {
     //  double temp = (this->avg*this->count)/(this->count+1);
@@ -568,10 +576,11 @@ void sdcCar::DetectIntersection(){
     this->SetTargetSpeed(2);
     this->atIntersection = 1;
   }else if (this->atIntersection == 1 && this->flViews.size() > 1 && this->flViews.size() < 4 && (this->flSideLeft != 0 && this->flSideRight != 0)){
+      this->SetTargetSpeed(1);
       this->atIntersection = 2;
-      this->SetTargetDirection(this->GetDirection() + PI/2);
-  } else if (this->atIntersection == 2 && (this->GetDirection() - this->targetDirection).withinMargin(PI/8)){
-      this->SetTargetSpeed(6);
+      this->GridTurning();
+  } else if (this->atIntersection == 2 && (this->GetDirection() - this->targetDirection).withinMargin(PI/16)){
+      this->SetTargetSpeed(5);
       this->atIntersection = 0;
   }
 }
@@ -579,12 +588,28 @@ void sdcCar::DetectIntersection(){
 
 // Car follows an object directly in front of it and slows down to stop when it starts to get close
 void sdcCar::Follow() {
-  using namespace std::chrono;
+  if(this->flNumRays == 0) return;
+  double distance = fl[320];
+  if(std::isinf(distance)){
+      lastPosition = 20.0;
+      estimatedSpeed = fmin(6, estimatedSpeed+.01);
+  } else {
+      double deltaDistance = distance - lastPosition;
+      lastPosition = distance;
+      double estimatedSpeedData = deltaDistance * 1000 + this->GetSpeed();
+      double alpha = fmax((distance * .005), (.1 - distance * -.005));
+      estimatedSpeed = fmin(6, (alpha * estimatedSpeedData) + ((1 - alpha) * estimatedSpeed));
+  }
+  this->SetTargetSpeed(estimatedSpeed);
+  std::cout << estimatedSpeed << std::endl;
+
+  this->SetTargetDirection(this->GetDirection() - Angle(this->flWeight*PI/320));
+
+
+  // EXTRA CODE, WILL MOVE TO DIFF METHOD LATER
+  //std::cout << this->model->GetWorld()->GetIterations() << std::endl;
   std::vector<std::pair<int,int>> objectsInView;
   int lastIndex = -1;
-
-  //std::cout << this->model->GetWorld()->GetIterations() << std::endl;
-
   for(int i = 0; i < this->flNumRays; i++) {
     if(!std::isinf(this->fl[i])){
       if (lastIndex < 0) {
@@ -600,62 +625,61 @@ void sdcCar::Follow() {
       objectsInView.push_back(std::make_pair(lastIndex, this->flNumRays-1));
     }
   }
-  //std::cout << objectsInView[0].first << "   " << objectsInView[0].second << std::endl;
-  //std::cout << typeid(objectsInView[0].first).name() << std::endl;
-  //
-  // high_resolution_clock::time_point t1 = high_resolution_clock::now();
-  // startTime = t1;
 
-  if(this->flNumRays == 0) return;
+}
 
-  //std::vector<double> closestPoint;
-  // for(int i = 315; i < 326; i++){
-  //   speedCounter++;
-  //   closestPoint.push_back(fl[i]);
-  //   //std::cout << closestPoint[0] << std::endl;
-  //   if (!std::isinf(this->fl[i]) && (this->fl[i] <= 10)) {
-  //     this->lastPosition = closestPoint[0];
-  //     this->SetTargetSpeed(1);
-  //     break;
-  //   }
-  // }
+void sdcCar::GridTurning(){
+    std::string curDir;
+    if((this->GetDirection() - WEST).withinMargin(PI/4)){
+        curDir = "WEST";
+    } else if((this->GetDirection() - SOUTH).withinMargin(PI/4)){
+        curDir = "SOUTH";
+    } else if((this->GetDirection() - EAST).withinMargin(PI/4)){
+        curDir = "EAST";
+    } else {
+        curDir = "NORTH";
+    }
 
-  //high_resolution_clock::time_point t2 = high_resolution_clock::now();
-  // if(speedCounter >= 100000){
-  //   endTime = t2;
-  //   duration<double> time_span = duration_cast<duration<double>>(endTime - startTime);
-  //   std::cout << "Time elapsed: " << time_span.count() << std::endl;
-  // }
+    math::Vector2d waypoint = math::Vector2d(200,100);
+    double x = this->chassis->GetWorldPose().pos.x;
+    double y = this->chassis->GetWorldPose().pos.y;
+    //The direction we need to head in to get to the destination
+    std::string dirX;
+    std::string dirY;
+    if(waypoint[0] - 5 < x && waypoint[0] + 5 > x){
+        dirX = "";
+    } else if (waypoint[0] > x){
+        dirX = "EAST";
+    } else {
+        dirX = "WEST";
+    }
+    if(waypoint[1] - 5 < y && waypoint[1] + 5 > y){
+        dirY = "";
+    } else if(waypoint[1] > y){
+        dirY = "NORTH";
+    } else {
+        dirY = "SOUTH";
+    }
 
-  // for(int i = 315; i < 326; i++){
-  //   if (!std::isinf(this->fl[i]) && (this->fl[i] <= 20) && (this->fl[i] > 10)) {
-  //
-  //     lastPosition = this->fl[i];
-  //     break;
-  //   } if (!std::isinf(this->fl[i]) && (this->fl[i] <= 10)) {
-  //       currentPosition = this->fl[i];
-  //       endTime = t2;
-  //       duration<double> time_span = duration_cast<duration<double>>(endTime - startTime);
-  //       estimatedSpeed = (currentPosition - lastPosition) / (time_span.count() * 1000000);
-  //       this->SetTargetSpeed(estimatedSpeed);
-  //       break;
-  //   }
-  // }
+    if(dirX == "" && dirY == ""){
+        std::cout << "WE MADE IT" << std::endl;
+        this->atIntersection = 3;
+    } else {
+        std::cout << "x " << dirX << std::endl;
+        std::cout << "y " << dirY << std::endl;
+        std::cout << "curDir " << curDir << std::endl;
+        if(dirX == curDir || dirY == curDir){}
+        else {
+            this->TurnAround();
+        }
+    }
 
+    // SetTargetDirection(this->GetDirection() + PI/2);
+}
 
-  double distance = fl[320];
-  if(std::isinf(distance)){
-      lastPosition = 20.0;
-      estimatedSpeed = fmin(6, estimatedSpeed+.01);
-  } else {
-      double deltaDistance = distance - lastPosition;
-      lastPosition = distance;
-      double estimatedSpeedData = deltaDistance * 1000 + this->GetSpeed();
-      double alpha = (distance * .0025) + .05;
-      estimatedSpeed = fmin(6, (alpha * estimatedSpeedData) + ((1 - alpha) * estimatedSpeed));
-  }
-  this->SetTargetSpeed(estimatedSpeed);
-  std::cout << estimatedSpeed << std::endl;
-
-
+void sdcCar::TurnAround(){
+    if(turningVector.empty())
+        turningVector = {PI/2,-PI/2,-PI/2,-PI/2};
+    SetTargetDirection(this->GetDirection() + turningVector.back());
+    turningVector.pop_back();
 }

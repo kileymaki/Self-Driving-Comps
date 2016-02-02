@@ -102,6 +102,8 @@ namespace gazebo
 
          void DriveStraightThenStop();
          void WalledDriving();
+         void GridTurning();
+         void TurnAround();
          void DriveStraightThenTurn();
          void WaypointDriving(std::vector<math::Vector2d> waypoints);
          void Follow();

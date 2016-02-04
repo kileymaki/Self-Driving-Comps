@@ -27,6 +27,7 @@ namespace gazebo
         public: static std::vector<double> GetFrontLidarRays();
         public: static double GetRangeInFront();
         public: static std::vector<double> GetTopLidarRays();
+        public: static std::vector<std::pair<int,double>> GetObjectsInFront();
         private: static double frontRayRange;
         private: static bool frontIsAllInfVar;
         private: static std::vector<double>* frontAnglesNotAtInf;

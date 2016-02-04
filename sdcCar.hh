@@ -23,7 +23,6 @@
 
 #include <string>
 #include <vector>
-#include <chrono>
 
 #include "gazebo/common/Plugin.hh"
 #include "gazebo/physics/physics.hh"
@@ -107,7 +106,7 @@ namespace gazebo
          void DriveStraightThenTurn();
          void WaypointDriving(std::vector<math::Vector2d> waypoints);
          void Follow();
-
+         void GetObjectsInFront();
 
 
          double gas; //variable that accelerates the car
@@ -132,9 +131,8 @@ namespace gazebo
          double estimatedSpeed;
          double lastPosition;
          double currentPosition;
-         int speedCounter;
-         std::chrono::high_resolution_clock::time_point startTime;
-         std::chrono::high_resolution_clock::time_point endTime;
+
+         std::vector<std::pair<int,double>> objectsInFront;
 
          double x;
          double y;

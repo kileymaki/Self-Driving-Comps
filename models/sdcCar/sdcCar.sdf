@@ -276,7 +276,7 @@
                   <plugin name="sdcLaserSensor" filename="build/libsdcLaserSensor.so" />
                   <always_on>1</always_on>
                   <update_rate>30</update_rate>
-                  <visualize>false</visualize>
+                  <visualize>true</visualize>
               </sensor>
             </link>
 

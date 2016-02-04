@@ -83,9 +83,9 @@ sdcCar::sdcCar()
     this->estimatedSpeed = 0.0;
     this->lastPosition = 0.0;
     this->currentPosition = 0.0;
-    this->speedCounter = 0.0;
-    this->startTime = std::chrono::high_resolution_clock::time_point();
-    this->endTime = std::chrono::high_resolution_clock::time_point();
+
+    // List of objects that are in view of front lidar
+    std::vector<std::pair<int,double>> objectsInFront;
 }
 
 
@@ -457,8 +457,8 @@ void sdcCar::frontLidarUpdate(){
 void sdcCar::Drive()
 {
 //    this->TurnRightIfObjectAhead();
-//    this->DriveStraightThenStop();
-//    this->DriveToCoordinates(0.0005, 0.0005);
+    //this->DriveStraightThenStop();
+    //this->DriveToCoordinates(0.0005, 0.0005);
 
     // Combines WalledDriving with WaypointDriving;
     // if (!(sdcSensorData::IsAllInf())) {
@@ -468,16 +468,16 @@ void sdcCar::Drive()
     //     this->WaypointDriving(waypoints);
     // }
 
-
+    // this->GetObjectsInFront();
     // this->DriveStraightThenStop();
-    this->WalledDriving();
+    //this->WalledDriving();
     this->DetectIntersection();
-    // this->Follow();
+    //  this->Follow();
     // Handles all turning
     this->Steer();
-    if(this->atIntersection != 3){
-        this->MatchTargetSpeed();
-    }
+    //if(this->atIntersection != 3){
+       this->MatchTargetSpeed();
+    //}
 
     //if(!std::isinf(sdcSensorData::GetCurrentCoord().x)) {
     //  double temp = (this->avg*this->count)/(this->count+1);
@@ -568,6 +568,7 @@ void sdcCar::DriveStraightThenTurn(){
         this->SetTargetDirection(Angle(-PI/2));
     }
 }
+
 //Uses the front LIDAR sensor to detect an intersection.
 //Based off of how many fields of view we have an what we can see we try to turn.
 //When we are almost at an intersection slow down.
@@ -585,8 +586,8 @@ void sdcCar::DetectIntersection(){
   }
 }
 
-
 // Car follows an object directly in front of it and slows down to stop when it starts to get close
+// Also turns to follow object
 void sdcCar::Follow() {
   if(this->flNumRays == 0) return;
   double distance = fl[320];
@@ -601,31 +602,45 @@ void sdcCar::Follow() {
       estimatedSpeed = fmin(6, (alpha * estimatedSpeedData) + ((1 - alpha) * estimatedSpeed));
   }
   this->SetTargetSpeed(estimatedSpeed);
-  std::cout << estimatedSpeed << std::endl;
-
   this->SetTargetDirection(this->GetDirection() - Angle(this->flWeight*PI/320));
 
-
-  // EXTRA CODE, WILL MOVE TO DIFF METHOD LATER
+  // reference of how to get iterations
   //std::cout << this->model->GetWorld()->GetIterations() << std::endl;
-  std::vector<std::pair<int,int>> objectsInView;
-  int lastIndex = -1;
-  for(int i = 0; i < this->flNumRays; i++) {
-    if(!std::isinf(this->fl[i])){
-      if (lastIndex < 0) {
-        lastIndex = i;
-      }
-    } else {
-      if (lastIndex > 0) {
-        objectsInView.push_back(std::make_pair(lastIndex, i-1));
-        lastIndex = -1;
-      }
-    }
-    if(lastIndex > 0){
-      objectsInView.push_back(std::make_pair(lastIndex, this->flNumRays-1));
-    }
-  }
+}
 
+// Gets a vector of the objects in view of the front lidar sensor
+// Creates vector of pairs (ray #, ray length)
+void sdcCar::GetObjectsInFront(){
+    objectsInFront.clear();
+    for (int i = 0; i < this->flNumRays; i++) {
+      if (!std::isinf(this->fl[i])) {
+        objectsInFront.push_back(std::make_pair(i, fl[i]));
+      }
+    }
+    // Print rays and ray lengths
+    // std::cout << "Objects in front: " << std::endl;
+    // for(int i = 0; i < objectsInFront.size(); i++){
+    //     std::cout << "Pair: " << std::get<0>(objectsInFront[i]) << ", " << std::get<1>(objectsInFront[i]) << std::endl;
+    // }
+
+
+    // std::vector<std::pair<int,int>> objectsInView;
+    // int lastIndex = -1;
+    // for(int i = 0; i < this->flNumRays; i++) {
+    //   if(!std::isinf(this->fl[i])){
+    //     if (lastIndex < 0) {
+    //       lastIndex = i;
+    //     }
+    //   } else {
+    //     if (lastIndex > 0) {
+    //       objectsInView.push_back(std::make_pair(lastIndex, i-1));
+    //       lastIndex = -1;
+    //     }
+    //   }
+    //   if(lastIndex > 0){
+    //     objectsInView.push_back(std::make_pair(lastIndex, this->flNumRays-1));
+    //   }
+    // }
 }
 
 void sdcCar::GridTurning(){
@@ -677,6 +692,7 @@ void sdcCar::GridTurning(){
     // SetTargetDirection(this->GetDirection() + PI/2);
 }
 
+//Goes around the block and returns to the original point but now it is facing the other way
 void sdcCar::TurnAround(){
     if(turningVector.empty())
         turningVector = {PI/2,-PI/2,-PI/2,-PI/2};

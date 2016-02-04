@@ -23,9 +23,10 @@ namespace gazebo
     public: void OnUpdate(const common::UpdateInfo & /*_info*/)
         {
             // Apply a small linear velocity to the model.
-
-            if(this->model->GetWorld()->GetIterations() > 10000){
-                this->model->SetLinearVel(math::Vector3(5, 0, 0));
+            if(this->model->GetWorld()->GetIterations() > 10000 && this->model->GetWorld()->GetIterations() <= 15000){
+                this->model->SetLinearVel(math::Vector3(5, -5, 0));
+            } else if (this->model->GetWorld()->GetIterations() > 15000) {
+                this->model->SetLinearVel(math::Vector3(0, 0, 0));
             } else {
                 this->model->SetLinearVel(math::Vector3(3, 0, 0));
             }

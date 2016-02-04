@@ -1,0 +1,15 @@
+material intersection
+{
+	receive_shadows off
+	technique
+	{
+		pass
+		{
+			texture_unit
+			{
+				texture intersection.png
+				scale 1 1
+			}
+		}
+	}
+}

@@ -153,6 +153,17 @@ double sdcSensorData::GetRangeInFront(){
     return frontRayRange;
 }
 
+// Return a vector of pairs (ray, ray length) which represents objects in view of front lidar
+std::vector<std::pair<int,double>> sdcSensorData::GetObjectsInFront(){
+  std::vector<std::pair<int,double>> objectsInFront;
+  for (int i = 0; i < frontLidarRays->size(); i++) {
+    if (!std::isinf((*frontLidarRays)[i])) {
+      objectsInFront.push_back(std::make_pair(i, (*frontLidarRays)[i]));
+    }
+  }
+  return objectsInFront;
+}
+
 
 // New gps system using 2d vector
 math::Vector2d sdcSensorData::coordinate;

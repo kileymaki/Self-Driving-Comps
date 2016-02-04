@@ -8,6 +8,7 @@
 #include <iostream>
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
+#include "opencv2/objdetect/objdetect.hpp"
 
 #include "sdcCameraSensor.hh"
 
@@ -63,9 +64,12 @@ void sdcCameraSensor::OnUpdate(){
   Mat result(contours.rows,contours.cols,CV_8U,Scalar(255));
   image.copyTo(result);
 
-  // Draw the limes
-  std::vector<Vec2f>::const_iterator it= lines.begin();
+  // Draw the lines
+  std::vector<Vec2f>::const_iterator it = lines.begin();
   Mat hough(imageROI.size(),CV_8U,Scalar(0));
+
+  line(imageROI, Point(0,0), Point(320,0), Scalar(255,255,255), 1);
+  line(imageROI, Point(160,0), Point(160,120), Scalar(255,255,255), 1);
 
   while (it!=lines.end()) {
       float rho= (*it)[0];   // first element is distance rho
@@ -76,13 +80,40 @@ void sdcCameraSensor::OnUpdate(){
       // point of intersection of the line with last row
       Point pt2((rho-result.rows*sin(theta))/cos(theta),result.rows);
       // draw a white line
-      line(result, pt1, pt2, Scalar(255), 3);
+      //line(result, pt1, pt2, Scalar(255), 3);
       line(imageROI, pt1, pt2, Scalar(255), 3);
+      /*
+      //rectangle(imageROI, pt1, Point(theta,result.rows), Scalar(255,255,0), 3,8,0);
+      int thickness = 3;
+      int lineType = 8;
+      int shift = 0;
+      vector<Point> fill_points;
+      fill_points.push_back(Point(160,0));
+      fill_points.push_back(Point(160,imageROI.rows-2));
+      fill_points.push_back(Point(320,imageROI.rows-2));
+      fill_points.push_back(Point(320,imageROI.rows-2));
+      //fill_points.push_back(pt2);
+
+      const Point *ppt = (const Point*) Mat(fill_points).data;
+      int npt = Mat(fill_points).rows;
+      //circle(imageROI, Point(160,0), radius, Scalar(255), thickness, lineType, shift);
+      //fillPoly(imageROI,ppt,&npt,0,1,Scalar(255),thickness,lineType,shift);
+      polylines(imageROI,&ppt,&npt,1,true,Scalar( 255, 255, 255 ),2,lineType,0);
+      */
+
     //   std::cout << "line: (" << rho << "," << theta << ")\n";
       //}
       ++it;
   }
+  CascadeClassifier stopSign;
+  if ( !stopSign.load("haarcascade.xml") ){ printf("--(!)Error loading\n");}
 
+  std::vector<Rect> stopsigns;
+  //std::cout << "hi\n";
+  stopSign.detectMultiScale(image, stopsigns, 1.1, 2, 0|CV_HAAR_SCALE_IMAGE, Size(30, 30));
+  if (stopsigns.size() > 0){
+    std::cout << "found a sign!!\n";
+  }
   namedWindow("Lane Detection", CV_WINDOW_AUTOSIZE);
   imshow("Lane Detection", image);
   waitKey(4);

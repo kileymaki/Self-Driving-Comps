@@ -16,7 +16,7 @@
   <world name="default">
     <gui>
       <camera name="user_camera">
-        <pose>75 200 20 0 0.27 0.0</pose>
+        <pose>75 100 20 0 0.34 0.0</pose>
       </camera>
     </gui>
     <include>
@@ -27,7 +27,7 @@
     </include>
     <include>
         <uri>/models/sdcCar</uri>
-        <pose>49 49 0 0 0 0</pose>
+        <pose>100 100 0 0 0 0</pose>
     </include>
 
 
@@ -52,17 +52,19 @@
     <link name="link">
       <collision name="collision">
         <geometry>
-          <box>
-            <size>45 45 3</size>
-          </box>
+          <mesh>
+              <uri>/Users/selfcar/Desktop/Self-Driving-Comps/models/asphalt_plane/blockbevel.dae</uri>
+              <scale> .565 .565 3 </scale>
+          </mesh>
         </geometry>
       </collision>
       <visual name="visual">
         <cast_shadows>false</cast_shadows>
         <geometry>
-          <box>
-            <size>45 45 3</size>
-          </box>
+          <mesh>
+              <uri>/Users/selfcar/Desktop/Self-Driving-Comps/models/asphalt_plane/blockbevel.dae</uri>
+              <scale> .565 .565 3 </scale>
+          </mesh>
         </geometry>
         <material>
           <script>
@@ -102,7 +104,7 @@
         <collision name="collision">
           <geometry>
             <box>
-              <size>45 5 .1</size>
+              <size>40 5 .1</size>
             </box>
           </geometry>
         </collision>
@@ -110,7 +112,7 @@
           <cast_shadows>false</cast_shadows>
           <geometry>
             <box>
-              <size>45 5 .1</size>
+              <size>40 5 .1</size>
             </box>
           </geometry>
         <material>
@@ -132,7 +134,7 @@
         <collision name="collision">
           <geometry>
             <box>
-              <size>45 5 .1</size>
+              <size>40 5 .1</size>
             </box>
           </geometry>
         </collision>
@@ -140,7 +142,7 @@
           <cast_shadows>false</cast_shadows>
           <geometry>
             <box>
-              <size>45 5 .1</size>
+              <size>40 5 .1</size>
             </box>
           </geometry>
         <material>
@@ -172,7 +174,7 @@
         <collision name="collision">
           <geometry>
             <box>
-              <size>5 5 .1</size>
+              <size>10 10 .1</size>
             </box>
           </geometry>
         </collision>
@@ -180,7 +182,7 @@
           <cast_shadows>false</cast_shadows>
           <geometry>
             <box>
-              <size>5 5 .1</size>
+              <size>10 10 .1</size>
             </box>
           </geometry>
         <material>

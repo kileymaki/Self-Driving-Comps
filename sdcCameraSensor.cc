@@ -101,28 +101,25 @@ void sdcCameraSensor::OnUpdate(){
   while (it_left!=lines_left.end()) {
       float rho= (*it_left)[0];   // first element is distance rho
       float theta= (*it_left)[1]; // second element is angle theta
-      // point of intersection of the line with first row
-      if ( (theta > 0.09 && theta < 1.48) || (theta < 3.14 && theta > 1.66) ){
-      Point pt1(rho/cos(theta),0);
-      pt1_x.push_back(rho/cos(theta));
-      pt1_y.push_back(0);
-      // point of intersection of the line with last row
-      Point pt2((rho-result_left.rows*sin(theta))/cos(theta),result_left.rows);
-      pt2_x.push_back((rho-result_left.rows*sin(theta))/cos(theta));
-      pt2_y.push_back(result_left.rows);
-      // draw a white line
-    }
-      //line(imageROI_left, pt1, pt2, Scalar(255), 3);
 
+      if ( (theta > 0.09 && theta < 1.48) || (theta < 3.14 && theta > 1.66) ){
+          Point pt1(rho/cos(theta),0);
+          pt1_x.push_back(rho/cos(theta));
+          pt1_y.push_back(0);
+          Point pt2((rho-result_left.rows*sin(theta))/cos(theta),result_left.rows);
+          pt2_x.push_back((rho-result_left.rows*sin(theta))/cos(theta));
+          pt2_y.push_back(result_left.rows);
+    }
       ++it_left;
   }
-if (pt1_x.size() > 0 && pt1_y.size() > 0 && pt2_x.size() > 0 && pt2_y.size() > 0){
-float pt1_x_average = std::accumulate(pt1_x.begin(), pt1_x.end(), 0)/pt1_x.size();
-float pt1_y_average = std::accumulate(pt1_y.begin(), pt1_y.end(), 0)/pt1_y.size();
-float pt2_x_average = std::accumulate(pt2_x.begin(), pt2_x.end(), 0)/pt2_x.size();
-float pt2_y_average = std::accumulate(pt2_y.begin(), pt2_y.end(), 0)/pt2_y.size();
-line(imageROI_left, Point(pt1_x_average,pt1_y_average), Point(pt2_x_average,pt2_y_average), Scalar(255), 3);
-}
+  if (pt1_x.size() > 0 && pt1_y.size() > 0 && pt2_x.size() > 0 && pt2_y.size() > 0) {
+      float pt1_x_average = std::accumulate(pt1_x.begin(), pt1_x.end(), 0)/pt1_x.size();
+      float pt1_y_average = std::accumulate(pt1_y.begin(), pt1_y.end(), 0)/pt1_y.size();
+      float pt2_x_average = std::accumulate(pt2_x.begin(), pt2_x.end(), 0)/pt2_x.size();
+      float pt2_y_average = std::accumulate(pt2_y.begin(), pt2_y.end(), 0)/pt2_y.size();
+      line(imageROI_left, Point(pt1_x_average,pt1_y_average), Point(pt2_x_average,pt2_y_average), Scalar(255), 3);
+  }
+
 //iter over right
   while (it_right!=lines_right.end()) {
       float rho= (*it_right)[0];   // first element is distance rho
@@ -136,16 +133,31 @@ line(imageROI_left, Point(pt1_x_average,pt1_y_average), Point(pt2_x_average,pt2_
       line(imageROI_right, pt1, pt2, Scalar(255), 3);
       ++it_right;
   }
-  /*
+
+  //BEGIN HAAR CASCADE OBJECT DETECTION
   CascadeClassifier stopSign;
-  if ( !stopSign.load("haarcascade.xml") ){ printf("--(!)Error loading\n");}
-  std::vector<Rect> stopsigns;
-  //std::cout << "hi\n";
-  stopSign.detectMultiScale(image, stopsigns, 1.1, 2, 0|CV_HAAR_SCALE_IMAGE, Size(30, 30));
-  if (stopsigns.size() > 0){
-    std::cout << "found a sign!!\n";
+  //Load Stop Sign Schema for Haar - this should NOT be in the OnUpdate Loop!!
+  if (!stopSign.load("/Users/selfcar/Desktop/haarcascade_stop.xml")) {
+    printf("Error: Unable to load stop sign cascade xml file!\n");
   }
-  */
+
+  std::vector<Rect> stopSigns_left;
+  std::vector<Rect> stopSigns_right;
+  stopSign.detectMultiScale( image_left, stopSigns_left, 1.1, 2, 0|CV_HAAR_SCALE_IMAGE, Size(30, 30) );
+  stopSign.detectMultiScale( image_right, stopSigns_right, 1.1, 2, 0|CV_HAAR_SCALE_IMAGE, Size(30, 30) );
+
+  for( int i = 0; i < stopSigns_left.size(); i++ )
+  {
+     Point center( stopSigns_left[i].x + stopSigns_left[i].width*0.5, stopSigns_left[i].y + stopSigns_left[i].height*0.5 );
+     ellipse( image_left, center, Size( stopSigns_left[i].width*0.5, stopSigns_left[i].height*0.5), 0, 0, 360, Scalar( 0, 0, 255 ), 4, 8, 0 );
+  }
+  
+  for( int i = 0; i < stopSigns_right.size(); i++ )
+  {
+     Point center( stopSigns_right[i].x + stopSigns_right[i].width*0.5, stopSigns_right[i].y + stopSigns_right[i].height*0.5 );
+     ellipse( image_right, center, Size( stopSigns_right[i].width*0.5, stopSigns_right[i].height*0.5), 0, 0, 360, Scalar( 0, 0, 255 ), 4, 8, 0 );
+  }
+
   namedWindow("Lane Detection Left", CV_WINDOW_AUTOSIZE);
   namedWindow("Lane Detection Right", CV_WINDOW_AUTOSIZE);
   imshow("Lane Detection Left", image_left);

@@ -42,6 +42,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		588280D91C650AE1005416FD /* cascade.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = cascade.xml; sourceTree = "<group>"; };
+		588280DA1C650BAF005416FD /* STOP_sign.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = STOP_sign.jpg; sourceTree = "<group>"; };
 		58C36C6E1C5EA2A70010BE1A /* libopencv_calib3d.2.4.12.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_calib3d.2.4.12.dylib; path = ../../../../../../../usr/local/Cellar/opencv/2.4.12_2/lib/libopencv_calib3d.2.4.12.dylib; sourceTree = "<group>"; };
 		58C36C6F1C5EA2A70010BE1A /* libopencv_contrib.2.4.12.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_contrib.2.4.12.dylib; path = ../../../../../../../usr/local/Cellar/opencv/2.4.12_2/lib/libopencv_contrib.2.4.12.dylib; sourceTree = "<group>"; };
 		58C36C701C5EA2A70010BE1A /* libopencv_core.2.4.12.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_core.2.4.12.dylib; path = ../../../../../../../usr/local/Cellar/opencv/2.4.12_2/lib/libopencv_core.2.4.12.dylib; sourceTree = "<group>"; };
@@ -124,6 +126,7 @@
 				58C36C751C5EA2A70010BE1A /* libopencv_imgproc.2.4.12.dylib */,
 				58C36C761C5EA2A70010BE1A /* libopencv_legacy.2.4.12.dylib */,
 				58C36C771C5EA2A70010BE1A /* libopencv_ml.2.4.12.dylib */,
+				588280D91C650AE1005416FD /* cascade.xml */,
 				58C36C781C5EA2A70010BE1A /* libopencv_nonfree.2.4.12.dylib */,
 				58C36C791C5EA2A70010BE1A /* libopencv_objdetect.2.4.12.dylib */,
 				58C36C7A1C5EA2A70010BE1A /* libopencv_ocl.2.4.12.dylib */,
@@ -134,6 +137,7 @@
 				58C36C7F1C5EA2A70010BE1A /* libopencv_video.2.4.12.dylib */,
 				58C36C801C5EA2A70010BE1A /* libopencv_videostab.2.4.12.dylib */,
 				58C8892C1C50129F002C2ED3 /* main.cpp */,
+				588280DA1C650BAF005416FD /* STOP_sign.jpg */,
 			);
 			path = CompsLaneDetection;
 			sourceTree = "<group>";

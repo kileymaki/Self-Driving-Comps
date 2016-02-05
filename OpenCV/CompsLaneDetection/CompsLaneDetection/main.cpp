@@ -1,4 +1,4 @@
-//
+
 //  main.cpp
 //  CompsLaneDetection
 //
@@ -7,7 +7,7 @@
 //
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
-
+#include "opencv2/objdetect/objdetect.hpp"
 #include <iostream>
 
 using namespace cv;
@@ -18,6 +18,25 @@ int main(int argc, char* argv[]) {
     Mat image = cv::imread(argv[1]);
     if (!image.data)
         return 0;
+    
+    // Load Face cascade (.xml file)
+    CascadeClassifier face_cascade;
+    //face_cascade.load( "caasdasdasdscade.xml" );
+    if ( !face_cascade.load("/Users/selfcar/Desktop/haarcascade_stop.xml") ){ printf("--(!)Error loading\n");}
+    // Detect faces
+    std::vector<Rect> faces;
+    face_cascade.detectMultiScale( image, faces, 1.1, 2, 0|CV_HAAR_SCALE_IMAGE, Size(30, 30) );
+    for( int i = 0; i < faces.size(); i++ )
+    {
+    //std::cout << faces.size();
+       Point center( faces[i].x + faces[i].width*0.5, faces[i].y + faces[i].height*0.5 );
+       ellipse( image, center, Size( faces[i].width*0.5, faces[i].height*0.5), 0, 0, 360, Scalar( 255, 0, 255 ), 4, 8, 0 );
+    }
+    imshow( "Detected Face", image );
+    
+    waitKey(0);
+    return 0;
+ /*
     Mat imageROI = image(cv::Rect(0, image.rows/2, image.cols, image.rows/2));
     
     // Canny algorithm
@@ -79,8 +98,33 @@ int main(int argc, char* argv[]) {
     destroyWindow("MyWindow"); //destroy the window with the name, "MyWindow"
     destroyWindow("MyWindow2");
     destroyWindow("MyWindow3");
+  */
 }
- /*
+
+
+
+/*
+ // Load Face cascade (.xml file)
+ CascadeClassifier face_cascade;
+ face_cascade.load( "cascade.xml" );
+ 
+ // Detect faces
+ std::vector<Rect> faces;
+ face_cascade.detectMultiScale( image, faces, 1.1, 2, 0|CV_HAAR_SCALE_IMAGE, Size(30, 30) );
+ 
+ // Draw circles on the detected faces
+ for( int i = 0; i < faces.size(); i++ )
+ {
+ Point center( faces[i].x + faces[i].width*0.5, faces[i].y + faces[i].height*0.5 );
+ ellipse( image, center, Size( faces[i].width*0.5, faces[i].height*0.5), 0, 0, 360, Scalar( 255, 0, 255 ), 4, 8, 0 );
+ }
+ 
+ imshow( "Detected Face", image );
+ 
+ waitKey(0);
+ return 0;
+ }
+ 
  //NOW COMPUTE PROBABILISTIC HOUGH LINE TRANSFORM
  // Create LineFinder instance
  LineFinder ld;

@@ -5,7 +5,7 @@
   <world name="default">
     <gui>
       <camera name="user_camera">
-        <pose>75 100 20 0 0.27 0.0</pose>
+        <pose>75 100 20 0 0.34 0.0</pose>
       </camera>
     </gui>
     <include>
@@ -16,7 +16,7 @@
     </include>
     <include>
         <uri>/models/sdcCar</uri>
-        <pose>100 100 0 0 0 0</pose>
+        <pose>106.39 98.86 0 0 0 0</pose>
     </include>
 
 
@@ -30,7 +30,7 @@
         <geometry>
           <mesh>
               <uri>/Users/selfcar/Desktop/Self-Driving-Comps/models/asphalt_plane/blockbevel.dae</uri>
-              <scale> .565 .565 3 </scale>
+              <scale> .565 .565 1 </scale>
           </mesh>
         </geometry>
       </collision>
@@ -39,7 +39,7 @@
         <geometry>
           <mesh>
               <uri>/Users/selfcar/Desktop/Self-Driving-Comps/models/asphalt_plane/blockbevel.dae</uri>
-              <scale> .565 .565 3 </scale>
+              <scale> .565 .565 1 </scale>
           </mesh>
         </geometry>
         <material>
@@ -62,7 +62,7 @@
         <geometry>
           <mesh>
               <uri>/Users/selfcar/Desktop/Self-Driving-Comps/models/asphalt_plane/blockbevel.dae</uri>
-              <scale> .565 .565 3 </scale>
+              <scale> .565 .565 1 </scale>
           </mesh>
         </geometry>
       </collision>
@@ -71,7 +71,7 @@
         <geometry>
           <mesh>
               <uri>/Users/selfcar/Desktop/Self-Driving-Comps/models/asphalt_plane/blockbevel.dae</uri>
-              <scale> .565 .565 3 </scale>
+              <scale> .565 .565 1 </scale>
           </mesh>
         </geometry>
         <material>
@@ -94,7 +94,7 @@
         <geometry>
           <mesh>
               <uri>/Users/selfcar/Desktop/Self-Driving-Comps/models/asphalt_plane/blockbevel.dae</uri>
-              <scale> .565 .565 3 </scale>
+              <scale> .565 .565 1 </scale>
           </mesh>
         </geometry>
       </collision>
@@ -103,7 +103,7 @@
         <geometry>
           <mesh>
               <uri>/Users/selfcar/Desktop/Self-Driving-Comps/models/asphalt_plane/blockbevel.dae</uri>
-              <scale> .565 .565 3 </scale>
+              <scale> .565 .565 1 </scale>
           </mesh>
         </geometry>
         <material>
@@ -126,7 +126,7 @@
         <geometry>
           <mesh>
               <uri>/Users/selfcar/Desktop/Self-Driving-Comps/models/asphalt_plane/blockbevel.dae</uri>
-              <scale> .565 .565 3 </scale>
+              <scale> .565 .565 1 </scale>
           </mesh>
         </geometry>
       </collision>
@@ -135,7 +135,7 @@
         <geometry>
           <mesh>
               <uri>/Users/selfcar/Desktop/Self-Driving-Comps/models/asphalt_plane/blockbevel.dae</uri>
-              <scale> .565 .565 3 </scale>
+              <scale> .565 .565 1 </scale>
           </mesh>
         </geometry>
         <material>
@@ -158,7 +158,7 @@
         <geometry>
           <mesh>
               <uri>/Users/selfcar/Desktop/Self-Driving-Comps/models/asphalt_plane/blockbevel.dae</uri>
-              <scale> .565 .565 3 </scale>
+              <scale> .565 .565 1 </scale>
           </mesh>
         </geometry>
       </collision>
@@ -167,7 +167,7 @@
         <geometry>
           <mesh>
               <uri>/Users/selfcar/Desktop/Self-Driving-Comps/models/asphalt_plane/blockbevel.dae</uri>
-              <scale> .565 .565 3 </scale>
+              <scale> .565 .565 1 </scale>
           </mesh>
         </geometry>
         <material>
@@ -190,7 +190,7 @@
         <geometry>
           <mesh>
               <uri>/Users/selfcar/Desktop/Self-Driving-Comps/models/asphalt_plane/blockbevel.dae</uri>
-              <scale> .565 .565 3 </scale>
+              <scale> .565 .565 1 </scale>
           </mesh>
         </geometry>
       </collision>
@@ -199,7 +199,7 @@
         <geometry>
           <mesh>
               <uri>/Users/selfcar/Desktop/Self-Driving-Comps/models/asphalt_plane/blockbevel.dae</uri>
-              <scale> .565 .565 3 </scale>
+              <scale> .565 .565 1 </scale>
           </mesh>
         </geometry>
         <material>
@@ -222,7 +222,7 @@
         <geometry>
           <mesh>
               <uri>/Users/selfcar/Desktop/Self-Driving-Comps/models/asphalt_plane/blockbevel.dae</uri>
-              <scale> .565 .565 3 </scale>
+              <scale> .565 .565 1 </scale>
           </mesh>
         </geometry>
       </collision>
@@ -231,7 +231,7 @@
         <geometry>
           <mesh>
               <uri>/Users/selfcar/Desktop/Self-Driving-Comps/models/asphalt_plane/blockbevel.dae</uri>
-              <scale> .565 .565 3 </scale>
+              <scale> .565 .565 1 </scale>
           </mesh>
         </geometry>
         <material>
@@ -254,7 +254,7 @@
         <geometry>
           <mesh>
               <uri>/Users/selfcar/Desktop/Self-Driving-Comps/models/asphalt_plane/blockbevel.dae</uri>
-              <scale> .565 .565 3 </scale>
+              <scale> .565 .565 1 </scale>
           </mesh>
         </geometry>
       </collision>
@@ -263,7 +263,7 @@
         <geometry>
           <mesh>
               <uri>/Users/selfcar/Desktop/Self-Driving-Comps/models/asphalt_plane/blockbevel.dae</uri>
-              <scale> .565 .565 3 </scale>
+              <scale> .565 .565 1 </scale>
           </mesh>
         </geometry>
         <material>
@@ -286,7 +286,7 @@
         <geometry>
           <mesh>
               <uri>/Users/selfcar/Desktop/Self-Driving-Comps/models/asphalt_plane/blockbevel.dae</uri>
-              <scale> .565 .565 3 </scale>
+              <scale> .565 .565 1 </scale>
           </mesh>
         </geometry>
       </collision>
@@ -295,7 +295,7 @@
         <geometry>
           <mesh>
               <uri>/Users/selfcar/Desktop/Self-Driving-Comps/models/asphalt_plane/blockbevel.dae</uri>
-              <scale> .565 .565 3 </scale>
+              <scale> .565 .565 1 </scale>
           </mesh>
         </geometry>
         <material>
@@ -318,7 +318,7 @@
         <geometry>
           <mesh>
               <uri>/Users/selfcar/Desktop/Self-Driving-Comps/models/asphalt_plane/blockbevel.dae</uri>
-              <scale> .565 .565 3 </scale>
+              <scale> .565 .565 1 </scale>
           </mesh>
         </geometry>
       </collision>
@@ -327,7 +327,7 @@
         <geometry>
           <mesh>
               <uri>/Users/selfcar/Desktop/Self-Driving-Comps/models/asphalt_plane/blockbevel.dae</uri>
-              <scale> .565 .565 3 </scale>
+              <scale> .565 .565 1 </scale>
           </mesh>
         </geometry>
         <material>
@@ -350,7 +350,7 @@
         <geometry>
           <mesh>
               <uri>/Users/selfcar/Desktop/Self-Driving-Comps/models/asphalt_plane/blockbevel.dae</uri>
-              <scale> .565 .565 3 </scale>
+              <scale> .565 .565 1 </scale>
           </mesh>
         </geometry>
       </collision>
@@ -359,7 +359,7 @@
         <geometry>
           <mesh>
               <uri>/Users/selfcar/Desktop/Self-Driving-Comps/models/asphalt_plane/blockbevel.dae</uri>
-              <scale> .565 .565 3 </scale>
+              <scale> .565 .565 1 </scale>
           </mesh>
         </geometry>
         <material>
@@ -382,7 +382,7 @@
         <geometry>
           <mesh>
               <uri>/Users/selfcar/Desktop/Self-Driving-Comps/models/asphalt_plane/blockbevel.dae</uri>
-              <scale> .565 .565 3 </scale>
+              <scale> .565 .565 1 </scale>
           </mesh>
         </geometry>
       </collision>
@@ -391,7 +391,7 @@
         <geometry>
           <mesh>
               <uri>/Users/selfcar/Desktop/Self-Driving-Comps/models/asphalt_plane/blockbevel.dae</uri>
-              <scale> .565 .565 3 </scale>
+              <scale> .565 .565 1 </scale>
           </mesh>
         </geometry>
         <material>
@@ -414,7 +414,7 @@
         <geometry>
           <mesh>
               <uri>/Users/selfcar/Desktop/Self-Driving-Comps/models/asphalt_plane/blockbevel.dae</uri>
-              <scale> .565 .565 3 </scale>
+              <scale> .565 .565 1 </scale>
           </mesh>
         </geometry>
       </collision>
@@ -423,7 +423,7 @@
         <geometry>
           <mesh>
               <uri>/Users/selfcar/Desktop/Self-Driving-Comps/models/asphalt_plane/blockbevel.dae</uri>
-              <scale> .565 .565 3 </scale>
+              <scale> .565 .565 1 </scale>
           </mesh>
         </geometry>
         <material>
@@ -446,7 +446,7 @@
         <geometry>
           <mesh>
               <uri>/Users/selfcar/Desktop/Self-Driving-Comps/models/asphalt_plane/blockbevel.dae</uri>
-              <scale> .565 .565 3 </scale>
+              <scale> .565 .565 1 </scale>
           </mesh>
         </geometry>
       </collision>
@@ -455,7 +455,7 @@
         <geometry>
           <mesh>
               <uri>/Users/selfcar/Desktop/Self-Driving-Comps/models/asphalt_plane/blockbevel.dae</uri>
-              <scale> .565 .565 3 </scale>
+              <scale> .565 .565 1 </scale>
           </mesh>
         </geometry>
         <material>
@@ -478,7 +478,7 @@
         <geometry>
           <mesh>
               <uri>/Users/selfcar/Desktop/Self-Driving-Comps/models/asphalt_plane/blockbevel.dae</uri>
-              <scale> .565 .565 3 </scale>
+              <scale> .565 .565 1 </scale>
           </mesh>
         </geometry>
       </collision>
@@ -487,7 +487,7 @@
         <geometry>
           <mesh>
               <uri>/Users/selfcar/Desktop/Self-Driving-Comps/models/asphalt_plane/blockbevel.dae</uri>
-              <scale> .565 .565 3 </scale>
+              <scale> .565 .565 1 </scale>
           </mesh>
         </geometry>
         <material>
@@ -510,7 +510,7 @@
         <geometry>
           <mesh>
               <uri>/Users/selfcar/Desktop/Self-Driving-Comps/models/asphalt_plane/blockbevel.dae</uri>
-              <scale> .565 .565 3 </scale>
+              <scale> .565 .565 1 </scale>
           </mesh>
         </geometry>
       </collision>
@@ -519,7 +519,7 @@
         <geometry>
           <mesh>
               <uri>/Users/selfcar/Desktop/Self-Driving-Comps/models/asphalt_plane/blockbevel.dae</uri>
-              <scale> .565 .565 3 </scale>
+              <scale> .565 .565 1 </scale>
           </mesh>
         </geometry>
         <material>
@@ -542,7 +542,7 @@
         <geometry>
           <mesh>
               <uri>/Users/selfcar/Desktop/Self-Driving-Comps/models/asphalt_plane/blockbevel.dae</uri>
-              <scale> .565 .565 3 </scale>
+              <scale> .565 .565 1 </scale>
           </mesh>
         </geometry>
       </collision>
@@ -551,7 +551,7 @@
         <geometry>
           <mesh>
               <uri>/Users/selfcar/Desktop/Self-Driving-Comps/models/asphalt_plane/blockbevel.dae</uri>
-              <scale> .565 .565 3 </scale>
+              <scale> .565 .565 1 </scale>
           </mesh>
         </geometry>
         <material>
@@ -574,7 +574,7 @@
         <geometry>
           <mesh>
               <uri>/Users/selfcar/Desktop/Self-Driving-Comps/models/asphalt_plane/blockbevel.dae</uri>
-              <scale> .565 .565 3 </scale>
+              <scale> .565 .565 1 </scale>
           </mesh>
         </geometry>
       </collision>
@@ -583,7 +583,7 @@
         <geometry>
           <mesh>
               <uri>/Users/selfcar/Desktop/Self-Driving-Comps/models/asphalt_plane/blockbevel.dae</uri>
-              <scale> .565 .565 3 </scale>
+              <scale> .565 .565 1 </scale>
           </mesh>
         </geometry>
         <material>
@@ -606,7 +606,7 @@
         <geometry>
           <mesh>
               <uri>/Users/selfcar/Desktop/Self-Driving-Comps/models/asphalt_plane/blockbevel.dae</uri>
-              <scale> .565 .565 3 </scale>
+              <scale> .565 .565 1 </scale>
           </mesh>
         </geometry>
       </collision>
@@ -615,7 +615,7 @@
         <geometry>
           <mesh>
               <uri>/Users/selfcar/Desktop/Self-Driving-Comps/models/asphalt_plane/blockbevel.dae</uri>
-              <scale> .565 .565 3 </scale>
+              <scale> .565 .565 1 </scale>
           </mesh>
         </geometry>
         <material>
@@ -638,7 +638,7 @@
         <geometry>
           <mesh>
               <uri>/Users/selfcar/Desktop/Self-Driving-Comps/models/asphalt_plane/blockbevel.dae</uri>
-              <scale> .565 .565 3 </scale>
+              <scale> .565 .565 1 </scale>
           </mesh>
         </geometry>
       </collision>
@@ -647,7 +647,7 @@
         <geometry>
           <mesh>
               <uri>/Users/selfcar/Desktop/Self-Driving-Comps/models/asphalt_plane/blockbevel.dae</uri>
-              <scale> .565 .565 3 </scale>
+              <scale> .565 .565 1 </scale>
           </mesh>
         </geometry>
         <material>
@@ -670,7 +670,7 @@
         <geometry>
           <mesh>
               <uri>/Users/selfcar/Desktop/Self-Driving-Comps/models/asphalt_plane/blockbevel.dae</uri>
-              <scale> .565 .565 3 </scale>
+              <scale> .565 .565 1 </scale>
           </mesh>
         </geometry>
       </collision>
@@ -679,7 +679,7 @@
         <geometry>
           <mesh>
               <uri>/Users/selfcar/Desktop/Self-Driving-Comps/models/asphalt_plane/blockbevel.dae</uri>
-              <scale> .565 .565 3 </scale>
+              <scale> .565 .565 1 </scale>
           </mesh>
         </geometry>
         <material>
@@ -702,7 +702,7 @@
         <geometry>
           <mesh>
               <uri>/Users/selfcar/Desktop/Self-Driving-Comps/models/asphalt_plane/blockbevel.dae</uri>
-              <scale> .565 .565 3 </scale>
+              <scale> .565 .565 1 </scale>
           </mesh>
         </geometry>
       </collision>
@@ -711,7 +711,7 @@
         <geometry>
           <mesh>
               <uri>/Users/selfcar/Desktop/Self-Driving-Comps/models/asphalt_plane/blockbevel.dae</uri>
-              <scale> .565 .565 3 </scale>
+              <scale> .565 .565 1 </scale>
           </mesh>
         </geometry>
         <material>
@@ -734,7 +734,7 @@
         <geometry>
           <mesh>
               <uri>/Users/selfcar/Desktop/Self-Driving-Comps/models/asphalt_plane/blockbevel.dae</uri>
-              <scale> .565 .565 3 </scale>
+              <scale> .565 .565 1 </scale>
           </mesh>
         </geometry>
       </collision>
@@ -743,7 +743,7 @@
         <geometry>
           <mesh>
               <uri>/Users/selfcar/Desktop/Self-Driving-Comps/models/asphalt_plane/blockbevel.dae</uri>
-              <scale> .565 .565 3 </scale>
+              <scale> .565 .565 1 </scale>
           </mesh>
         </geometry>
         <material>
@@ -766,7 +766,7 @@
         <geometry>
           <mesh>
               <uri>/Users/selfcar/Desktop/Self-Driving-Comps/models/asphalt_plane/blockbevel.dae</uri>
-              <scale> .565 .565 3 </scale>
+              <scale> .565 .565 1 </scale>
           </mesh>
         </geometry>
       </collision>
@@ -775,7 +775,7 @@
         <geometry>
           <mesh>
               <uri>/Users/selfcar/Desktop/Self-Driving-Comps/models/asphalt_plane/blockbevel.dae</uri>
-              <scale> .565 .565 3 </scale>
+              <scale> .565 .565 1 </scale>
           </mesh>
         </geometry>
         <material>
@@ -798,7 +798,7 @@
         <geometry>
           <mesh>
               <uri>/Users/selfcar/Desktop/Self-Driving-Comps/models/asphalt_plane/blockbevel.dae</uri>
-              <scale> .565 .565 3 </scale>
+              <scale> .565 .565 1 </scale>
           </mesh>
         </geometry>
       </collision>
@@ -807,7 +807,7 @@
         <geometry>
           <mesh>
               <uri>/Users/selfcar/Desktop/Self-Driving-Comps/models/asphalt_plane/blockbevel.dae</uri>
-              <scale> .565 .565 3 </scale>
+              <scale> .565 .565 1 </scale>
           </mesh>
         </geometry>
         <material>

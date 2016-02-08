@@ -50,6 +50,10 @@ namespace gazebo
         private: static std::vector<double>* forwardLidarRays;
         private: static std::vector<double>* backwardLidarRays;
 
+    public:
+        static bool stopSignInLeftCamera;
+        static bool stopSignInRightCamera;
+
         public: static void UpdateFrontLidar(math::Angle minAngle, double angleResolution, std::vector<double>* newRays);
         public: static void UpdateLeftLidar(math::Angle minAngle, double angleResolution, std::vector<double>* newRays);
         public: static void UpdateRightLidar(math::Angle minAngle, double angleResolution, std::vector<double>* newRays);

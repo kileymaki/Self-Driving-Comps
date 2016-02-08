@@ -638,12 +638,12 @@
                   <pose>0 0.2 0 0 0 0</pose>
                   <horizontal_fov>1.047</horizontal_fov>
                   <image>
-                    <width>320</width>
-                    <height>240</height>
+                    <width>1480</width>
+                    <height>1320</height>
                   </image>
                   <clip>
                     <near>0.1</near>
-                    <far>100</far>
+                    <far>150</far>
                   </clip>
                   <save enabled="False">
                    <path>/Users/selfcar/Desktop/Self-Driving-Comps/comps_camera_recordings/</path>
@@ -654,12 +654,12 @@
                   <pose>0 -0.2 0 0 0 0</pose>
                   <horizontal_fov>1.047</horizontal_fov>
                   <image>
-                    <width>320</width>
-                    <height>240</height>
+                    <width>1480</width>
+                    <height>1320</height>
                   </image>
                   <clip>
                     <near>0.1</near>
-                    <far>100</far>
+                    <far>150</far>
                   </clip>
                   <save enabled="False">
                    <path>/Users/selfcar/Desktop/Self-Driving-Comps/comps_camera_recordings/</path>

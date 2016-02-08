@@ -36,6 +36,9 @@ std::vector<double>* sdcSensorData::rightLidarRays = new std::vector<double>();
 std::vector<double>* sdcSensorData::forwardLidarRays = new std::vector<double>();
 std::vector<double>* sdcSensorData::backwardLidarRays = new std::vector<double>();
 
+bool sdcSensorData::stopSignInLeftCamera = false;
+bool sdcSensorData::stopSignInRightCamera = false;
+
 void sdcSensorData::UpdateFrontLidar(math::Angle minAngle, double angleResolution, std::vector<double>* newRays){
 
     frontLidarRays = newRays;

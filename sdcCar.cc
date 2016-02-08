@@ -468,10 +468,16 @@ void sdcCar::Drive()
     //     this->WaypointDriving(waypoints);
     // }
 
+    if (sdcSensorData::stopSignInLeftCamera && sdcSensorData::stopSignInRightCamera) {
+      this->SetTargetSpeed(0);
+    } else {
+      this->SetTargetSpeed(4);
+    }
+
     // this->GetObjectsInFront();
     // this->DriveStraightThenStop();
     //this->WalledDriving();
-    this->DetectIntersection();
+    //this->DetectIntersection();
     //  this->Follow();
     // Handles all turning
     this->Steer();

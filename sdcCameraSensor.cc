@@ -9,7 +9,10 @@
 #include <numeric>
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
-#include "opencv2/objdetect/objdetect.hpp"
+#include "opencv2/cudaobjdetect.hpp"
+#include <opencv2/opencv.hpp>
+#include <opencv2/cudaimgproc.hpp>
+#include <opencv2/core/cuda.hpp>
 
 #include "sdcCameraSensor.hh"
 
@@ -23,7 +26,25 @@ GZ_REGISTER_SENSOR_PLUGIN(sdcCameraSensor)
 event::ConnectionPtr updateConnection;
 sensors::MultiCameraSensorPtr parentSensor;
 
+// Pointer to Cascade Classifier file
+//Ptr<cuda::CascadeClassifier> stopSign = cuda::CascadeClassifier::create("/Users/selfcar/Desktop/Self-Driving-Comps/OpenCV/haarcascade_stop.xml");
+CascadeClassifier cpu_stop_sign;
+String cascade_file_path = "/Users/selfcar/Desktop/Self-Driving-Comps/OpenCV/haarcascade_stop.xml";
+
 void sdcCameraSensor::Load(sensors::SensorPtr _sensor, sdf::ElementPtr /*_sdf*/){
+    /*
+    //Ensure Gazebo is making use of GPU Acceleration
+    cuda::DeviceInfo::DeviceInfo gpuInfo;
+    const char* gpuName = gpuInfo.name();
+    int isGPULoaded = cuda::getCudaEnabledDeviceCount();
+    if (isGPULoaded == 1){
+      std::cout << "OpenCV using CUDA-enabled Graphics Card: " << gpuName << std::endl;
+    }
+    else {
+      std::cout << "Unable to Find CUDA-enabled Graphics Card" << std::endl;
+      return;
+    }
+    */
 
     // Get the parent sensor.
     this->parentSensor =
@@ -44,20 +65,24 @@ void sdcCameraSensor::Load(sensors::SensorPtr _sensor, sdf::ElementPtr /*_sdf*/)
 }
 
 // Called by the world update start event
-void sdcCameraSensor::OnUpdate(){
-  // printf("\n\n");
-
+void sdcCameraSensor::OnUpdate() {
   // Kappa
   const unsigned char* img_left = this->parentSensor->GetImageData(0);
   const unsigned char* img_right = this->parentSensor->GetImageData(1);
-
+  //Load frames
   Mat image_left = Mat(this->parentSensor->GetImageHeight(0), this->parentSensor->GetImageWidth(0), CV_8UC3, const_cast<unsigned char*>(img_left));
   Mat image_right = Mat(this->parentSensor->GetImageHeight(1), this->parentSensor->GetImageWidth(1), CV_8UC3, const_cast<unsigned char*>(img_right));
+  std::cout << this->parentSensor->GetImageHeight(0) << std::endl;
+  //Pass the frames to the GPU
+  //cuda::GpuMat gpu_image_left, gpu_image_right;
+  //gpu_image_left.upload(image_left);
+  //gpu_image_right.upload(image_right);
 
+
+  //Select Region of Interest (ROI) for lane detection - this is the bottom half of the image.
   Mat imageROI_left = image_left(cv::Rect(0, image_left.rows/2, image_left.cols, image_left.rows/2));
   Mat imageROI_right = image_right(cv::Rect(0, image_right.rows/2, image_right.cols, image_right.rows/2));
-
-  // Canny algorithm
+  // Canny algorithm for edge dectection
   Mat contours_left, contours_right;
   Canny(imageROI_left,contours_left,50,350);
   Canny(imageROI_right,contours_right,50,350);
@@ -71,18 +96,19 @@ void sdcCameraSensor::OnUpdate(){
 
   HoughLines(contours_left,lines_left,1,PI/180, 100);
   HoughLines(contours_right,lines_right,1,PI/180, 100);
-  Mat result_left(contours_left.rows,contours_left.cols,CV_8U,Scalar(255));
-  Mat result_right(contours_right.rows,contours_right.cols,CV_8U,Scalar(255));
-  image_left.copyTo(result_left);
-  image_right.copyTo(result_right);
+  //Mat result_left(contours_left.rows,contours_left.cols,CV_8U,Scalar(255));
+  //Mat result_right(contours_right.rows,contours_right.cols,CV_8U,Scalar(255));
+  //image_left.copyTo(result_left);
+  //image_right.copyTo(result_right);
   //print out line angles
-  //for (std::vector<Vec2f>::const_iterator i = lines_left.begin(); i != lines_left.end(); ++i)
-  //  std::cout << *i << ' ' << std::endl;
-  //std::cout << "=====================================\n";
+  for (std::vector<Vec2f>::const_iterator i = lines_right.begin(); i != lines_right.end(); ++i)
+    std::cout << *i << ' ' << std::endl;
+  std::cout << "=====================================\n";
   // Draw the lines
   std::vector<Vec2f>::const_iterator it_left = lines_left.begin();
   std::vector<Vec2f>::const_iterator it_right = lines_right.begin();
 
+  // white line grid overlay for reference points on displayed image
   line(imageROI_left, Point(0,0), Point(320,0), Scalar(255,255,255), 1);
   line(imageROI_left, Point(160,0), Point(160,120), Scalar(255,255,255), 1);
   line(imageROI_right, Point(0,0), Point(320,0), Scalar(255,255,255), 1);
@@ -102,13 +128,14 @@ void sdcCameraSensor::OnUpdate(){
       float rho= (*it_left)[0];   // first element is distance rho
       float theta= (*it_left)[1]; // second element is angle theta
 
-      if ( (theta > 0.09 && theta < 1.48) || (theta < 3.14 && theta > 1.66) ){
+      //if ( (theta > 0.09 && theta < 1.48) || (theta < 3.14 && theta > 1.66) ){
+      if ((theta > 0 && theta < 3.14)) {
           Point pt1(rho/cos(theta),0);
           pt1_x.push_back(rho/cos(theta));
           pt1_y.push_back(0);
-          Point pt2((rho-result_left.rows*sin(theta))/cos(theta),result_left.rows);
-          pt2_x.push_back((rho-result_left.rows*sin(theta))/cos(theta));
-          pt2_y.push_back(result_left.rows);
+          Point pt2((rho-image_left.rows*sin(theta))/cos(theta),image_left.rows);
+          pt2_x.push_back((rho-image_left.rows*sin(theta))/cos(theta));
+          pt2_y.push_back(image_left.rows);
     }
       ++it_left;
   }
@@ -125,38 +152,77 @@ void sdcCameraSensor::OnUpdate(){
       float rho= (*it_right)[0];   // first element is distance rho
       float theta= (*it_right)[1]; // second element is angle theta
       // point of intersection of the line with first row
-      //if (theta < 1.5 || theta > 1.7)
+      //if ( (theta > 0.09 && theta < 1.48) || (theta < 3.14 && theta > 1.66) ){
+      if ( (theta > 0.8 && theta < 1.2) || (theta > 2.2 && theta < 2.4) ) {
       Point pt1(rho/cos(theta),0);
       // point of intersection of the line with last row
-      Point pt2((rho-result_right.rows*sin(theta))/cos(theta),result_right.rows);
+      Point pt2((rho-image_right.rows*sin(theta))/cos(theta),image_right.rows);
       // draw a white line
       line(imageROI_right, pt1, pt2, Scalar(255), 3);
+    }
       ++it_right;
   }
 
+
   //BEGIN HAAR CASCADE OBJECT DETECTION
-  CascadeClassifier stopSign;
-  //Load Stop Sign Schema for Haar - this should NOT be in the OnUpdate Loop!!
-  if (!stopSign.load("/Users/selfcar/Desktop/haarcascade_stop.xml")) {
-    printf("Error: Unable to load stop sign cascade xml file!\n");
+
+  if(!cpu_stop_sign.load(cascade_file_path)){ printf("--(!)Error loading face cascade\n");};
+  std::vector<Rect> stopSigns_left, stopSigns_right;
+  cpu_stop_sign.detectMultiScale( image_left, stopSigns_left, 1.1, 2, 0|CASCADE_SCALE_IMAGE, Size(30, 30) );
+  cpu_stop_sign.detectMultiScale( image_right, stopSigns_right, 1.1, 2, 0|CASCADE_SCALE_IMAGE, Size(30, 30) );
+  sdcSensorData::stopSignInLeftCamera = false;
+  for( int i = 0; i < stopSigns_left.size(); i++ )
+  {
+     cv::rectangle(image_left, stopSigns_left[i], Scalar(0,0,255),3,LINE_8,0);
+     std::cout << "stop sign found in left image" <<std::endl;
+     sdcSensorData::stopSignInLeftCamera = true;
   }
 
-  std::vector<Rect> stopSigns_left;
-  std::vector<Rect> stopSigns_right;
-  stopSign.detectMultiScale( image_left, stopSigns_left, 1.1, 2, 0|CV_HAAR_SCALE_IMAGE, Size(30, 30) );
-  stopSign.detectMultiScale( image_right, stopSigns_right, 1.1, 2, 0|CV_HAAR_SCALE_IMAGE, Size(30, 30) );
+  sdcSensorData::stopSignInRightCamera = false;
+  for( int i = 0; i < stopSigns_right.size(); i++ )
+  {
+     cv::rectangle(image_right, stopSigns_right[i], Scalar(0,0,255),3,LINE_8,0);
+     std::cout << "stop sign found in right image" <<std::endl;
+     sdcSensorData::stopSignInRightCamera = true;
+  }
+  /*
+  //comment out gpu implementation because it sucks
+
+  std::vector<Rect> stopSigns_left, stopSigns_right;
+  cuda::GpuMat left_gpu_buffer, right_gpu_buffer;
+
+  stopSign->setFindLargestObject(false);
+  stopSign->setScaleFactor(1.1);
+  stopSign->setMinNeighbors(4);
+  stopSign->setMinObjectSize(cv::Size(40,40));
+  stopSign->setMaxObjectSize(image_left.size());
+
+  stopSign->detectMultiScale(gpu_image_left, left_gpu_buffer);
+  stopSign->detectMultiScale(gpu_image_right, right_gpu_buffer);
+  stopSign->convert(left_gpu_buffer, stopSigns_left);
+  stopSign->convert(right_gpu_buffer, stopSigns_right);
 
   for( int i = 0; i < stopSigns_left.size(); i++ )
   {
+     cv::rectangle(image_left, stopSigns_left[i], Scalar(255),1,LINE_8,0);
      Point center( stopSigns_left[i].x + stopSigns_left[i].width*0.5, stopSigns_left[i].y + stopSigns_left[i].height*0.5 );
      ellipse( image_left, center, Size( stopSigns_left[i].width*0.5, stopSigns_left[i].height*0.5), 0, 0, 360, Scalar( 0, 0, 255 ), 4, 8, 0 );
+     std::cout << "stop sign found in left image" <<std::endl;
   }
-  
+
   for( int i = 0; i < stopSigns_right.size(); i++ )
   {
+     cv::rectangle(image_right, stopSigns_right[i], Scalar(255),1,LINE_8,0);
      Point center( stopSigns_right[i].x + stopSigns_right[i].width*0.5, stopSigns_right[i].y + stopSigns_right[i].height*0.5 );
      ellipse( image_right, center, Size( stopSigns_right[i].width*0.5, stopSigns_right[i].height*0.5), 0, 0, 360, Scalar( 0, 0, 255 ), 4, 8, 0 );
+     std::cout << "stop sign found in right image" <<std::endl;
   }
+
+  //Mat image_left_final;
+  //Mat image_right_final;
+  //gpu_image_left.download(image_left_final);
+  //gpu_image_right.download(image_right_final);
+  */
 
   namedWindow("Lane Detection Left", CV_WINDOW_AUTOSIZE);
   namedWindow("Lane Detection Right", CV_WINDOW_AUTOSIZE);

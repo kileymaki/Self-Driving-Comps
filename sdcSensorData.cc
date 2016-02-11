@@ -167,7 +167,6 @@ std::vector<std::pair<int,double>> sdcSensorData::GetObjectsInFront(){
   return objectsInFront;
 }
 
-
 // New gps system using 2d vector
 math::Vector2d sdcSensorData::coordinate;
 

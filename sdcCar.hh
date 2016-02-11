@@ -38,58 +38,72 @@ namespace gazebo
 
     class GAZEBO_VISIBLE sdcCar : public ModelPlugin
     {
-        /// \brief Constructor
+         // Constructor for sdcCar
          public: sdcCar();
 
+         // These methods are called by Gazebo during the loading and initializing
+         // stages of world building and populating
          virtual void Load(physics::ModelPtr _model, sdf::ElementPtr _sdf);
          virtual void Init();
 
+         // Bound to Gazebo's world update, gets called every tick of the simulation
          private: void OnUpdate();
 
-         void OnVelMsg(ConstPosePtr &_msg);
-
+         // Holds the bound connection to Gazebo's update, necessary in order to properly
+         // receive updates
          std::vector<event::ConnectionPtr> connections;
 
+         // The Gazebo model representation of the car
          physics::ModelPtr model;
-         physics::LinkPtr chassis;
+         // Contains the wheel joints that get operated on each tick for movement
          std::vector<physics::JointPtr> joints;
-         physics::JointPtr gasJoint, brakeJoint;
-         physics::JointPtr steeringJoint;
+         // A link to the chassis of the car, mainly used for access to physics variables
+         // related to the car's state
+         physics::LinkPtr chassis;
 
+         // The velocity of the car
          math::Vector3 velocity;
 
-         transport::NodePtr node;
-         transport::SubscriberPtr velSub;
-
+         // These variables are mostly set in the SDF for the car and relate to the
+         // physical parameters of the vehicle
          double frontPower, rearPower;
          double maxSpeed;
          double wheelRadius;
 
          double steeringRatio;
          double tireAngleRange;
-         double maxGas, maxBrake;
 
          double aeroLoad;
          double swayForce;
 
         /*
-         * Begin Comps Defined Stuff
+         * Begin Non-Gazebo Related Definitions
          */
+
+         // The different states the car can be in. The logic and behavior of
+         // the car will change depending on which state it's in, with various
+         // sensor readings affecting the decision to transition states
+         enum CarState { stop, waypoint, intersection, follow, avoidance };
+
          void frontLidarUpdate();
          void Drive();
          void Steer();
          void MatchTargetSpeed();
+         void SteerToPosition(double steeringRadius, Angle targetDirection);
+
          void topLidarUpdate();
          void topForwardLidarUpdate(std::vector<double> rays);
 
+         void SetAccelRate(double rate = 1.0);
+         void SetBrakeRate(double rate = 1.0);
 
          void SetTargetDirection(Angle direction);
          void SetTargetSteeringAmount(double a);
          void SetTargetSpeed(double s);
 
-         void ApplyMovementForce(double amt);
-         void Accel(double amt = 0.5);
-         void Brake(double amt = 1);
+         void Accelerate(double amt = 1, double rate = 1.0);
+         void Brake(double amt = 1, double rate = 1.0);
+         void Stop();
 
          bool IsMovingForwards();
          double GetSpeed();
@@ -107,13 +121,19 @@ namespace gazebo
          void WaypointDriving(std::vector<math::Vector2d> waypoints);
          void Follow();
          void GetObjectsInFront();
+         void PerpendicularPark();
 
 
          double gas; //variable that accelerates the car
          double brake; //variable that brakes the car
 
+         double accelRate;
+         double brakeRate;
+
          double yaw;
          double lon;
+
+         CarState currentState;
 
          int waypointProgress;
 
@@ -186,6 +206,7 @@ namespace gazebo
          int tlLeftNumRays;
          int tlLeftWeight;
          std::vector<std::vector<int>> tlLeftViews;
+
 
     };
 

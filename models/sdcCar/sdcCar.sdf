@@ -25,10 +25,14 @@
 
         <!-- FRONT LEFT WHEEL -->
         <link name="front_left_wheel">
+            <inertial>
+                <mass>10.0</mass>
+            </inertial>
             <pose>0.8 0.5 0.3 0 1.57079 1.57079</pose>
             <collision name="front_left_wheel_collision">
                 <geometry>
-                    <cylinder><radius>0.21</radius><length>0.1</length></cylinder>
+                    <!--<cylinder><radius>0.21</radius><length>0.1</length></cylinder-->
+                    <mesh><uri>/Users/selfcar/Desktop/Self-Driving-Comps/models/sdcCar/wheel.stl</uri></mesh>
                 </geometry>
             </collision>
             <visual name="front_left_wheel_visual">
@@ -49,9 +53,13 @@
         <!-- FRONT RIGHT WHEEL -->
         <link name="front_right_wheel">
             <pose>0.8 -0.5 0.3 0 1.57079 -1.57079</pose>
+            <inertial>
+                <mass>10.0</mass>
+            </inertial>
             <collision name="front_right_wheel_collision">
                 <geometry>
-                    <cylinder><radius>0.21</radius><length>0.1</length></cylinder>
+                    <!--<cylinder><radius>0.21</radius><length>0.1</length></cylinder>-->
+                    <mesh><uri>/Users/selfcar/Desktop/Self-Driving-Comps/models/sdcCar/wheel.stl</uri></mesh>
                 </geometry>
             </collision>
             <visual name="front_right_wheel_visual">
@@ -72,9 +80,13 @@
         <!-- BACK RIGHT WHEEL -->
         <link name="back_right_wheel">
             <pose>-0.87 -0.5 0.3 0 1.57079 -1.57079</pose>
+            <inertial>
+                <mass>10.0</mass>
+            </inertial>
             <collision name="back_right_wheel_collision">
                 <geometry>
-                    <cylinder><radius>0.21</radius><length>0.1</length></cylinder>
+                    <!--<cylinder><radius>0.21</radius><length>0.1</length></cylinder>-->
+                    <mesh><uri>/Users/selfcar/Desktop/Self-Driving-Comps/models/sdcCar/wheel.stl</uri></mesh>
                 </geometry>
             </collision>
             <visual name="back_right_wheel_visual">
@@ -95,9 +107,13 @@
         <!-- BACK LEFT WHEEL -->
         <link name="back_left_wheel">
             <pose>-0.87 0.5 0.3 0 1.57079 1.57079</pose>
+            <inertial>
+                <mass>10.0</mass>
+            </inertial>
             <collision name="back_left_wheel_collision">
                 <geometry>
-                    <cylinder><radius>0.21</radius><length>0.1</length></cylinder>
+                    <!--<cylinder><radius>0.21</radius><length>0.1</length></cylinder>-->
+                    <mesh><uri>/Users/selfcar/Desktop/Self-Driving-Comps/models/sdcCar/wheel.stl</uri></mesh>
                 </geometry>
             </collision>
             <visual name="back_left_wheel_visual">
@@ -229,9 +245,6 @@
           <!-- FRONT LASER SENSOR -->
         <link name="front_lidar">
               <pose>1.0 0 0.4 0 0 0</pose>
-              <inertial>
-                  <mass>0.1</mass>
-              </inertial>
               <visual name="front_lidar_visual">
                   <geometry>
                       <mesh>
@@ -296,9 +309,6 @@
         <!-- TOP LASER SENSOR -->
         <link name="top_laser">
             <pose>0.0 0 1.0 0.0 0.0 0.0</pose>
-            <inertial>
-                <mass>0.1</mass>
-            </inertial>
             <visual name="top_laser_visual">
                 <geometry>
                     <mesh>
@@ -431,9 +441,6 @@
         <!-- SIDE SENSORS (PSEUDO-RADAR) -->
         <link name="side_right_sensors">
             <pose>0.0 -0.55 0.4 0.0 0.0 0.0</pose>
-            <inertial>
-                <mass>0.1</mass>
-            </inertial>
             <visual name="side_right_sensors_visual">
                 <geometry>
                     <mesh>
@@ -518,9 +525,6 @@
 
         <link name="side_left_sensors">
             <pose>0.0 0.55 0.4 0.0 0.0 0.0</pose>
-            <inertial>
-                <mass>0.1</mass>
-            </inertial>
             <visual name="side_left_sensors_visual">
                 <geometry>
                     <mesh>
@@ -613,17 +617,6 @@
         <!-- STEREO CAMERA -->
         <link name='camera::link'>
               <pose>0.65 0 0.85 0 0.008 0</pose>
-              <inertial>
-                <mass>0.1</mass>
-                <inertia>
-                  <ixx>0.000166667</ixx>
-                  <iyy>0.000166667</iyy>
-                  <izz>0.000166667</izz>
-                  <ixy>0</ixy>
-                  <ixz>0</ixz>
-                  <iyz>0</iyz>
-                </inertia>
-              </inertial>
 
               <self_collide>0</self_collide>
               <kinematic>0</kinematic>
@@ -638,8 +631,8 @@
                   <pose>0 0.2 0 0 0 0</pose>
                   <horizontal_fov>1.047</horizontal_fov>
                   <image>
-                    <width>1480</width>
-                    <height>1320</height>
+                    <width>640</width>
+                    <height>480</height>
                   </image>
                   <clip>
                     <near>0.1</near>
@@ -654,8 +647,8 @@
                   <pose>0 -0.2 0 0 0 0</pose>
                   <horizontal_fov>1.047</horizontal_fov>
                   <image>
-                    <width>1480</width>
-                    <height>1320</height>
+                    <width>640</width>
+                    <height>480</height>
                   </image>
                   <clip>
                     <near>0.1</near>
@@ -723,9 +716,6 @@
         <!-- GPS SENSOR -->
         <link name="gps">
             <pose>0.0 0.0 1.0 0 0 0</pose>
-            <inertial>
-                <mass>0.1</mass>
-            </inertial>
             <visual name="visual">
                 <geometry>
                     <mesh>

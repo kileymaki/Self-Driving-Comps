@@ -42,8 +42,6 @@ const Angle EAST = Angle(0);
 
 std::vector<double> turningVector;
 
-
-/////////////////////////////////////////////////
 sdcCar::sdcCar()
 {
 
@@ -56,16 +54,18 @@ sdcCar::sdcCar()
     this->frontPower = 50;
     this->rearPower = 50;
     this->wheelRadius = 0.3;
-    this->maxBrake = 0.0;
-    this->maxGas = 0.0;
     this->steeringRatio = 1.0;
     this->tireAngleRange = 1.0;
 
     this->gas = 0.0;
     this->brake = 0.0;
+    this->accelRate = 1.0;
+    this->brakeRate = 1.0;
 
-    this->maxCarSpeed = 5;
+    this->maxCarSpeed = 30;
     this->maxCarReverseSpeed = -10;
+
+    this->currentState = stop;
 
     this->steeringAmount = 0.0;
     this->targetSteeringAmount = 0.0;
@@ -88,8 +88,6 @@ sdcCar::sdcCar()
     std::vector<std::pair<int,double>> objectsInFront;
 }
 
-
-/////////////////////////////////////////////////
 void sdcCar::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
 {
   this->model = _model;
@@ -111,14 +109,12 @@ void sdcCar::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
   this->connections.push_back(event::Events::ConnectWorldUpdateBegin(boost::bind(&sdcCar::OnUpdate, this)));
 }
 
-/////////////////////////////////////////////////
 void sdcCar::Init()
 {
   // Compute the angle ratio between the steering wheel and the tires
   this->steeringRatio = STEERING_RANGE / this->tireAngleRange;
 }
 
-/////////////////////////////////////////////////
 void sdcCar::OnUpdate()
 {
     // Get the current velocity of the car
@@ -137,24 +133,22 @@ void sdcCar::OnUpdate()
     // Compute the angle of the front wheels.
     double wheelAngle = this->steeringAmount / this->steeringRatio;
 
-    // double idleSpeed = 0.5;
-
     // Compute the rotational velocity of the wheels
     double jointVel = (std::max(0.0, this->gas-this->brake) * this->maxSpeed) /
                     this->wheelRadius;
 
     // Set velocity and max force for each wheel
     this->joints[0]->SetVelocityLimit(1, -jointVel);
-    this->joints[0]->SetForce(1, -(this->gas + this->brake) * this->frontPower);
+    this->joints[0]->SetForce(1, -(this->gas * this->accelRate + this->brake * this->brakeRate) * this->frontPower);
 
     this->joints[1]->SetVelocityLimit(1, -jointVel);
-    this->joints[1]->SetForce(1, -(this->gas + this->brake) * this->frontPower);
+    this->joints[1]->SetForce(1, -(this->gas * this->accelRate + this->brake * this->brakeRate) * this->frontPower);
 
     this->joints[2]->SetVelocityLimit(1, -jointVel);
-    this->joints[2]->SetForce(1, -(this->gas + this->brake) * this->rearPower);
+    this->joints[2]->SetForce(1, -(this->gas * this->accelRate + this->brake * this->brakeRate) * this->rearPower);
 
     this->joints[3]->SetVelocityLimit(1, -jointVel);
-    this->joints[3]->SetForce(1, -(this->gas + this->brake) * this->rearPower);
+    this->joints[3]->SetForce(1, -(this->gas * this->accelRate + this->brake * this->brakeRate) * this->rearPower);
 
     // Set the front-left wheel angle
     this->joints[0]->SetLowStop(0, wheelAngle);
@@ -201,33 +195,10 @@ void sdcCar::OnUpdate()
     }
 }
 
-/////////////////////////////////////////////////
-void sdcCar::OnVelMsg(ConstPosePtr &_msg)
-{
-    std::cout << "Hello?\t" << _msg << std::endl;
-}
-
 /*
- * Both Accel and Brake call ApplyMovementForce
- * Caps max velocity and accelerates the vehicle.
+ * Returns true if the current velocity angle matches the direction the car
+ * is facing
  */
-void sdcCar::ApplyMovementForce(double amt){
-    if(amt > 0){
-        if(this->GetSpeed() > this->maxCarSpeed){
-            amt = 0;
-        }
-        this->gas = std::min(5.0, amt);
-        this->brake = 0.0;
-    } else {
-        this->gas = 0.0;
-        if(this->IsMovingForwards()){
-            this->brake = std::max(this->maxCarReverseSpeed, amt);
-        } else {
-            this->brake = 0.0;
-        }
-    }
-}
-
 bool sdcCar::IsMovingForwards(){
     Angle velAngle = GetDirection();
     Angle carAngle = Angle(this->yaw);
@@ -235,21 +206,37 @@ bool sdcCar::IsMovingForwards(){
 }
 
 /*
- * Default: 0.5
+ * Speeds up the car by the given amount (in m/s) at the given rate
+ *
+ * Default amt: 1.0
+ * Default rate: 1.0
  */
-void sdcCar::Accel(double amt){
-//    amt = 3;
-    this->ApplyMovementForce(amt);
+void sdcCar::Accelerate(double amt, double rate){
+    this->SetTargetSpeed(this->GetSpeed() + amt);
+    this->SetAccelRate(rate);
 }
 
 /*
- * Default: 1.0
+ * Slows down the car by the given amount (in m/s) at the given rate
+ *
+ * Default amt: 1.0
+ * Default rate: 1.0
  */
-void sdcCar::Brake(double amt){
-//    amt = 7;
-    this->ApplyMovementForce(-amt);
+void sdcCar::Brake(double amt, double rate){
+    this->SetTargetSpeed(this->GetSpeed() - amt);
+    this->SetBrakeRate(rate);
 }
 
+/*
+ * Sets the target speed to 0 m/s
+ */
+void sdcCar::Stop(){
+    this->SetTargetSpeed(0);
+}
+
+/*
+ * Attempts to match the current target speed
+ */
 void sdcCar::MatchTargetSpeed(){
   if(this->GetSpeed() < this->targetSpeed){
     this->gas = 1.0;
@@ -265,6 +252,26 @@ void sdcCar::MatchTargetSpeed(){
 }
 
 /*
+ * Sets the rate of acceleration for the car. The rate is a scalar for the
+ * force applies to accelerate the car
+ *
+ * Default rate: 1.0, can't be negative
+ */
+void sdcCar::SetAccelRate(double rate){
+    this->accelRate = fmax(rate, 0.0);
+}
+
+/*
+ * Sets the rate of braking for the car. The rate is a scalar for the
+ * force applied to brake the car
+ *
+ * Default rate: 1.0, can't be negative
+ */
+void sdcCar::SetBrakeRate(double rate){
+    this->brakeRate = fmax(rate, 0.0);
+}
+
+/*
  * Handles turning based on the value of targetDirection. Calculates both which direction
  * to turn and by how much, as well as turning the actual wheel
  */
@@ -272,7 +279,6 @@ void sdcCar::Steer(){
     Angle directionAngleChange = this->GetDirection() - this->targetDirection;
     // If the car needs to turn, set the target steering amount
     if (!directionAngleChange.withinMargin(DIRECTION_MARGIN_OF_ERROR)) {
-        // Angle proposedSteeringAngle = Angle(7*pow(sin(std::abs(directionAngleChange.angle)/2)-1,3)+7);
         double proposedSteeringAmount = fmax(fmin(-7*tan(directionAngleChange.angle/-2), 7), -7)*8;
         this->SetTargetSteeringAmount(proposedSteeringAmount);
     }
@@ -291,27 +297,26 @@ void sdcCar::Steer(){
 }
 
 // PRELIMINARY THOUGHTS ON A SMARTER TURNING ALGORITHM
+void sdcCar::SteerToPosition(double steeringRadius, Angle targetDirection){
+    Angle directionAngleChange = this->GetDirection() - this->targetDirection;
+    if(!directionAngleChange.withinMargin(DIRECTION_MARGIN_OF_ERROR)){
+      // 1.67 is the distance between wheels in the sdf
+      double proposedSteeringAmount = asin(1.67/steeringRadius);
+      this->SetTargetSteeringAmount(proposedSteeringAmount);
+    }
 
-// void sdcCar::SteerToPosition(double steeringRadius, Angle targetDirection){
-//     Angle directionAngleChange = this->GetDirection() - this->targetDirection;
-//     if(!directionAngleChange.withinMargin(DIRECTION_MARGIN_OF_ERROR)){
-//       // 1.67 is the distance between wheels in the sdf
-//       double proposedSteeringAmount = asin(1.67/steeringRadius);
-//       this->SetTargetSteeringAmount(proposedSteeringAmount);
-//     }
-//
-//     // Check if the car needs to steer, and apply a small turn in the corresponding direction
-//     if (!(std::abs(this->targetSteeringAmount - this->steeringAmount) < STEERING_MARGIN_OF_ERROR)) {
-//         this->turning = true;
-//         if (this->steeringAmount < this->targetSteeringAmount) {
-//             this->steeringAmount = this->steeringAmount + STEERING_ADJUSTMENT_RATE;
-//         }else{
-//             this->steeringAmount = this->steeringAmount - STEERING_ADJUSTMENT_RATE;
-//         }
-//     } else {
-//         this->turning = false;
-//     }
-// }
+    // Check if the car needs to steer, and apply a small turn in the corresponding direction
+    if (!(std::abs(this->targetSteeringAmount - this->steeringAmount) < STEERING_MARGIN_OF_ERROR)) {
+        this->turning = true;
+        if (this->steeringAmount < this->targetSteeringAmount) {
+            this->steeringAmount = this->steeringAmount + STEERING_ADJUSTMENT_RATE;
+        }else{
+            this->steeringAmount = this->steeringAmount - STEERING_ADJUSTMENT_RATE;
+        }
+    } else {
+        this->turning = false;
+    }
+}
 
 /*
  * Sets a target direction for the car
@@ -327,9 +332,16 @@ void sdcCar::SetTargetSteeringAmount(double a){
     this->targetSteeringAmount = a;
 }
 
+/*
+ * Sets the target speed for the car, as well as resetting the brake
+ * and accel rates to default. Methods wishing to change those parameters
+ * should make sure to do so AFTER a call to this method
+ */
 void sdcCar::SetTargetSpeed(double s){
   // Caps the target speed, currently can't reverse
   this->targetSpeed = fmax(fmin(s, this->maxCarSpeed), 0);
+  this->SetAccelRate();
+  this->SetBrakeRate();
 }
 
 /*
@@ -346,11 +358,13 @@ Angle sdcCar::GetDirection(){
     math::Vector3 velocity = this->velocity;
     return Angle(atan2(velocity.y, velocity.x));
 }
-    //Updates Top LIDAR data
+
+//Updates Top LIDAR data
 void sdcCar::topLidarUpdate(){
     this->tl = sdcSensorData::GetTopLidarRays();
     sdcCar::topForwardLidarUpdate(this->tl);
 }
+
 void sdcCar::topForwardLidarUpdate(std::vector<double> rays){
     this->tlForwardViews.clear();
     this->tlForwardRayLengths = 0;
@@ -456,9 +470,30 @@ void sdcCar::frontLidarUpdate(){
  */
 void sdcCar::Drive()
 {
-//    this->TurnRightIfObjectAhead();
-    //this->DriveStraightThenStop();
-    //this->DriveToCoordinates(0.0005, 0.0005);
+    // Possible states: stop, waypoint, intersection, follow, avoidance
+    switch(this->currentState)
+    {
+        case stop:
+        this->Stop();
+        break;
+
+        case waypoint:
+        break;
+
+        case intersection:
+        break;
+
+        case follow:
+        break;
+
+        case avoidance:
+        break;
+    }
+
+    // Attempts to turn towards the target direction
+    this->Steer();
+    // Attempts to match the target speed
+    this->MatchTargetSpeed();
 
     // Combines WalledDriving with WaypointDriving;
     // if (!(sdcSensorData::IsAllInf())) {
@@ -468,30 +503,18 @@ void sdcCar::Drive()
     //     this->WaypointDriving(waypoints);
     // }
 
-    if (sdcSensorData::stopSignInLeftCamera && sdcSensorData::stopSignInRightCamera) {
-      this->SetTargetSpeed(0);
-    } else {
-      this->SetTargetSpeed(4);
-    }
+    //if (sdcSensorData::stopSignInLeftCamera && sdcSensorData::stopSignInRightCamera) {
+    //  this->SetTargetSpeed(0);
+    //} else {
+    //  this->SetTargetSpeed(4);
+    //}
 
     // this->GetObjectsInFront();
     // this->DriveStraightThenStop();
     //this->WalledDriving();
     //this->DetectIntersection();
-    //  this->Follow();
-    // Handles all turning
-    this->Steer();
-    //if(this->atIntersection != 3){
-       this->MatchTargetSpeed();
-    //}
-
-    //if(!std::isinf(sdcSensorData::GetCurrentCoord().x)) {
-    //  double temp = (this->avg*this->count)/(this->count+1);
-    //  double data = this->chassis->GetWorldPose().pos.x / sdcSensorData::GetCurrentCoord().x;
-    //  this->avg = temp + data/(this->count+1);
-    //  this->count += 1;
-
-    //}
+    // this->Follow();
+    // this->PerpendicularPark();
 }
 
 enum WaypointType {
@@ -528,7 +551,7 @@ void sdcCar::WaypointDriving(std::vector<math::Vector2d> waypoints){
 
         //std::cout << targetAngle << std::endl;
 
-        this->Accel();
+        this->Accelerate();
 
         double distance = sdcSensorData::GetCurrentCoord().Distance(nextTarget);
         //std::cout << distance << std::endl;
@@ -558,23 +581,6 @@ void sdcCar::WalledDriving(){
     }
 }
 
-// Drive in a straight line until it passes LON: 0.000200
-void sdcCar::DriveStraightThenStop(){
-     if (this->x > 200) {
-         this->Brake();
-     } else {
-         this->Accel();
-     }
-}
-
-void sdcCar::DriveStraightThenTurn(){
-    Angle direction = this->GetDirection();
-    this->Accel();
-    if (this->x > 100) {
-        this->SetTargetDirection(Angle(-PI/2));
-    }
-}
-
 //Uses the front LIDAR sensor to detect an intersection.
 //Based off of how many fields of view we have an what we can see we try to turn.
 //When we are almost at an intersection slow down.
@@ -599,7 +605,7 @@ void sdcCar::Follow() {
   double distance = fl[320];
   if(std::isinf(distance)){
       lastPosition = 20.0;
-      estimatedSpeed = fmin(6, estimatedSpeed+.01);
+      estimatedSpeed = fmin(6, estimatedSpeed + .01);
   } else {
       double deltaDistance = distance - lastPosition;
       lastPosition = distance;
@@ -704,4 +710,20 @@ void sdcCar::TurnAround(){
         turningVector = {PI/2,-PI/2,-PI/2,-PI/2};
     SetTargetDirection(this->GetDirection() + turningVector.back());
     turningVector.pop_back();
+}
+
+
+// Perpendicular parking algorithm
+void sdcCar::PerpendicularPark(){
+    this->SetTargetDirection(this->GetDirection() - PI/2);
+    if(this->flNumRays == 0) return;
+    double left_min = fl[640];
+    double mid_min = fl[320];
+    double right_min = fl[0];
+    if((left_min < 1.0) || (right_min < 1.0)){
+        //stops for now, will reverse when reverse is implemented
+        this->SetTargetSpeed(0);
+    } else {
+        this->SetTargetSpeed(1);
+    }
 }

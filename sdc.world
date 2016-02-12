@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 <sdf version="1.4">
     <world name="default">
-
         <!-- Ground Plane -->
         <include>
             <uri>model://ground_plane</uri>
@@ -10,6 +9,10 @@
         <include>
             <uri>model://sun</uri>
         </include>
+
+        <!-- <include>
+            <uri>model://Final_Paris_Segment</uri>
+        </include> -->
 
         <include>
             <uri>/models/sdcCar</uri>
@@ -22,7 +25,7 @@
         </gui>
 
         <model name="box">
-            <pose>10 0 0.5 0 0 0</pose>
+            <pose>25 0 0.5 0 0 0</pose>
             <link name="link">
                 <collision name="collision">
                     <geometry>
@@ -41,7 +44,7 @@
                 </visual>
             </link>
 
-            <plugin name="model_push" filename="build/libsdcBox.so"/>
+            <!-- <plugin name="model_push" filename="build/libsdcBox.so"/> -->
         </model>
 
         <model name="box2">

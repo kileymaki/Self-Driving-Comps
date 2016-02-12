@@ -76,6 +76,8 @@ namespace gazebo
          double aeroLoad;
          double swayForce;
 
+
+
         /*
          * Begin Non-Gazebo Related Definitions
          */
@@ -84,6 +86,10 @@ namespace gazebo
          // the car will change depending on which state it's in, with various
          // sensor readings affecting the decision to transition states
          enum CarState { stop, waypoint, intersection, follow, avoidance };
+
+         // The different states the car can be in while performing a front
+         // perpendicular park
+         enum ParkingState { stopPark, turnPark, straightPark, backPark, donePark };
 
          void frontLidarUpdate();
          void Drive();
@@ -104,13 +110,13 @@ namespace gazebo
          void Accelerate(double amt = 1, double rate = 1.0);
          void Brake(double amt = 1, double rate = 1.0);
          void Stop();
+         void Reverse();
 
          bool IsMovingForwards();
          double GetSpeed();
          Angle GetDirection();
          void DetectIntersection();
          Angle AngleToTarget(math::Vector2d target);
-
 
 
          void DriveStraightThenStop();
@@ -120,7 +126,6 @@ namespace gazebo
          void DriveStraightThenTurn();
          void WaypointDriving(std::vector<math::Vector2d> waypoints);
          void Follow();
-         void GetObjectsInFront();
          void PerpendicularPark();
 
 
@@ -135,6 +140,8 @@ namespace gazebo
 
          CarState currentState;
 
+         ParkingState currentParkingState;
+
          int waypointProgress;
 
          int atIntersection;
@@ -142,6 +149,7 @@ namespace gazebo
          double maxCarReverseSpeed;
 
          bool turning;
+         bool reversing;
          Angle targetDirection;
          double targetSteeringAmount;
          double steeringAmount;
@@ -151,8 +159,6 @@ namespace gazebo
          double estimatedSpeed;
          double lastPosition;
          double currentPosition;
-
-         std::vector<std::pair<int,double>> objectsInFront;
 
          double x;
          double y;

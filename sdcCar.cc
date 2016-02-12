@@ -62,15 +62,18 @@ sdcCar::sdcCar()
     this->accelRate = 1.0;
     this->brakeRate = 1.0;
 
-    this->maxCarSpeed = 30;
+    this->maxCarSpeed = 6;
     this->maxCarReverseSpeed = -10;
 
-    this->currentState = stop;
+    this->currentState = waypoint;
+
+    this->currentParkingState = stopPark;
 
     this->steeringAmount = 0.0;
     this->targetSteeringAmount = 0.0;
     this->targetDirection = Angle(0.0);
     this->turning = false;
+    this->reversing = true;
 
     this->targetSpeed = 5;
 
@@ -83,9 +86,6 @@ sdcCar::sdcCar()
     this->estimatedSpeed = 0.0;
     this->lastPosition = 0.0;
     this->currentPosition = 0.0;
-
-    // List of objects that are in view of front lidar
-    std::vector<std::pair<int,double>> objectsInFront;
 }
 
 void sdcCar::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
@@ -134,7 +134,7 @@ void sdcCar::OnUpdate()
     double wheelAngle = this->steeringAmount / this->steeringRatio;
 
     // Compute the rotational velocity of the wheels
-    double jointVel = (std::max(0.0, this->gas-this->brake) * this->maxSpeed) /
+    double jointVel = (this->gas-this->brake * this->maxSpeed) /
                     this->wheelRadius;
 
     // Set velocity and max force for each wheel
@@ -217,6 +217,13 @@ void sdcCar::Accelerate(double amt, double rate){
 }
 
 /*
+ * Move the car in reverse.
+ */
+void sdcCar::Reverse(){
+    this->reversing = true;
+}
+
+/*
  * Slows down the car by the given amount (in m/s) at the given rate
  *
  * Default amt: 1.0
@@ -238,17 +245,37 @@ void sdcCar::Stop(){
  * Attempts to match the current target speed
  */
 void sdcCar::MatchTargetSpeed(){
-  if(this->GetSpeed() < this->targetSpeed){
-    this->gas = 1.0;
-    this->brake = 0.0;
-  }else if(this->GetSpeed() > this->targetSpeed){
-    this->gas = 0.0;
-    if(this->IsMovingForwards()){
-        this->brake = -2.0;
+    // For reversing
+    if(this->reversing == true){
+        std::cout << "Reversing" << std::endl;
+        if(this->GetSpeed() < this->targetSpeed){
+            std::cout << "Gas is -1" << std::endl;
+          this->gas = -1.0;
+          this->brake = 0.0;
+        } else if(this->GetSpeed() > this->targetSpeed){
+          this->gas = 0.0;
+          if(!(this->IsMovingForwards())){
+              std::cout << "Brake is 2" << std::endl;
+              this->brake = 2.0;
+          } else {
+              std::cout << "Everything is 0" << std::endl;
+              this->brake = 0.0;
+          }
+        }
     } else {
+      //For driving forwards
+      if(this->GetSpeed() < this->targetSpeed){
+        this->gas = 1.0;
         this->brake = 0.0;
+      } else if(this->GetSpeed() > this->targetSpeed){
+        this->gas = 0.0;
+        if(this->IsMovingForwards()){
+            this->brake = -2.0;
+        } else {
+            this->brake = 0.0;
+        }
+      }
     }
-  }
 }
 
 /*
@@ -296,7 +323,9 @@ void sdcCar::Steer(){
     }
 }
 
-// PRELIMINARY THOUGHTS ON A SMARTER TURNING ALGORITHM
+/*
+ * PRELIMINARY THOUGHTS ON A SMARTER TURNING ALGORITHM
+ */
 void sdcCar::SteerToPosition(double steeringRadius, Angle targetDirection){
     Angle directionAngleChange = this->GetDirection() - this->targetDirection;
     if(!directionAngleChange.withinMargin(DIRECTION_MARGIN_OF_ERROR)){
@@ -359,7 +388,9 @@ Angle sdcCar::GetDirection(){
     return Angle(atan2(velocity.y, velocity.x));
 }
 
-//Updates Top LIDAR data
+/*
+ * Updates Top LIDAR data
+ */
 void sdcCar::topLidarUpdate(){
     this->tl = sdcSensorData::GetTopLidarRays();
     sdcCar::topForwardLidarUpdate(this->tl);
@@ -470,24 +501,51 @@ void sdcCar::frontLidarUpdate(){
  */
 void sdcCar::Drive()
 {
+    // Do collision detection
+
     // Possible states: stop, waypoint, intersection, follow, avoidance
     switch(this->currentState)
     {
+        // Final state, car is finished driving
         case stop:
         this->Stop();
         break;
 
+        // Default state; drive straight to target location
         case waypoint:
+        // Handle lane driving
+        this->Accelerate();
         break;
 
+        // At a stop sign, performing a turn
         case intersection:
         break;
 
+        // Follows object that is going in same direction/towards same target
         case follow:
+        this->Follow();
+        // Handle lane driving
         break;
 
+        // Smarter way to avoid objects; stopping, swerving, etc.
         case avoidance:
+        // Cases: stop, swerve, go around
+        this->Stop();
         break;
+    }
+
+    // Sets state to default (waypoint)
+    this->currentState = waypoint;
+
+    // Gets the objects in front as <ray, distance> pairs
+    // Changes state to avoidance if object is in front
+    std::vector<std::pair<int,double>> objectsInFront = sdcSensorData::GetObjectsInFront();
+    for(int i = 0; i < objectsInFront.size(); i++){
+        if(std::get<0>(objectsInFront[i]) > 310 && std::get<0>(objectsInFront[i]) < 330){
+            if(std::get<1>(objectsInFront[i]) < 10){
+                this->currentState = avoidance;
+            }
+        }
     }
 
     // Attempts to turn towards the target direction
@@ -495,26 +553,15 @@ void sdcCar::Drive()
     // Attempts to match the target speed
     this->MatchTargetSpeed();
 
-    // Combines WalledDriving with WaypointDriving;
-    // if (!(sdcSensorData::IsAllInf())) {
-    //     this->WalledDriving();
-    // } else {
-    //     std::vector<math::Vector2d> waypoints = {math::Vector2d(0.0005,0.000), math::Vector2d(-0.0005,0.000), math::Vector2d(-0.001,-0.001)};
-    //     this->WaypointDriving(waypoints);
-    // }
-
     //if (sdcSensorData::stopSignInLeftCamera && sdcSensorData::stopSignInRightCamera) {
     //  this->SetTargetSpeed(0);
     //} else {
     //  this->SetTargetSpeed(4);
     //}
 
-    // this->GetObjectsInFront();
-    // this->DriveStraightThenStop();
+    //this->DriveStraightThenStop();
     //this->WalledDriving();
     //this->DetectIntersection();
-    // this->Follow();
-    // this->PerpendicularPark();
 }
 
 enum WaypointType {
@@ -565,15 +612,19 @@ void sdcCar::WaypointDriving(std::vector<math::Vector2d> waypoints){
     this->waypointProgress = progress;
 }
 
-// Returns the angle from the car's current position to a target position
+/*
+ * Returns the angle from the car's current position to a target position
+ */
 Angle sdcCar::AngleToTarget(math::Vector2d target) {
     math::Vector2d position = sdcSensorData::GetCurrentCoord();
     math::Vector2d targetVector = math::Vector2d(target.x - position.x, target.y - position.y);
     return Angle(atan2(targetVector.y, targetVector.x));
 }
 
-// Drive with walled roads
-//LIDAR 0-319 is right, 320-619 is left.
+/*
+ * Drive with walled roads
+ * LIDAR 0-319 is right, 320-619 is left.
+ */
 void sdcCar::WalledDriving(){
     //When driving down our current grid and the car stabilizes, centerRight and centerLeft are between 260-262 and drops down to 209 on intersections.
     if(this->atIntersection==0){
@@ -581,9 +632,11 @@ void sdcCar::WalledDriving(){
     }
 }
 
-//Uses the front LIDAR sensor to detect an intersection.
-//Based off of how many fields of view we have an what we can see we try to turn.
-//When we are almost at an intersection slow down.
+/*
+ * Uses the front LIDAR sensor to detect an intersection.
+ * Based off of how many fields of view we have an what we can see we try to turn.
+ * When we are almost at an intersection slow down.
+ */
 void sdcCar::DetectIntersection(){
   if(this->atIntersection == 0 && this->flViews.size() == 4 && this->flSideRight == 0 && this->flSideLeft == 0){
     this->SetTargetSpeed(2);
@@ -598,8 +651,9 @@ void sdcCar::DetectIntersection(){
   }
 }
 
-// Car follows an object directly in front of it and slows down to stop when it starts to get close
-// Also turns to follow object
+/*
+ * Car follows an object directly in front of it and slows down to stop when it starts to get close
+ */
 void sdcCar::Follow() {
   if(this->flNumRays == 0) return;
   double distance = fl[320];
@@ -615,44 +669,6 @@ void sdcCar::Follow() {
   }
   this->SetTargetSpeed(estimatedSpeed);
   this->SetTargetDirection(this->GetDirection() - Angle(this->flWeight*PI/320));
-
-  // reference of how to get iterations
-  //std::cout << this->model->GetWorld()->GetIterations() << std::endl;
-}
-
-// Gets a vector of the objects in view of the front lidar sensor
-// Creates vector of pairs (ray #, ray length)
-void sdcCar::GetObjectsInFront(){
-    objectsInFront.clear();
-    for (int i = 0; i < this->flNumRays; i++) {
-      if (!std::isinf(this->fl[i])) {
-        objectsInFront.push_back(std::make_pair(i, fl[i]));
-      }
-    }
-    // Print rays and ray lengths
-    // std::cout << "Objects in front: " << std::endl;
-    // for(int i = 0; i < objectsInFront.size(); i++){
-    //     std::cout << "Pair: " << std::get<0>(objectsInFront[i]) << ", " << std::get<1>(objectsInFront[i]) << std::endl;
-    // }
-
-
-    // std::vector<std::pair<int,int>> objectsInView;
-    // int lastIndex = -1;
-    // for(int i = 0; i < this->flNumRays; i++) {
-    //   if(!std::isinf(this->fl[i])){
-    //     if (lastIndex < 0) {
-    //       lastIndex = i;
-    //     }
-    //   } else {
-    //     if (lastIndex > 0) {
-    //       objectsInView.push_back(std::make_pair(lastIndex, i-1));
-    //       lastIndex = -1;
-    //     }
-    //   }
-    //   if(lastIndex > 0){
-    //     objectsInView.push_back(std::make_pair(lastIndex, this->flNumRays-1));
-    //   }
-    // }
 }
 
 void sdcCar::GridTurning(){
@@ -704,7 +720,9 @@ void sdcCar::GridTurning(){
     // SetTargetDirection(this->GetDirection() + PI/2);
 }
 
-//Goes around the block and returns to the original point but now it is facing the other way
+/*
+ * Goes around the block and returns to the original point but now it is facing the other way
+ */
 void sdcCar::TurnAround(){
     if(turningVector.empty())
         turningVector = {PI/2,-PI/2,-PI/2,-PI/2};
@@ -712,18 +730,43 @@ void sdcCar::TurnAround(){
     turningVector.pop_back();
 }
 
-
-// Perpendicular parking algorithm
+/*
+ * Perpendicular parking algorithm
+ */
 void sdcCar::PerpendicularPark(){
-    this->SetTargetDirection(this->GetDirection() - PI/2);
     if(this->flNumRays == 0) return;
+    // Get rays that detect whether the front left and right bumpers of the car
+    // will collide with other objects
     double left_min = fl[640];
     double mid_min = fl[320];
     double right_min = fl[0];
     if((left_min < 1.0) || (right_min < 1.0)){
-        //stops for now, will reverse when reverse is implemented
-        this->SetTargetSpeed(0);
-    } else {
+        this->currentParkingState = stopPark;
+    }
+    // perform the parking manuevers based on current parking states
+    switch(this->currentParkingState)
+    {
+        case donePark:
+        this->Stop();
+        return;
+
+        case turnPark:
+        this->SetTargetDirection(this->GetDirection() - PI/2);
+        this->SetTargetSpeed(2);
+        break;
+
+        case straightPark:
+        this->SetTargetDirection(this->GetDirection());
         this->SetTargetSpeed(1);
+        break;
+
+        case stopPark:
+        this->Stop();
+        this->currentParkingState = backPark;
+        break;
+
+        case backPark:
+        // Reverse once it is implemented
+        break;
     }
 }

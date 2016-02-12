@@ -169,13 +169,13 @@ void sdcCameraSensor::OnUpdate() {
       float theta= (*it_right)[1]; // second element is angle theta
       // point of intersection of the line with first row
       //if ( (theta > 0.09 && theta < 1.48) || (theta < 3.14 && theta > 1.66) ){
-      if ( (theta > 0.8 && theta < 1.2) || (theta > 2.2 && theta < 2.4) ) {
+      //if ( (theta > 0.8 && theta < 1.2) || (theta > 2.2 && theta < 2.4) ) {
           Point pt1(rho/cos(theta),0);
           // point of intersection of the line with last row
           Point pt2((rho-image_right.rows*sin(theta))/cos(theta),image_right.rows);
           // draw line
           line(image_right, pt1, pt2, Scalar(255), 3);
-    }
+    //}
       ++it_right;
   }
 
@@ -248,7 +248,7 @@ void sdcCameraSensor::OnUpdate() {
   //namedWindow("Lane Detection Left", CV_WINDOW_AUTOSIZE);
   namedWindow("Lane Detection Right", CV_WINDOW_AUTOSIZE);
   //imshow("Lane Detection Left", image_left);
-  imshow("Lane Detection Right", image_right);
+  imshow("Lane Detection Right", contours_right);
 
   waitKey(4);
 }

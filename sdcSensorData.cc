@@ -165,6 +165,11 @@ std::vector<std::pair<int,double>> sdcSensorData::GetObjectsInFront(){
     }
   }
   return objectsInFront;
+  // Print rays and ray lengths
+  // std::cout << "Objects in front: " << std::endl;
+  // for(int i = 0; i < objectsInFront.size(); i++){
+  //     std::cout << "Pair: " << std::get<0>(objectsInFront[i]) << ", " << std::get<1>(objectsInFront[i]) << std::endl;
+  // }
 }
 
 // New gps system using 2d vector

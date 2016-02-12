@@ -9,10 +9,10 @@
 #include <numeric>
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
-#include "opencv2/cudaobjdetect.hpp"
+// #include "opencv2/cudaobjdetect.hpp"
 #include <opencv2/opencv.hpp>
-#include <opencv2/cudaimgproc.hpp>
-#include <opencv2/core/cuda.hpp>
+// #include <opencv2/cudaimgproc.hpp>
+// #include <opencv2/core/cuda.hpp>
 
 #include "sdcCameraSensor.hh"
 
@@ -149,9 +149,9 @@ void sdcCameraSensor::OnUpdate() {
   }
 */
 
-  namedWindow("Lane Detection", CV_WINDOW_AUTOSIZE);
+  namedWindow("Lane Detection", WINDOW_AUTOSIZE);
   imshow("Lane Detection", contours);
-  namedWindow("Camera View", CV_WINDOW_AUTOSIZE);
+  namedWindow("Camera View", WINDOW_AUTOSIZE);
   imshow("Camera View", image);
   waitKey(4);
 }

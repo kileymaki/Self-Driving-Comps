@@ -29,6 +29,13 @@
         <uri>/models/sdcCar</uri>
         <pose>106.39 98.86 0 0 0 0</pose>
     </include>
+    <scene>
+      <sky>
+        <clouds>
+          <speed>12</speed>
+        </clouds>
+      </sky>
+    </scene>
 
 
 <%   # Asphalt Planes
@@ -53,7 +60,7 @@
       <collision name="collision">
         <geometry>
           <mesh>
-              <uri>/Users/selfcar/Desktop/Self-Driving-Comps/models/asphalt_plane/blockbevel.dae</uri>
+              <uri>models/asphalt_plane/blockbevel.dae</uri>
               <scale> .565 .565 1 </scale>
           </mesh>
         </geometry>
@@ -62,7 +69,7 @@
         <cast_shadows>false</cast_shadows>
         <geometry>
           <mesh>
-              <uri>/Users/selfcar/Desktop/Self-Driving-Comps/models/asphalt_plane/blockbevel.dae</uri>
+              <uri>models/asphalt_plane/blockbevel.dae</uri>
               <scale> .565 .565 1 </scale>
           </mesh>
         </geometry>
@@ -117,8 +124,8 @@
           </geometry>
         <material>
             <script>
-                <uri>model://comps_road/materials/scripts</uri>
-                <uri>model://comps_road/materials/textures</uri>
+                <uri>models/comps_road/materials/scripts</uri>
+                <uri>models/comps_road/materials/textures</uri>
                 <name>comps_road</name>
             </script>
         </material>
@@ -147,8 +154,8 @@
           </geometry>
         <material>
             <script>
-                <uri>model://comps_road/materials/scripts</uri>
-                <uri>model://comps_road/materials/textures</uri>
+                <uri>models/comps_road/materials/scripts</uri>
+                <uri>models/comps_road/materials/textures</uri>
                 <name>comps_road</name>
             </script>
         </material>
@@ -187,8 +194,8 @@
           </geometry>
         <material>
             <script>
-                <uri>model://intersection/materials/scripts</uri>
-                <uri>model://intersection/materials/textures</uri>
+                <uri>models/intersection/materials/scripts</uri>
+                <uri>models/intersection/materials/textures</uri>
                 <name>intersection</name>
             </script>
         </material>

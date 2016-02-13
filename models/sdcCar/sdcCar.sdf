@@ -478,14 +478,14 @@
                     </scan>
                     <range>
                         <min>0.08</min>
-                        <max>0.8</max>
+                        <max>1.0</max>
                         <resolution>0.01</resolution>
                     </range>
                 </ray>
                 <plugin name="sdcSideRightSensor" filename="build/libsdcSideRightSensor.so" />
                 <always_on>1</always_on>
                 <update_rate>30</update_rate>
-                <visualize>false</visualize>
+                <visualize>true</visualize>
             </sensor>
             <sensor name="side_right_back_laser" type="ray">
                 <pose>-0.6 -0.02 0.0 0 0.0 -1.5708</pose>
@@ -500,14 +500,14 @@
                     </scan>
                     <range>
                         <min>0.08</min>
-                        <max>0.8</max>
+                        <max>1.0</max>
                         <resolution>0.01</resolution>
                     </range>
                 </ray>
                 <plugin name="sdcSideRightSensor" filename="build/libsdcSideRightSensor.so" />
                 <always_on>1</always_on>
                 <update_rate>30</update_rate>
-                <visualize>false</visualize>
+                <visualize>true</visualize>
             </sensor>
         </link>
 
@@ -562,14 +562,14 @@
                     </scan>
                     <range>
                         <min>0.08</min>
-                        <max>0.8</max>
+                        <max>1.0</max>
                         <resolution>0.01</resolution>
                     </range>
                 </ray>
                 <plugin name="sdcSideLeftSensor" filename="build/libsdcSideLeftSensor.so" />
                 <always_on>1</always_on>
                 <update_rate>30</update_rate>
-                <visualize>false</visualize>
+                <visualize>true</visualize>
             </sensor>
             <sensor name="side_left_back_laser" type="ray">
                 <pose>-0.6 0.02 0.0 0 0.0 1.5708</pose>
@@ -584,14 +584,14 @@
                     </scan>
                     <range>
                         <min>0.08</min>
-                        <max>0.8</max>
+                        <max>1.0</max>
                         <resolution>0.01</resolution>
                     </range>
                 </ray>
                 <plugin name="sdcSideLeftSensor" filename="build/libsdcSideLeftSensor.so" />
                 <always_on>1</always_on>
                 <update_rate>30</update_rate>
-                <visualize>false</visualize>
+                <visualize>true</visualize>
             </sensor>
         </link>
 

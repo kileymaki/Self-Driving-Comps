@@ -1,13 +1,13 @@
 //
-//  sdcLaserSensor.hh
+//  sdcTopLaserSensor.hh
 //
 //
 //  Created by selfcar on 10/25/15.
 //
 //
 
-#ifndef _sdcLaserSensor_hh
-#define _sdcLaserSensor_hh
+#ifndef _sdcTopLaserSensor_hh
+#define _sdcTopLaserSensor_hh
 
 #include <boost/bind.hpp>
 #include <gazebo/gazebo.hh>
@@ -25,7 +25,7 @@ namespace gazebo
     {
     public: virtual void Load(sensors::SensorPtr _sensor, sdf::ElementPtr /*_sdf*/);
     public: void OnUpdate();
-        
+
     private: sensors::RaySensorPtr parentSensor;
     private: event::ConnectionPtr updateConnection;
     };

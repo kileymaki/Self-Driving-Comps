@@ -67,13 +67,13 @@ sdcCar::sdcCar()
 
     this->currentState = waypoint;
 
-    this->currentParkingState = stopPark;
+    this->currentParkingState = backPark;
 
     this->steeringAmount = 0.0;
     this->targetSteeringAmount = 0.0;
     this->targetDirection = Angle(0.0);
     this->turning = false;
-    this->reversing = true;
+    this->reversing = false;
 
     this->targetSpeed = 5;
 
@@ -217,10 +217,19 @@ void sdcCar::Accelerate(double amt, double rate){
 }
 
 /*
- * Move the car in reverse.
+ * Move the car in reverse. Target speed will now be matched with the car going
+ * backwards and target direction should be the direction of velocity desired, NOT
+ * the direction the front of the car is facing
  */
 void sdcCar::Reverse(){
     this->reversing = true;
+}
+
+/*
+ * Stop reversing the car.
+ */
+void sdcCar::StopReverse(){
+    this->reversing = false;
 }
 
 /*
@@ -247,18 +256,14 @@ void sdcCar::Stop(){
 void sdcCar::MatchTargetSpeed(){
     // For reversing
     if(this->reversing == true){
-        std::cout << "Reversing" << std::endl;
         if(this->GetSpeed() < this->targetSpeed){
-            std::cout << "Gas is -1" << std::endl;
           this->gas = -1.0;
           this->brake = 0.0;
         } else if(this->GetSpeed() > this->targetSpeed){
           this->gas = 0.0;
           if(!(this->IsMovingForwards())){
-              std::cout << "Brake is 2" << std::endl;
               this->brake = 2.0;
           } else {
-              std::cout << "Everything is 0" << std::endl;
               this->brake = 0.0;
           }
         }
@@ -306,8 +311,13 @@ void sdcCar::Steer(){
     Angle directionAngleChange = this->GetDirection() - this->targetDirection;
     // If the car needs to turn, set the target steering amount
     if (!directionAngleChange.withinMargin(DIRECTION_MARGIN_OF_ERROR)) {
-        double proposedSteeringAmount = fmax(fmin(-7*tan(directionAngleChange.angle/-2), 7), -7)*8;
-        this->SetTargetSteeringAmount(proposedSteeringAmount);
+        double proposedSteeringAmount = fmax(fmin(-15*tan(directionAngleChange.angle/-2), 15), -15);
+        // When reversing, steering directions are inverted
+        if(!this->reversing){
+            this->SetTargetSteeringAmount(proposedSteeringAmount);
+        }else{
+            this->SetTargetSteeringAmount(-proposedSteeringAmount);
+        }
     }
 
     // Check if the car needs to steer, and apply a small turn in the corresponding direction
@@ -367,7 +377,6 @@ void sdcCar::SetTargetSteeringAmount(double a){
  * should make sure to do so AFTER a call to this method
  */
 void sdcCar::SetTargetSpeed(double s){
-  // Caps the target speed, currently can't reverse
   this->targetSpeed = fmax(fmin(s, this->maxCarSpeed), 0);
   this->SetAccelRate();
   this->SetBrakeRate();
@@ -532,6 +541,11 @@ void sdcCar::Drive()
         // Cases: stop, swerve, go around
         this->Stop();
         break;
+
+        // Parks the car
+        case parking:
+        this->PerpendicularPark();
+        break;
     }
 
     // Sets state to default (waypoint)
@@ -587,7 +601,7 @@ class Waypoint {
 /*
  * Drive from point to point in the given list
  */
-void sdcCar::WaypointDriving(std::vector<math::Vector2d> waypoints){
+void sdcCar::WaypointDriving(std::vector<math::Vector2d> waypoints) {
     int progress = this->waypointProgress;
     //std::vector<math::Vector2d> waypoints = waypoints;
     //std::cout << progress << " / " << waypoints.size() << " " << (progress < waypoints.size()) << std::endl;
@@ -740,19 +754,19 @@ void sdcCar::PerpendicularPark(){
     double left_min = fl[640];
     double mid_min = fl[320];
     double right_min = fl[0];
-    if((left_min < 1.0) || (right_min < 1.0)){
-        this->currentParkingState = stopPark;
-    }
+    // if((left_min < 1.0) || (right_min < 1.0)){
+    //     this->currentParkingState = stopPark;
+    // }
     // perform the parking manuevers based on current parking states
     switch(this->currentParkingState)
     {
         case donePark:
         this->Stop();
-        return;
+        break;
 
         case turnPark:
         this->SetTargetDirection(this->GetDirection() - PI/2);
-        this->SetTargetSpeed(2);
+        this->SetTargetSpeed(1);
         break;
 
         case straightPark:
@@ -766,7 +780,12 @@ void sdcCar::PerpendicularPark(){
         break;
 
         case backPark:
-        // Reverse once it is implemented
+        this->Reverse();
+        this->SetTargetDirection(this->GetDirection() + PI/2);
+        this->SetTargetSpeed(1);
+        std::vector<double> sideLidar = sdcSensorData::GetRightFrontRays();
+        if(sideLidar.size() == 0) { std::cout << "side empty" << std::endl; };
+        std::cout << sideLidar[1] << std::endl;
         break;
     }
 }

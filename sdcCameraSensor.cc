@@ -95,6 +95,11 @@ void sdcCameraSensor::OnUpdate() {
       if (PI/2 < theta < PI && theta > right_lane_marker[1]) {
         right_lane_marker = Vec2f(rho,theta);
       }
+
+      Point pt1(rho/cos(theta),0);
+      Point pt2((rho-imageROI.rows*sin(theta))/cos(theta),imageROI.rows);
+      line(imageROI, pt1, pt2, Scalar(0,0,255), 3);
+
       ++it;
   }
 
@@ -103,14 +108,14 @@ void sdcCameraSensor::OnUpdate() {
     imageROI, 
     Point(left_lane_marker[0]/cos(left_lane_marker[1]),0), 
     Point((left_lane_marker[0] - imageROI.rows * sin(left_lane_marker[1])) / cos(left_lane_marker[1]), imageROI.rows), 
-    Scalar(255), 3);
+    Scalar(0,255,0), 3);
 
   //draw right lane marker
   line(
     imageROI, 
     Point(right_lane_marker[0]/cos(right_lane_marker[1]),0), 
     Point((right_lane_marker[0] - imageROI.rows * sin(right_lane_marker[1])) / cos(right_lane_marker[1]), imageROI.rows), 
-    Scalar(255), 3);
+    Scalar(0,255,0), 3);
 
 
   //BEGIN HAAR CASCADE OBJECT DETECTION
@@ -136,8 +141,8 @@ void sdcCameraSensor::OnUpdate() {
   }
 */
 
-  namedWindow("Lane Detection", WINDOW_AUTOSIZE);
-  imshow("Lane Detection", contours);
+  //namedWindow("Lane Detection", WINDOW_AUTOSIZE);
+  //imshow("Lane Detection", contours);
   namedWindow("Camera View", WINDOW_AUTOSIZE);
   imshow("Camera View", image);
   waitKey(4);

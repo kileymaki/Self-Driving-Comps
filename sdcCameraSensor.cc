@@ -73,58 +73,45 @@ void sdcCameraSensor::OnUpdate() {
   // std::cout << *i << ' ' << std::endl;
   // std::cout << "=====================================\n";
 
-  // Draw the lines
 
   std::vector<Vec2f>::const_iterator it = lines.begin();
 
   // white line grid overlay for reference points on displayed image
-  line(image, Point((image.cols/2)-10,0), Point((image.cols/2)+10,0), Scalar(255,255,255), 2);
-  line(image, Point(image.cols/2,10), Point(image.cols/2,-10), Scalar(255,255,255), 2);
+  line(image, Point((imageROI.cols/2)-10,0), Point((imageROI.cols/2)+10,0), Scalar(255,255,255), 2);
+  line(image, Point(imageROI.cols/2,10), Point(imageROI.cols/2,-10), Scalar(255,255,255), 2);
 
-
-  //this isnt working that well - should classify lines on left and lines on right
-  //based on their theta value and then take averages of left and right lines.
-  //take the area between the single left and single right line as our area we can
-  //go to
-
-  //iter over right
-  //std::vector<float> s;
-  //std::vector<float> c;
-  //std::vector<float> p;
+  Vec2f left_lane_marker = Vec2f(0.0, PI);
+  Vec2f right_lane_marker = Vec2f(0.0, 0.0);
+  std::cout << left_lane_marker[0];
 
   while (it!=lines.end()) {
       float rho= (*it)[0];   // first element is distance rho
       float theta= (*it)[1]; // second element is angle theta
-      //s.push_back(sin(theta));
-      //c.push_back(cos(theta));
-      //p.push_back(rho);
-      // point of intersection of the line with first row
-      //if ( (theta > 0.09 && theta < 1.48) || (theta < 3.14 && theta > 1.66) ){
-      //if ( (theta > 0.8 && theta < 1.2) || (theta > 2.2 && theta < 2.4) ) {
-          Point pt1(rho/cos(theta),0);
-          // point of intersection of the line with last row
-          Point pt2((rho-imageROI.rows*sin(theta))/cos(theta),imageROI.rows);
-          // draw line
-          line(imageROI, pt1, pt2, Scalar(255), 3);
-    //}
+
+      if ( 0 < theta < PI/2 && theta < left_lane_marker[1]) {
+        left_lane_marker = Vec2f(rho,theta);
+      }
+
+      if (PI/2 < theta < PI && theta > right_lane_marker[1]) {
+        right_lane_marker = Vec2f(rho,theta);
+      }
       ++it;
   }
-  /*
-  Mat Mat_s = Mat(s);
-  Mat Mat_c = Mat(c);
-  Mat Mat_p = Mat(p);
 
-  std::vector<float>::const_iterator i;
-  for (i = s.begin(); i != s.end(); ++i)
-  std::cout << *i << ' ';
-  std::cout << "\n";
-  for (i = c.begin(); i != c.end(); ++i)
-  std::cout << *i << ' ';
-  std::cout << "\n";
-  for (i = p.begin(); i != p.end(); ++i)
-  std::cout << *i << ' ';
-  std::cout << "\n=====================================\n";
-  */
+  //draw left lane marker
+  line(
+    imageROI, 
+    Point(left_lane_marker[0]/cos(left_lane_marker[1]),0), 
+    Point((left_lane_marker[0] - imageROI.rows * sin(left_lane_marker[1])) / cos(left_lane_marker[1]), imageROI.rows), 
+    Scalar(255), 3);
+
+  //draw right lane marker
+  line(
+    imageROI, 
+    Point(right_lane_marker[0]/cos(right_lane_marker[1]),0), 
+    Point((right_lane_marker[0] - imageROI.rows * sin(right_lane_marker[1])) / cos(right_lane_marker[1]), imageROI.rows), 
+    Scalar(255), 3);
+
 
   //BEGIN HAAR CASCADE OBJECT DETECTION
 /*

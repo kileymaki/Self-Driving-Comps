@@ -374,7 +374,7 @@ void sdcCar::SetTargetSpeed(double s){
 }
 
 /*
- * Gets the spped of the car
+ * Gets the speed of the car
  */
 double sdcCar::GetSpeed(){
     return sqrt(pow(this->velocity.x,2) + pow(this->velocity.y,2));
@@ -502,7 +502,7 @@ void sdcCar::frontLidarUpdate(){
 void sdcCar::Drive()
 {
     // Do collision detection
-
+    /*
     // Possible states: stop, waypoint, intersection, follow, avoidance
     switch(this->currentState)
     {
@@ -536,7 +536,7 @@ void sdcCar::Drive()
 
     // Sets state to default (waypoint)
     this->currentState = waypoint;
-
+    */
     // Gets the objects in front as <ray, distance> pairs
     // Changes state to avoidance if object is in front
     std::vector<std::pair<int,double>> objectsInFront = sdcSensorData::GetObjectsInFront();
@@ -549,10 +549,10 @@ void sdcCar::Drive()
     }
 
     // Attempts to turn towards the target direction
-    this->Steer();
+    //this->Steer();
     // Attempts to match the target speed
-    this->MatchTargetSpeed();
-
+    //this->MatchTargetSpeed();
+    this->Accelerate();
     //if (sdcSensorData::stopSignInLeftCamera && sdcSensorData::stopSignInRightCamera) {
     //  this->SetTargetSpeed(0);
     //} else {

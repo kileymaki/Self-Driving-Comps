@@ -85,7 +85,7 @@ namespace gazebo
          // The different states the car can be in. The logic and behavior of
          // the car will change depending on which state it's in, with various
          // sensor readings affecting the decision to transition states
-         enum CarState { stop, waypoint, intersection, follow, avoidance };
+         enum CarState { stop, waypoint, intersection, follow, avoidance, parking};
 
          // The different states the car can be in while performing a front
          // perpendicular park
@@ -111,6 +111,7 @@ namespace gazebo
          void Brake(double amt = 1, double rate = 1.0);
          void Stop();
          void Reverse();
+         void StopReverse();
 
          bool IsMovingForwards();
          double GetSpeed();

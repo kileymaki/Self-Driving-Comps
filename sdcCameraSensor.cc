@@ -95,6 +95,11 @@ void sdcCameraSensor::OnUpdate() {
       if (PI/2 < theta < PI && theta > right_lane_marker[1]) {
         right_lane_marker = Vec2f(rho,theta);
       }
+
+      Point pt1(rho/cos(theta),0);
+      Point pt2((rho-imageROI.rows*sin(theta))/cos(theta),imageROI.rows);
+      line(imageROI, pt1, pt2, Scalar(0,0,255), 3);
+
       ++it;
   }
 
@@ -164,6 +169,7 @@ if (leftp1.x - leftp2.x != 0) {
 
   namedWindow("Lane Detection", WINDOW_AUTOSIZE);
   imshow("Lane Detection", contours);
+
   namedWindow("Camera View", WINDOW_AUTOSIZE);
   imshow("Camera View", image);
   waitKey(4);

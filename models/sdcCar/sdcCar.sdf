@@ -306,6 +306,70 @@
             </axis>
         </joint>
 
+        <!-- BACK LASER SENSOR -->
+      <link name="back_lidar">
+            <pose>-1.0 0 0.4 0 0 0</pose>
+            <visual name="back_lidar_visual">
+                <geometry>
+                    <mesh>
+                        <uri>model://hokuyo/meshes/hokuyo.dae</uri>
+                    </mesh>
+                </geometry>
+            </visual>
+            <collision name="back_lidar_collision-base">
+                <pose>0 0 -0.0145 0 0 0</pose>
+                <geometry>
+                    <box>
+                        <size>0.05 0.05 0.041</size>
+                    </box>
+                </geometry>
+            </collision>
+            <collision name="back_lidar_collision-top">
+                <pose>0 0 0.0205 0 0 0</pose>
+                <geometry>
+                    <cylinder>
+                        <radius>0.021</radius>
+                        <length>0.029</length>
+                    </cylinder>
+                </geometry>
+            </collision>
+            <sensor name="back_lidar" type="ray">
+                <pose>0.01 0 0.0175 0 3.1459 0</pose>
+                <ray>
+                    <scan>
+                        <horizontal>
+                            <samples>640</samples>
+                            <resolution>1</resolution>
+                            <min_angle>-1.39626</min_angle>
+                            <max_angle>1.39626</max_angle>
+                        </horizontal>
+                    </scan>
+                    <range>
+                        <min>0.08</min>
+                        <max>10</max>
+                        <resolution>0.01</resolution>
+                    </range>
+                </ray>
+                <plugin name="sdcBackLaserSensor" filename="build/libsdcBackLaserSensor.so" />
+                <always_on>1</always_on>
+                <update_rate>30</update_rate>
+                <visualize>true</visualize>
+            </sensor>
+          </link>
+
+      <!-- JOINT BETWEEN THE BACK LASER SENSOR AND CAR -->
+      <joint name="back_lidar_joint" type="revolute">
+          <child>back_lidar</child>
+          <parent>chassis</parent>
+          <axis>
+              <xyz>0 0 1</xyz>
+              <limit>
+                  <upper>0</upper>
+                  <lower>0</lower>
+              </limit>
+          </axis>
+      </joint>
+
         <!-- TOP LASER SENSOR -->
         <link name="top_laser">
             <pose>0.0 0 1.0 0.0 0.0 0.0</pose>
@@ -482,7 +546,7 @@
                         <resolution>0.01</resolution>
                     </range>
                 </ray>
-                <plugin name="sdcSideRightSensor" filename="build/libsdcSideRightSensor.so" />
+                <plugin name="sdcSideLaserSensor" filename="build/libsdcSideLaserSensor.so" />
                 <always_on>1</always_on>
                 <update_rate>30</update_rate>
                 <visualize>true</visualize>
@@ -504,7 +568,7 @@
                         <resolution>0.01</resolution>
                     </range>
                 </ray>
-                <plugin name="sdcSideRightSensor" filename="build/libsdcSideRightSensor.so" />
+                <plugin name="sdcSideLaserSensor" filename="build/libsdcSideLaserSensor.so" />
                 <always_on>1</always_on>
                 <update_rate>30</update_rate>
                 <visualize>true</visualize>
@@ -566,7 +630,7 @@
                         <resolution>0.01</resolution>
                     </range>
                 </ray>
-                <plugin name="sdcSideLeftSensor" filename="build/libsdcSideLeftSensor.so" />
+                <plugin name="sdcSideLaserSensor" filename="build/libsdcSideLaserSensor.so" />
                 <always_on>1</always_on>
                 <update_rate>30</update_rate>
                 <visualize>true</visualize>
@@ -588,7 +652,7 @@
                         <resolution>0.01</resolution>
                     </range>
                 </ray>
-                <plugin name="sdcSideLeftSensor" filename="build/libsdcSideLeftSensor.so" />
+                <plugin name="sdcSideLaserSensor" filename="build/libsdcSideLaserSensor.so" />
                 <always_on>1</always_on>
                 <update_rate>30</update_rate>
                 <visualize>true</visualize>

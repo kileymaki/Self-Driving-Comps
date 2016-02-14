@@ -16,6 +16,7 @@
 #include <gazebo/common/common.hh>
 #include <stdio.h>
 #include <vector>
+#include "Angle.hh"
 
 namespace gazebo
 {
@@ -25,14 +26,25 @@ namespace gazebo
         public: static bool FrontIsAllInf();
         public: static std::vector<double>* FrontGetNonInfAngles();
         public: static std::vector<double> GetFrontLidarRays();
+        public: static std::vector<double> GetBackLidarRays();
         public: static double GetRangeInFront();
         public: static std::vector<double> GetTopLidarRays();
         public: static std::vector<double> GetSideLidarRays();
-        public: static std::vector<double> GetRightFrontRays();
-        public: static std::vector<std::pair<int,double>> GetObjectsInFront();
+        public: static std::vector<double> GetRightFrontSideRays();
+        public: static std::vector<double> GetRightBackSideRays();
+        public: static std::vector<double> GetLeftFrontSideRays();
+        public: static std::vector<double> GetLeftBackSideRays();
+        public: static std::vector<std::pair<Angle,double>> GetObjectsInFront();
+
         private: static double frontRayRange;
         private: static bool frontIsAllInfVar;
         private: static std::vector<double>* frontAnglesNotAtInf;
+        static Angle frontMinAngle;
+        static double frontAngleResolution;
+
+        private: static double backRayRange;
+        private: static bool backIsAllInfVar;
+        private: static std::vector<double>* backAnglesNotAtInf;
         private: static double leftFrontRayRange;
         private: static bool leftFrontIsAllInfVar;
         private: static std::vector<double>* leftFrontAnglesNotAtInf;
@@ -47,6 +59,7 @@ namespace gazebo
         private: static std::vector<double>* rightBackAnglesNotAtInf;
 
         private: static std::vector<double>* frontLidarRays;
+        private: static std::vector<double>* backLidarRays;
         private: static std::vector<double>* leftTopLidarRays;
         private: static std::vector<double>* rightTopLidarRays;
         private: static std::vector<double>* forwardTopLidarRays;
@@ -61,6 +74,7 @@ namespace gazebo
         static bool stopSignInRightCamera;
 
         public: static void UpdateFrontLidar(math::Angle minAngle, double angleResolution, std::vector<double>* newRays);
+        public: static void UpdateBackLidar(math::Angle minAngle, double angleResolution, std::vector<double>* newRays);
         public: static void UpdateLeftLidar(math::Angle minAngle, double angleResolution, std::vector<double>* newRays);
         public: static void UpdateRightLidar(math::Angle minAngle, double angleResolution, std::vector<double>* newRays);
         public: static void UpdateForwardLidar(math::Angle minAngle, double angleResolution, std::vector<double>* newRays);

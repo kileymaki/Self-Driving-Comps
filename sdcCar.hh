@@ -35,7 +35,14 @@
 
 namespace gazebo
 {
+    class Waypoint
+    {
+    public:
+      int waypointType;
+      math::Vector2d pos;
 
+      Waypoint(int waypointType,math::Vector2d pos);
+    };
     class GAZEBO_VISIBLE sdcCar : public ModelPlugin
     {
          // Constructor for sdcCar
@@ -89,7 +96,7 @@ namespace gazebo
 
          // The different states the car can be in while performing a front
          // perpendicular park
-         enum ParkingState { stopPark, turnPark, straightPark, backPark, donePark };
+         enum ParkingState { stopPark, frontPark, straightPark, backPark, donePark };
 
          void frontLidarUpdate();
          void Drive();
@@ -129,6 +136,7 @@ namespace gazebo
          void Follow();
          void PerpendicularPark();
 
+         bool ObjectDirectlyAhead();
 
          double gas; //variable that accelerates the car
          double brake; //variable that brakes the car
@@ -155,6 +163,8 @@ namespace gazebo
          double targetSteeringAmount;
          double steeringAmount;
          double targetSpeed;
+         Angle targetParkingAngle;
+         bool parkingAngleSet;
 
          // for Follow
          double estimatedSpeed;
@@ -163,7 +173,6 @@ namespace gazebo
 
          double x;
          double y;
-
          //fl stands for Front Lidar
          std::vector<double> fl;
          int flRayLengths;
@@ -217,12 +226,6 @@ namespace gazebo
 
     };
 
-    class Waypoint
-    {
-    public:
-      int waypointType;
 
-      Waypoint(int waypointType);
-    };
 }
 #endif

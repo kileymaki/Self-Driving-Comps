@@ -82,7 +82,7 @@ void sdcCameraSensor::OnUpdate() {
 
   Vec2f left_lane_marker = Vec2f(0.0, PI);
   Vec2f right_lane_marker = Vec2f(0.0, 0.0);
-  std::cout << left_lane_marker[0];
+  //std::cout << left_lane_marker[0];
 
   while (it!=lines.end()) {
       float rho= (*it)[0];   // first element is distance rho
@@ -99,18 +99,14 @@ void sdcCameraSensor::OnUpdate() {
   }
 
   //draw left lane marker
-  line(
-    imageROI, 
-    Point(left_lane_marker[0]/cos(left_lane_marker[1]),0), 
-    Point((left_lane_marker[0] - imageROI.rows * sin(left_lane_marker[1])) / cos(left_lane_marker[1]), imageROI.rows), 
-    Scalar(255), 3);
+  Point leftp1 = Point(left_lane_marker[0]/cos(left_lane_marker[1]),0);
+  Point leftp2 = Point((left_lane_marker[0] - imageROI.rows * sin(left_lane_marker[1])) / cos(left_lane_marker[1]), imageROI.rows);
+  line(imageROI, leftp1, leftp2, Scalar(255), 3);
 
   //draw right lane marker
-  line(
-    imageROI, 
-    Point(right_lane_marker[0]/cos(right_lane_marker[1]),0), 
-    Point((right_lane_marker[0] - imageROI.rows * sin(right_lane_marker[1])) / cos(right_lane_marker[1]), imageROI.rows), 
-    Scalar(255), 3);
+  Point rightp1 = Point(right_lane_marker[0]/cos(right_lane_marker[1]),0);
+  Point rightp2 = Point((right_lane_marker[0] - imageROI.rows * sin(right_lane_marker[1])) / cos(right_lane_marker[1]), imageROI.rows);
+  line(imageROI, rightp1, rightp2, Scalar(255), 3);
 
 
   //BEGIN HAAR CASCADE OBJECT DETECTION
@@ -135,6 +131,36 @@ void sdcCameraSensor::OnUpdate() {
      sdcSensorData::stopSignInRightCamera = true;
   }
 */
+
+// BEGIN LCF LANE DETECTION
+double leftNearLaneSlope = 1., rightNearLaneSlope = 1., leftLaneIntercept, rightLaneIntercept;
+double a, b, c, d;
+// Using the two lane markers
+Point vanashingPoint;
+
+// using the right lane
+if (rightp2.x - rightp1.x != 0) {
+    rightNearLaneSlope = (1.*rightp2.y - rightp1.y)/(rightp2.x - rightp1.x);
+}
+
+// The intercept is appearing on the midline, also the top of the ROI, for some reason
+rightLaneIntercept = ((0-rightp1.y)/rightNearLaneSlope)+rightp1.x;
+
+a = rightNearLaneSlope/2;
+// b = v+n/2;
+c = pow(rightNearLaneSlope,2)/4;
+// d = a * (n-v);
+
+// using the left lane
+if (leftp1.x - leftp2.x != 0) {
+    leftNearLaneSlope = (1.*leftp1.y - leftp2.y)/(leftp1.x - leftp2.x);
+}
+
+// Uncomment to see the wonders of opencv in action
+//line(image, rightp1, rightp2, Scalar(0,255,0),2);
+
+//std::cout << rightLaneIntercept << "   " << rightNearLaneSlope << std::endl;
+///////// END LCF LANE DETECTION
 
   namedWindow("Lane Detection", WINDOW_AUTOSIZE);
   imshow("Lane Detection", contours);

@@ -32,199 +32,162 @@
 #include "sdcAngle.hh"
 
 
-namespace gazebo
-{
-    class Waypoint
-    {
+namespace gazebo {
+    class Waypoint {
     public:
       int waypointType;
       math::Vector2d pos;
 
       Waypoint(int waypointType,math::Vector2d pos);
     };
-    class GAZEBO_VISIBLE sdcCar : public ModelPlugin
-    {
-         // Constructor for sdcCar
-         public: sdcCar();
 
-         // These methods are called by Gazebo during the loading and initializing
-         // stages of world building and populating
-         virtual void Load(physics::ModelPtr _model, sdf::ElementPtr _sdf);
-         virtual void Init();
+    class GAZEBO_VISIBLE sdcCar : public ModelPlugin {
+        // Constructor for sdcCar
+        public: sdcCar();
 
-         // Bound to Gazebo's world update, gets called every tick of the simulation
-         private: void OnUpdate();
+        // These methods are called by Gazebo during the loading and initializing
+        // stages of world building and populating
+        virtual void Load(physics::ModelPtr _model, sdf::ElementPtr _sdf);
+        virtual void Init();
 
-         // Holds the bound connection to Gazebo's update, necessary in order to properly
-         // receive updates
-         std::vector<event::ConnectionPtr> connections;
+        // Bound to Gazebo's world update, gets called every tick of the simulation
+        private: void OnUpdate();
 
-         // The Gazebo model representation of the car
-         physics::ModelPtr model;
-         // Contains the wheel joints that get operated on each tick for movement
-         std::vector<physics::JointPtr> joints;
-         // A link to the chassis of the car, mainly used for access to physics variables
-         // related to the car's state
-         physics::LinkPtr chassis;
+        // Holds the bound connection to Gazebo's update, necessary in order to properly
+        // receive updates
+        std::vector<event::ConnectionPtr> connections;
 
-         // The velocity of the car
-         math::Vector3 velocity;
+        // The Gazebo model representation of the car
+        physics::ModelPtr model;
+        // Contains the wheel joints that get operated on each tick for movement
+        std::vector<physics::JointPtr> joints;
+        // A link to the chassis of the car, mainly used for access to physics variables
+        // related to the car's state
+        physics::LinkPtr chassis;
 
-         // These variables are mostly set in the SDF for the car and relate to the
-         // physical parameters of the vehicle
-         double frontPower, rearPower;
-         double maxSpeed;
-         double wheelRadius;
+        // The velocity of the car
+        math::Vector3 velocity;
 
-         double steeringRatio;
-         double tireAngleRange;
+        // These variables are mostly set in the SDF for the car and relate to the
+        // physical parameters of the vehicle
+        double frontPower, rearPower;
+        double maxSpeed;
+        double wheelRadius;
 
-         double aeroLoad;
-         double swayForce;
+        double steeringRatio;
+        double tireAngleRange;
 
+        double aeroLoad;
+        double swayForce;
 
+        //////////////////////////////////////////
+        // Begin Non-Gazebo Related Definitions //
+        //////////////////////////////////////////
 
-        /*
-         * Begin Non-Gazebo Related Definitions
-         */
+        // The different states the car can be in. The logic and behavior of
+        // the car will change depending on which state it's in, with various
+        // sensor readings affecting the decision to transition states
+        enum CarState { stop, waypoint, intersection, follow, avoidance, parking};
 
-         // The different states the car can be in. The logic and behavior of
-         // the car will change depending on which state it's in, with various
-         // sensor readings affecting the decision to transition states
-         enum CarState { stop, waypoint, intersection, follow, avoidance, parking};
+        // The different states the car can be in while performing a front
+        // perpendicular park
+        enum ParkingState { stopPark, frontPark, straightPark, backPark, donePark };
 
-         // The different states the car can be in while performing a front
-         // perpendicular park
-         enum ParkingState { stopPark, frontPark, straightPark, backPark, donePark };
+        ///////////////////////////
+        // SDC-defined variables //
+        ///////////////////////////
 
-         void frontLidarUpdate();
-         void Drive();
-         void Steer();
-         void MatchTargetSpeed();
-         void SteerToPosition(double steeringRadius, sdcAngle targetDirection);
+        // The current state of the car
+        CarState currentState;
+        ParkingState currentParkingState;
 
-         void topLidarUpdate();
-         void topForwardLidarUpdate(std::vector<double> rays);
+        double gas; //variable that accelerates the car
+        double brake; //variable that brakes the car
 
-         void SetAccelRate(double rate = 1.0);
-         void SetBrakeRate(double rate = 1.0);
+        // Scalars for accelrating and braking
+        double accelRate;
+        double brakeRate;
 
-         void SetTargetDirection(sdcAngle direction);
-         void SetTargetSteeringAmount(double a);
-         void SetTargetSpeed(double s);
+        // Position/rotation variables
+        double yaw;
+        double lon;
 
-         void Accelerate(double amt = 1, double rate = 1.0);
-         void Brake(double amt = 1, double rate = 1.0);
-         void Stop();
-         void Reverse();
-         void StopReverse();
+        int waypointProgress;
 
-         bool IsMovingForwards();
-         double GetSpeed();
-         sdcAngle GetDirection();
-         void DetectIntersection();
-         sdcAngle AngleToTarget(math::Vector2d target);
+        int atIntersection;
+        int maxCarSpeed;
+        double maxCarReverseSpeed;
 
+        bool turning;
+        bool reversing;
+        sdcAngle targetDirection;
+        double targetSteeringAmount;
+        double steeringAmount;
+        double targetSpeed;
+        sdcAngle targetParkingAngle;
+        bool parkingAngleSet;
 
-         void DriveStraightThenStop();
-         void WalledDriving();
-         void GridTurning();
-         void TurnAround();
-         void DriveStraightThenTurn();
-         void WaypointDriving(std::vector<math::Vector2d> waypoints);
-         void Follow();
-         void PerpendicularPark();
+        // for Follow
+        double estimatedSpeed;
+        double lastPosition;
+        double currentPosition;
 
-         bool ObjectDirectlyAhead();
+        double x;
+        double y;
 
-         double gas; //variable that accelerates the car
-         double brake; //variable that brakes the car
+        //fl stands for Front Lidar
+        std::vector<double> fl;
+        int flRayLengths;
+        int flCenterRight;
+        int flSideRight;
+        int flCenterLeft;
+        int flSideLeft;
+        int flNumRays;
+        int flWeight;
+        std::vector<std::vector<int>> flViews;
 
-         double accelRate;
-         double brakeRate;
+        /////////////////////////
+        // SDC-defined methods //
+        /////////////////////////
 
-         double yaw;
-         double lon;
+         // The 'Brain' Methods
+        void Drive();
+        void MatchTargetDirection();
+        void MatchTargetSpeed();
 
-         CarState currentState;
+        void DetectIntersection();
 
-         ParkingState currentParkingState;
+        // Driving algorithms
+        void WalledDriving();
+        void GridTurning();
+        void TurnAround();
+        void WaypointDriving(std::vector<math::Vector2d> waypoints);
+        void Follow();
+        void PerpendicularPark();
 
-         int waypointProgress;
+        // Helper methods
+        void frontLidarUpdate();
 
-         int atIntersection;
-         int maxCarSpeed;
-         double maxCarReverseSpeed;
+        sdcAngle AngleToTarget(math::Vector2d target);
+        bool ObjectDirectlyAhead();
 
-         bool turning;
-         bool reversing;
-         sdcAngle targetDirection;
-         double targetSteeringAmount;
-         double steeringAmount;
-         double targetSpeed;
-         sdcAngle targetParkingAngle;
-         bool parkingAngleSet;
+        bool IsMovingForwards();
+        double GetSpeed();
+        sdcAngle GetDirection();
 
-         // for Follow
-         double estimatedSpeed;
-         double lastPosition;
-         double currentPosition;
+        // Control methods
+        void Accelerate(double amt = 1, double rate = 1.0);
+        void Brake(double amt = 1, double rate = 1.0);
+        void Stop();
+        void Reverse();
+        void StopReverse();
 
-         double x;
-         double y;
-         //fl stands for Front Lidar
-         std::vector<double> fl;
-         int flRayLengths;
-         int flCenterRight;
-         int flSideRight;
-         int flCenterLeft;
-         int flSideLeft;
-         int flNumRays;
-         int flWeight;
-         std::vector<std::vector<int>> flViews;
+        void SetTargetDirection(sdcAngle direction);
+        void SetTargetSteeringAmount(double a);
+        void SetTargetSpeed(double s);
 
-         //tl stands for Top Lidar
-         std::vector<double> tl;
-
-         int tlForwardRayLengths;
-         int tlForwardCenterRight;
-         int tlForwardSideRight;
-         int tlForwardCenterLeft;
-         int tlForwardSideLeft;
-         int tlForwardNumRays;
-         int tlForwardWeight;
-         std::vector<std::vector<int>> tlForwardViews;
-
-         int tlRightRayLengths;
-         int tlRightCenterRight;
-         int tlRightSideRight;
-         int tlRightCenterLeft;
-         int tlRightSideLeft;
-         int tlRightNumRays;
-         int tlRightWeight;
-         std::vector<std::vector<int>> tlRightViews;
-
-         int tlBackwardRayLengths;
-         int tlBackwardCenterRight;
-         int tlBackwardSideRight;
-         int tlBackwardCenterLeft;
-         int tlBackwardSideLeft;
-         int tlBackwardNumRays;
-         int tlBackwardWeight;
-         std::vector<std::vector<int>> tlBackwardViews;
-
-         int tlLeftRayLengths;
-         int tlLeftCenterRight;
-         int tlLeftSideRight;
-         int tlLeftCenterLeft;
-         int tlLeftSideLeft;
-         int tlLeftNumRays;
-         int tlLeftWeight;
-         std::vector<std::vector<int>> tlLeftViews;
-
-
+        void SetAccelRate(double rate = 1.0);
+        void SetBrakeRate(double rate = 1.0);
     };
-
-
 }
 #endif

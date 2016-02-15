@@ -692,7 +692,7 @@
                 <topic>comps_car_camera</topic>
 
                 <camera name="left">
-                  <pose>0 0.2 0 0 0 0</pose>
+                  <pose>0 0 0 0 0 0</pose>
                   <horizontal_fov>1.047</horizontal_fov>
                   <image>
                     <width>640</width>
@@ -707,7 +707,7 @@
                   </save>
                 </camera>
 
-                <camera name="right">
+                <!-- <camera name="right">
                   <pose>0 -0.2 0 0 0 0</pose>
                   <horizontal_fov>1.047</horizontal_fov>
                   <image>
@@ -721,7 +721,7 @@
                   <save enabled="False">
                    <path>/Users/selfcar/Desktop/Self-Driving-Comps/comps_camera_recordings/</path>
                   </save>
-                </camera>
+                </camera> -->
 
                 <plugin name="sdcCameraSensor" filename="build/libsdcCameraSensor.so" />
 

@@ -9,10 +9,8 @@
 #include <numeric>
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
-// #include "opencv2/cudaobjdetect.hpp"
 #include <opencv2/opencv.hpp>
-// #include <opencv2/cudaimgproc.hpp>
-// #include <opencv2/core/cuda.hpp>
+
 
 #include "sdcCameraSensor.hh"
 
@@ -158,7 +156,7 @@ vec_of_i_vals.push_back(-48.);
 
 
 // Using the two lane markers
-Point vanishingPoint; 
+Point vanishingPoint;
 
 // using the right lane
 if (rightp2.x - rightp1.x != 0) {

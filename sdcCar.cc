@@ -329,14 +329,16 @@ void sdcCar::PerpendicularPark(){
         break;
 
         case frontPark:
+        std::cout << "in front park" << std::endl;
         this->StopReverse();
         this->SetTargetSpeed(1);
+        this->SetTargetDirection(this->GetDirection());
         break;
 
         case straightPark:
         std::cout << "in straight park" << std::endl;
         this->SetTargetSpeed(2);
-        if(backLidar[320] < 5){
+        if(backLidar[320] < 3){
             this->currentParkingState = donePark;
         }
         break;
@@ -349,10 +351,12 @@ void sdcCar::PerpendicularPark(){
 
         case backPark:
         // If the car is too close to anything on the sides, stop and fix it
-        if(backLidar.size() != 0 && (backLidar[0] < 0.25 || backLidar[639] < 0.25)){
-            std::cout << "Back Lidars: " << backLidar[0] << backLidar[639] << std::endl;
-            this->currentParkingState = stopPark;
-            break;
+        if(backLidar.size() != 0){
+            for(int i = 0; i < backLidar.size(); i++){
+                if(backLidar[i] < 0.25){
+                    this->currentParkingState = stopPark;
+                }
+            }
         }
         // Sets a target angle for the car for when it's done parking
         if(!parkingAngleSet){

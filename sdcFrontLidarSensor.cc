@@ -40,7 +40,6 @@ void sdcFrontLidarSensor::Load(sensors::SensorPtr _sensor, sdf::ElementPtr /*_sd
 
 // Called by the world update start event
 void sdcFrontLidarSensor::OnUpdate(){
-
     std::vector<double>* rays = new std::vector<double>();
     for (unsigned int i = 0; i < this->parentSensor->GetRayCount(); ++i){
         rays->push_back(this->parentSensor->GetRange(i));

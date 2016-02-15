@@ -16,85 +16,56 @@
 #include <gazebo/common/common.hh>
 #include <stdio.h>
 #include <vector>
-#include "Angle.hh"
+#include "sdcAngle.hh"
 
 namespace gazebo
 {
+    // An enumeration of all positions of Lidar sensors, including a few (TOP, SIDE_LEFT, SIDE_RIGHT) that
+    // correspond to a collection of sensors
+    enum LidarPos {FRONT, BACK, TOP, TOP_FORWARD, TOP_RIGHT, TOP_BACKWARD, TOP_LEFT, SIDE_LEFT, SIDE_RIGHT, SIDE_LEFT_FRONT, SIDE_LEFT_BACK, SIDE_RIGHT_FRONT, SIDE_RIGHT_BACK};
+
     class sdcSensorData
     {
         // Lidar variables and methods
-        public: static bool FrontIsAllInf();
-        public: static std::vector<double>* FrontGetNonInfAngles();
-        public: static std::vector<double> GetFrontLidarRays();
-        public: static std::vector<double> GetBackLidarRays();
-        public: static double GetRangeInFront();
-        public: static std::vector<double> GetTopLidarRays();
-        public: static std::vector<double> GetSideLidarRays();
-        public: static std::vector<double> GetRightFrontSideRays();
-        public: static std::vector<double> GetRightBackSideRays();
-        public: static std::vector<double> GetLeftFrontSideRays();
-        public: static std::vector<double> GetLeftBackSideRays();
-        public: static std::vector<std::pair<Angle,double>> GetObjectsInFront();
+    public:
+        static void InitLidar(LidarPos lidar, double minAngle, double angleResolution);
+        static void UpdateLidar(LidarPos lidar, std::vector<double>* newRays);
+        static std::vector<double> GetLidarRays(LidarPos lidar);
 
-        private: static double frontRayRange;
-        private: static bool frontIsAllInfVar;
-        private: static std::vector<double>* frontAnglesNotAtInf;
-        static Angle frontMinAngle;
+        static std::vector<std::pair<sdcAngle,double>> GetBlockedFrontRays();
+
+        static sdcAngle frontMinAngle;
         static double frontAngleResolution;
 
-        private: static double backRayRange;
-        private: static bool backIsAllInfVar;
-        private: static std::vector<double>* backAnglesNotAtInf;
-        private: static double leftFrontRayRange;
-        private: static bool leftFrontIsAllInfVar;
-        private: static std::vector<double>* leftFrontAnglesNotAtInf;
-        private: static double rightFrontRayRange;
-        private: static bool rightFrontIsAllInfVar;
-        private: static std::vector<double>* rightFrontAnglesNotAtInf;
-        private: static double leftBackRayRange;
-        private: static bool leftBackIsAllInfVar;
-        private: static std::vector<double>* leftBackAnglesNotAtInf;
-        private: static double rightBackRayRange;
-        private: static bool rightBackIsAllInfVar;
-        private: static std::vector<double>* rightBackAnglesNotAtInf;
+    private:
+        static std::vector<double>* frontLidarRays;
+        static std::vector<double>* backLidarRays;
 
-        private: static std::vector<double>* frontLidarRays;
-        private: static std::vector<double>* backLidarRays;
-        private: static std::vector<double>* leftTopLidarRays;
-        private: static std::vector<double>* rightTopLidarRays;
-        private: static std::vector<double>* forwardTopLidarRays;
-        private: static std::vector<double>* backwardTopLidarRays;
-        static std::vector<double>* leftFrontSideLidarRays;
-        static std::vector<double>* leftBackSideLidarRays;
-        static std::vector<double>* rightFrontSideLidarRays;
-        static std::vector<double>* rightBackSideLidarRays;
+        static std::vector<double>* topLeftLidarRays;
+        static std::vector<double>* topRightLidarRays;
+        static std::vector<double>* topForwardLidarRays;
+        static std::vector<double>* topBackwardLidarRays;
+
+        static std::vector<double>* sideLeftFrontLidarRays;
+        static std::vector<double>* sideLeftBackLidarRays;
+        static std::vector<double>* sideRightFrontLidarRays;
+        static std::vector<double>* sideRightBackLidarRays;
 
     public:
         static bool stopSignInLeftCamera;
         static bool stopSignInRightCamera;
 
-        public: static void UpdateFrontLidar(math::Angle minAngle, double angleResolution, std::vector<double>* newRays);
-        public: static void UpdateBackLidar(math::Angle minAngle, double angleResolution, std::vector<double>* newRays);
-        public: static void UpdateLeftLidar(math::Angle minAngle, double angleResolution, std::vector<double>* newRays);
-        public: static void UpdateRightLidar(math::Angle minAngle, double angleResolution, std::vector<double>* newRays);
-        public: static void UpdateForwardLidar(math::Angle minAngle, double angleResolution, std::vector<double>* newRays);
-        public: static void UpdateBackwardLidar(math::Angle minAngle, double angleResolution, std::vector<double>* newRays);
-        static void UpdateSideLeftFrontLidar(math::Angle minAngle, double angleResolution, std::vector<double>* newRays);
-        static void UpdateSideLeftBackLidar(math::Angle minAngle, double angleResolution, std::vector<double>* newRays);
-        static void UpdateSideRightFrontLidar(math::Angle minAngle, double angleResolution, std::vector<double>* newRays);
-        static void UpdateSideRightBackLidar(math::Angle minAngle, double angleResolution, std::vector<double>* newRays);
-
         // GPS variables and methods
-        public: static math::Vector2d GetCurrentCoord();
-        public: static double GetLongitude();
-        public: static double GetLatitude();
+        static math::Vector2d GetCurrentCoord();
+        static double GetLongitude();
+        static double GetLatitude();
         //private: static math::Angle* targetLon;
         //private: static math::Angle* lat;
         //private: static math::Angle* lon;
-        private: static math::Vector2d coordinate;
+        static math::Vector2d coordinate;
 
         //public: static void UpdateGPS(math::Angle* newLat, math::Angle* newLon);
-        public: static void UpdateGPS(math::Vector2d newCoordinate);
+        static void UpdateGPS(math::Vector2d newCoordinate);
     };
 }
 

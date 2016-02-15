@@ -6,18 +6,18 @@
 #include <stdio.h>
 #include <vector>
 
-#include "sdcLaserSensor.hh"
+#include "sdcSideLidarSensor.hh"
 
 using namespace gazebo;
 // Register this plugin with the simulator
-GZ_REGISTER_SENSOR_PLUGIN(sdcLaserSensor)
+GZ_REGISTER_SENSOR_PLUGIN(sdcSideLidarSensor)
 
 // Pointer to the update event connection
 event::ConnectionPtr updateConnection;
 sensors::RaySensorPtr parentSensor;
 
-////// LIDAR ON FRONT OF CAR
-void sdcLaserSensor::Load(sensors::SensorPtr _sensor, sdf::ElementPtr /*_sdf*/){
+////// LIDAR ON SIDE OF CAR
+void sdcSideLidarSensor::Load(sensors::SensorPtr _sensor, sdf::ElementPtr /*_sdf*/){
     // Get the parent sensor.
     this->parentSensor =
     boost::dynamic_pointer_cast<sensors::RaySensor>(_sensor);
@@ -30,18 +30,29 @@ void sdcLaserSensor::Load(sensors::SensorPtr _sensor, sdf::ElementPtr /*_sdf*/){
     }
 
     // Connect to the sensor update event.
-    this->updateConnection = this->parentSensor->ConnectUpdated(boost::bind(&sdcLaserSensor::OnUpdate, this));
+    this->updateConnection = this->parentSensor->ConnectUpdated(boost::bind(&sdcSideLidarSensor::OnUpdate, this));
 
     // Make sure the parent sensor is active.
     this->parentSensor->SetActive(true);
+
+    std::string name = this->parentSensor->GetName();
+    if(name == "side_left_front_laser"){
+        this->lidarPos = SIDE_LEFT_FRONT;
+    } else if(name == "side_left_back_laser"){
+        this->lidarPos = SIDE_LEFT_BACK;
+    } else if(name == "side_right_front_laser"){
+        this->lidarPos = SIDE_RIGHT_FRONT;
+    } else if(name == "side_right_back_laser"){
+        this->lidarPos = SIDE_RIGHT_BACK;
+    }
 }
 
 // Called by the world update start event
-void sdcLaserSensor::OnUpdate(){
-
+void sdcSideLidarSensor::OnUpdate(){
     std::vector<double>* rays = new std::vector<double>();
     for (unsigned int i = 0; i < this->parentSensor->GetRayCount(); ++i){
         rays->push_back(this->parentSensor->GetRange(i));
     }
-    sdcSensorData::UpdateFrontLidar(this->parentSensor->AngleMin(), this->parentSensor->GetAngleResolution(), rays);
+
+    sdcSensorData::UpdateLidar(this->lidarPos, rays);
 }

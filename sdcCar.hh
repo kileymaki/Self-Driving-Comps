@@ -28,9 +28,8 @@
 #include "gazebo/physics/physics.hh"
 #include "gazebo/transport/transport.hh"
 #include "gazebo/util/system.hh"
-#include "sdcLaserSensor.hh"
-#include "sdcGpsSensor.hh"
-#include "Angle.hh"
+#include "sdcSensorData.hh"
+#include "sdcAngle.hh"
 
 
 namespace gazebo
@@ -102,7 +101,7 @@ namespace gazebo
          void Drive();
          void Steer();
          void MatchTargetSpeed();
-         void SteerToPosition(double steeringRadius, Angle targetDirection);
+         void SteerToPosition(double steeringRadius, sdcAngle targetDirection);
 
          void topLidarUpdate();
          void topForwardLidarUpdate(std::vector<double> rays);
@@ -110,7 +109,7 @@ namespace gazebo
          void SetAccelRate(double rate = 1.0);
          void SetBrakeRate(double rate = 1.0);
 
-         void SetTargetDirection(Angle direction);
+         void SetTargetDirection(sdcAngle direction);
          void SetTargetSteeringAmount(double a);
          void SetTargetSpeed(double s);
 
@@ -122,9 +121,9 @@ namespace gazebo
 
          bool IsMovingForwards();
          double GetSpeed();
-         Angle GetDirection();
+         sdcAngle GetDirection();
          void DetectIntersection();
-         Angle AngleToTarget(math::Vector2d target);
+         sdcAngle AngleToTarget(math::Vector2d target);
 
 
          void DriveStraightThenStop();
@@ -159,11 +158,11 @@ namespace gazebo
 
          bool turning;
          bool reversing;
-         Angle targetDirection;
+         sdcAngle targetDirection;
          double targetSteeringAmount;
          double steeringAmount;
          double targetSpeed;
-         Angle targetParkingAngle;
+         sdcAngle targetParkingAngle;
          bool parkingAngleSet;
 
          // for Follow

@@ -16,23 +16,23 @@ target_link_libraries(sdcBox ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
 add_library(sdcFlyingBox SHARED sdcFlyingBox.cc)
 target_link_libraries(sdcFlyingBox ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
 
-add_library(Angle SHARED Angle.cc)
-target_link_libraries(Angle ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
+add_library(sdcAngle SHARED sdcAngle.cc)
+target_link_libraries(sdcAngle ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
 
 add_library(sdcSensorData SHARED sdcSensorData.cc)
-target_link_libraries(sdcSensorData Angle ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
+target_link_libraries(sdcSensorData sdcAngle ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
 
-add_library(sdcLaserSensor SHARED sdcLaserSensor.cc)
-target_link_libraries(sdcLaserSensor sdcSensorData ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
+add_library(sdcFrontLidarSensor SHARED sdcFrontLidarSensor.cc)
+target_link_libraries(sdcFrontLidarSensor sdcSensorData ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
 
-add_library(sdcTopLaserSensor SHARED sdcTopLaserSensor.cc)
-target_link_libraries(sdcTopLaserSensor sdcSensorData ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
+add_library(sdcTopLidarSensor SHARED sdcTopLidarSensor.cc)
+target_link_libraries(sdcTopLidarSensor sdcSensorData ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
 
-add_library(sdcSideLaserSensor SHARED sdcSideLaserSensor.cc)
-target_link_libraries(sdcSideLaserSensor sdcSensorData ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
+add_library(sdcSideLidarSensor SHARED sdcSideLidarSensor.cc)
+target_link_libraries(sdcSideLidarSensor sdcSensorData ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
 
-add_library(sdcBackLaserSensor SHARED sdcBackLaserSensor.cc)
-target_link_libraries(sdcBackLaserSensor sdcSensorData ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
+add_library(sdcBackLidarSensor SHARED sdcBackLidarSensor.cc)
+target_link_libraries(sdcBackLidarSensor sdcSensorData ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
 
 add_library(sdcGpsSensor SHARED sdcGpsSensor.cc)
 target_link_libraries(sdcGpsSensor sdcSensorData ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
@@ -44,4 +44,4 @@ target_link_libraries(sdcCameraSensor sdcSensorData ${GAZEBO_LIBRARIES} ${Boost_
 # target_link_libraries(Waypoint ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
 
 add_library(sdcCar SHARED sdcCar.cc)
-target_link_libraries(sdcCar Angle sdcSensorData sdcGpsSensor sdcLaserSensor ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
+target_link_libraries(sdcCar sdcAngle sdcSensorData ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})

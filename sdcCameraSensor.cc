@@ -183,6 +183,22 @@ a = leftNearLaneSlope/2;
 b = (v+n)/2;
 c = pow(leftNearLaneSlope,2)/4;
 d = a * (n-v);
+
+//DRAW NEAR FIELD AND FAR FIELD ASYMPTOTES
+Point nfa_p1, nfa_p2, ffa_p1, ffa_p2;
+//Yf = (a+ sqrt(c)x_f + (b + c(d/(2*sqrt(c)))))
+nfa_p1.x = 0.;
+nfa_p2.x = 320.;
+ffa_p1.x = 0.;
+ffa_p2.x = 320.;
+nfa_p1.y = (a + sqrt(c))*(nfa_p1.x) + (b + c*(d/(2*sqrt(c))));
+nfa_p2.y = (a + sqrt(c))*(nfa_p2.x) + (b + c*(d/(2*sqrt(c))));
+ffa_p1.y = (a - sqrt(c))*(nfa_p1.x) + (b - c*(d/(2*sqrt(c))));
+ffa_p2.y = (a - sqrt(c))*(nfa_p2.x) + (b - c*(d/(2*sqrt(c))));
+line(image, nfa_p1, nfa_p2, Scalar(255,255,0), 1, CV_AA);
+line(image, ffa_p1, ffa_p2, Scalar(255,255,0), 1, CV_AA);
+
+
 //e = (b-v)^2 + ka
 //e =  pow((b-v),2) + (k*a);
 //Mat curves = image.clone();

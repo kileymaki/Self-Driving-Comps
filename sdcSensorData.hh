@@ -17,6 +17,7 @@
 #include <stdio.h>
 #include <vector>
 #include "sdcAngle.hh"
+#include "sdcLidarRay.hh"
 
 namespace gazebo
 {
@@ -31,10 +32,12 @@ namespace gazebo
         static void InitLidar(LidarPos lidar, double minAngle, double angleResolution);
         static void UpdateLidar(LidarPos lidar, std::vector<double>* newRays);
         static std::vector<double> GetLidarRays(LidarPos lidar);
+        static void UpdateCameraData(int lanePos);
+        static int LanePosition();
 
-        static std::vector<std::pair<sdcAngle,double>> GetBlockedFrontRays();
-        static std::vector<std::pair<sdcAngle,double>> GetBlockedBackRays();
-        static std::vector<std::pair<std::pair<sdcAngle,sdcAngle>,double>> GetObjectsInFront();
+        static std::vector<sdcLidarRay> GetBlockedFrontRays();
+        static std::vector<sdcLidarRay> GetBlockedBackRays();
+        static std::vector<std::pair<sdcLidarRay, sdcLidarRay>> GetObjectsInFront();
 
         static sdcAngle frontMinAngle;
         static double frontAngleResolution;
@@ -59,6 +62,7 @@ namespace gazebo
     public:
         static bool stopSignInLeftCamera;
         static bool stopSignInRightCamera;
+        static int lanePosition;
 
         // GPS variables and methods
         static math::Vector2d GetCurrentCoord();

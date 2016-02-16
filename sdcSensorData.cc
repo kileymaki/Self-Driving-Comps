@@ -34,6 +34,7 @@ std::vector<double>* sdcSensorData::sideRightBackLidarRays = new std::vector<dou
 // Camera variables
 bool sdcSensorData::stopSignInLeftCamera = false;
 bool sdcSensorData::stopSignInRightCamera = false;
+int sdcSensorData::lanePosition = 0;
 
 /*
  * Initializes the lidar in the given position to store its minimum angle, as well as the resolution
@@ -132,6 +133,17 @@ void sdcSensorData::UpdateLidar(LidarPos lidar, std::vector<double>* newRays){
 }
 
 /*
+ * Retrieve any camera data that we might find helpful
+ */
+void sdcSensorData::UpdateCameraData(int lanePos) {
+    lanePosition = lanePos;
+}
+
+int sdcSensorData::LanePosition() {
+    return lanePosition;
+}
+
+/*
  * Retrieve a copy of the rays for the lidar in the given position
  */
 std::vector<double> sdcSensorData::GetLidarRays(LidarPos lidar){
@@ -202,12 +214,12 @@ std::vector<double> sdcSensorData::GetLidarRays(LidarPos lidar){
 /*
  * Return a vector of pairs (ray angle, ray length) which represents objects in view of front lidar
  */
-std::vector<std::pair<sdcAngle,double>> sdcSensorData::GetBlockedFrontRays(){
-    std::vector<std::pair<sdcAngle,double>> objectsInFront;
+std::vector<sdcLidarRay> sdcSensorData::GetBlockedFrontRays(){
+    std::vector<sdcLidarRay> objectsInFront;
     for (int i = 0; i < frontLidarRays->size(); i++) {
         if (!std::isinf((*frontLidarRays)[i])) {
             sdcAngle angle = sdcAngle(i*frontAngleResolution+frontMinAngle);
-            objectsInFront.push_back(std::make_pair(angle, (*frontLidarRays)[i]));
+            objectsInFront.push_back(sdcLidarRay(angle, (*frontLidarRays)[i]));
         }
     }
     return objectsInFront;
@@ -216,12 +228,12 @@ std::vector<std::pair<sdcAngle,double>> sdcSensorData::GetBlockedFrontRays(){
 /*
  * Return a vector of pairs (ray angle, ray length) which represents objects in view of back lidar
  */
-std::vector<std::pair<sdcAngle,double>> sdcSensorData::GetBlockedBackRays(){
-    std::vector<std::pair<sdcAngle,double>> objectsInBack;
+std::vector<sdcLidarRay> sdcSensorData::GetBlockedBackRays(){
+    std::vector<sdcLidarRay> objectsInBack;
     for (int i = 0; i < backLidarRays->size(); i++) {
         if (!std::isinf((*backLidarRays)[i])) {
             sdcAngle angle = sdcAngle(i*backAngleResolution+backMinAngle);
-            objectsInBack.push_back(std::make_pair(angle, (*backLidarRays)[i]));
+            objectsInBack.push_back(sdcLidarRay(angle, (*backLidarRays)[i]));
         }
     }
     return objectsInBack;
@@ -232,10 +244,10 @@ std::vector<std::pair<sdcAngle,double>> sdcSensorData::GetBlockedBackRays(){
  * corresponding to an object in the front lidar, and the minimum distance the object is
  * away
  */
-std::vector<std::pair<std::pair<sdcAngle,sdcAngle>,double>> sdcSensorData::GetObjectsInFront(){
-    std::vector<std::pair<std::pair<sdcAngle,sdcAngle>,double>> objectList;
+std::vector<std::pair<sdcLidarRay, sdcLidarRay>> sdcSensorData::GetObjectsInFront(){
+    std::vector<std::pair<sdcLidarRay, sdcLidarRay>> objectList;
 
-    std::vector<std::pair<sdcAngle,double>> blockedRays = GetBlockedFrontRays();
+    std::vector<sdcLidarRay> blockedRays = GetBlockedFrontRays();
     if(blockedRays.size() == 0) return objectList;
 
     double distMargin = 0.5;
@@ -250,14 +262,14 @@ std::vector<std::pair<std::pair<sdcAngle,sdcAngle>,double>> sdcSensorData::GetOb
     double prevDist;
 
     for (int i = 0; i < blockedRays.size(); i++) {
-        sdcAngle curAngle = blockedRays[i].first;
-        double curDist = blockedRays[i].second;
+        sdcAngle curAngle = blockedRays[i].angle;
+        double curDist = blockedRays[i].dist;
 
         if(!ignorePrev){
             objMinDist = curDist < objMinDist ? curDist : objMinDist;
 
             if(!((curAngle - prevAngle).withinMargin(angleMargin) && fabs(curDist - prevDist) < distMargin)){
-                objectList.push_back(std::make_pair(std::make_pair(objMinAngle, curAngle), objMinDist));
+                objectList.push_back(std::make_pair(sdcLidarRay(objMinAngle, objMinDist), sdcLidarRay(curAngle, objMinDist)));
                 ignorePrev = true;
             }
         }else{
@@ -270,7 +282,7 @@ std::vector<std::pair<std::pair<sdcAngle,sdcAngle>,double>> sdcSensorData::GetOb
         prevDist = curDist;
     }
 
-    objectList.push_back(std::make_pair(std::make_pair(objMinAngle, prevAngle), objMinDist));
+    objectList.push_back(std::make_pair(sdcLidarRay(objMinAngle, objMinDist), sdcLidarRay(prevAngle, objMinDist)));
     return objectList;
 }
 

@@ -154,6 +154,7 @@ namespace gazebo {
 
         // Driving algorithms
         void WalledDriving();
+        void LanedDriving();
         void GridTurning();
         void TurnAround();
         void WaypointDriving(std::vector<sdcWaypoint> waypoints);

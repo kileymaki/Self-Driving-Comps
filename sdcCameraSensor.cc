@@ -54,14 +54,15 @@ void sdcCameraSensor::OnUpdate() {
   const unsigned char* img = this->parentSensor->GetImageData(0);
   Mat image = Mat(this->parentSensor->GetImageHeight(0), this->parentSensor->GetImageWidth(0), CV_8UC3, const_cast<unsigned char*>(img));
 
-  //Select Region of Interest (ROI) for lane detection - this is the bottom half of the image.
+  // Select Region of Interest (ROI) for lane detection - this is the bottom half of the image.
   //Mat imageROI = image(cv::Rect(0, (4*image.rows)/5, image.cols, image.rows/5));
   Mat imageROI = image(cv::Rect(0, image.rows/2, image.cols, image.rows/2));
-  // Canny algorithm for edge dectection
+  // Canny algorithm for edge dectection, stores result in contours.
   Mat contours;
   Canny(imageROI,contours,50,150);
   //Mat contoursInv;
   //threshold(contours,contoursInv,128,255,THRESH_BINARY_INV);
+  // Hough Transform detects lines within the edge map, stores result in lines.
   float PI = 3.14159;
   std::vector<Vec2f> lines;
   HoughLines(contours,lines,1,PI/180, 100);
@@ -138,7 +139,7 @@ void sdcCameraSensor::OnUpdate() {
 
 // BEGIN LCF LANE DETECTION
 double leftNearLaneSlope = 1., rightNearLaneSlope = 1., leftLaneIntercept, rightLaneIntercept;
-double a, b, c, d, e, v, n, k, lane_midpoint, eps = 25.0;
+double a, b, c, d, e, k, n, v, lane_midpoint, eps = 25.0;
 float FOCAL_LENGTH = 554.382; //lambda in Park et. al.
 float Tz = 0.85; // in meters
 // float xf = leftp1.x;
@@ -168,7 +169,7 @@ if (leftp1.x - leftp2.x != 0) {
     leftNearLaneSlope = (1.*leftp1.y - leftp2.y)/(leftp2.x - leftp1.x);
 }
 
-// The intercept is appearing on the midline, also the top of the ROI, for some reason
+// The intercept is appearing on the midline, also the top of the ROI
 rightLaneIntercept = ((0-rightp1.y)/rightNearLaneSlope)+rightp1.x;
 leftLaneIntercept = ((0-leftp1.y)/leftNearLaneSlope)+leftp1.x;
 //v is the height component of the vanishing point, described as vp = (u,v)
@@ -176,8 +177,12 @@ v = image.rows/2;
 
 lane_midpoint = (leftp2.x + rightp2.x)/2;
 
-//lane midpoint - image midpoint
-n = lane_midpoint - (image.cols/2);
+// n is our position relative to the center of the lane directly in front of us.
+n = (image.cols/2) - lane_midpoint;
+// Naive lane detection is better than no lane detection
+sdcSensorData::UpdateCameraData(n);
+
+line(image, Point(lane_midpoint, 480), Point(lane_midpoint, 20), Scalar(0, 255, 0), 1);
 // std::cout << "n: " << n << "\tlane midpoint: " << lane_midpoint << std::endl;
 a = leftNearLaneSlope/2;
 b = (v+n)/2;
@@ -193,8 +198,8 @@ ffa_p1.x = 0.;
 ffa_p2.x = 320.;
 nfa_p1.y = (a + sqrt(c))*(nfa_p1.x) + (b + c*(d/(2*sqrt(c))));
 nfa_p2.y = (a + sqrt(c))*(nfa_p2.x) + (b + c*(d/(2*sqrt(c))));
-ffa_p1.y = (a - sqrt(c))*(nfa_p1.x) + (b - c*(d/(2*sqrt(c))));
-ffa_p2.y = (a - sqrt(c))*(nfa_p2.x) + (b - c*(d/(2*sqrt(c))));
+ffa_p1.y = (a - sqrt(c))*(ffa_p1.x) + (b - c*(d/(2*sqrt(c))));
+ffa_p2.y = (a - sqrt(c))*(ffa_p2.x) + (b - c*(d/(2*sqrt(c))));
 line(image, nfa_p1, nfa_p2, Scalar(255,255,0), 1, CV_AA);
 line(image, ffa_p1, ffa_p2, Scalar(255,255,0), 1, CV_AA);
 

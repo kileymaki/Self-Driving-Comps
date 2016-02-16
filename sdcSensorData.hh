@@ -33,9 +33,14 @@ namespace gazebo
         static std::vector<double> GetLidarRays(LidarPos lidar);
 
         static std::vector<std::pair<sdcAngle,double>> GetBlockedFrontRays();
+        static std::vector<std::pair<sdcAngle,double>> GetBlockedBackRays();
+        static std::vector<std::pair<std::pair<sdcAngle,sdcAngle>,double>> GetObjectsInFront();
 
         static sdcAngle frontMinAngle;
         static double frontAngleResolution;
+
+        static sdcAngle backMinAngle;
+        static double backAngleResolution;
 
     private:
         static std::vector<double>* frontLidarRays;

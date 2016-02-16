@@ -30,16 +30,10 @@
 #include "gazebo/util/system.hh"
 #include "sdcSensorData.hh"
 #include "sdcAngle.hh"
+#include "sdcWaypoint.hh"
 
 
 namespace gazebo {
-    class Waypoint {
-    public:
-      int waypointType;
-      math::Vector2d pos;
-
-      Waypoint(int waypointType,math::Vector2d pos);
-    };
 
     class GAZEBO_VISIBLE sdcCar : public ModelPlugin {
         // Constructor for sdcCar
@@ -135,6 +129,7 @@ namespace gazebo {
         double x;
         double y;
 
+
         //fl stands for Front Lidar
         std::vector<double> fl;
         int flRayLengths;
@@ -161,19 +156,21 @@ namespace gazebo {
         void WalledDriving();
         void GridTurning();
         void TurnAround();
-        void WaypointDriving(std::vector<math::Vector2d> waypoints);
+        void WaypointDriving(std::vector<sdcWaypoint> waypoints);
         void Follow();
         void PerpendicularPark();
 
         // Helper methods
         void frontLidarUpdate();
+        std::vector<sdcWaypoint> generateWaypoints(sdcWaypoint dest);
 
         sdcAngle AngleToTarget(math::Vector2d target);
-        bool ObjectDirectlyAhead();
+        static bool ObjectDirectlyAhead();
 
         bool IsMovingForwards();
         double GetSpeed();
         sdcAngle GetDirection();
+        sdcAngle GetOrientation();
 
         // Control methods
         void Accelerate(double amt = 1, double rate = 1.0);

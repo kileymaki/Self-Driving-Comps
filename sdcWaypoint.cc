@@ -1,11 +1,8 @@
 #include <stdio.h>
-#include "Waypoint.hh"
+#include "sdcWaypoint.hh"
 
 
 enum WaypointType {
-  // Waypoint to visit, lowest priority
-  WaypointType_Target,
-  // Waypoints created programmatically, should be given higher priority
   WaypointType_DriveStraight,
   WaypointType_TurnLeft,
   WaypointType_TurnRight,
@@ -14,7 +11,7 @@ enum WaypointType {
 
 
 
-Waypoint::Waypoint(int waypointType, math::Vector2d pos) {
+sdcWaypoint::sdcWaypoint(int waypointType, std::pair<double,double> pos) {
     this->waypointType = WaypointType_DriveStraight;
     this->pos = pos;
 }

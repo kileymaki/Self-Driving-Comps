@@ -286,7 +286,7 @@
                           <resolution>0.01</resolution>
                       </range>
                   </ray>
-                  <plugin name="sdcLaserSensor" filename="build/libsdcLaserSensor.so" />
+                  <plugin name="sdcFrontLidarSensor" filename="build/libsdcFrontLidarSensor.so" />
                   <always_on>1</always_on>
                   <update_rate>30</update_rate>
                   <visualize>true</visualize>
@@ -308,7 +308,7 @@
 
         <!-- BACK LASER SENSOR -->
       <link name="back_lidar">
-            <pose>-1.0 0 0.4 0 0 0</pose>
+            <pose>-1.2 0 0.4 0 0 0</pose>
             <visual name="back_lidar_visual">
                 <geometry>
                     <mesh>
@@ -340,8 +340,8 @@
                         <horizontal>
                             <samples>640</samples>
                             <resolution>1</resolution>
-                            <min_angle>-1.39626</min_angle>
-                            <max_angle>1.39626</max_angle>
+                            <min_angle>-1.5709</min_angle>
+                            <max_angle>1.5709</max_angle>
                         </horizontal>
                     </scan>
                     <range>
@@ -350,7 +350,7 @@
                         <resolution>0.01</resolution>
                     </range>
                 </ray>
-                <plugin name="sdcBackLaserSensor" filename="build/libsdcBackLaserSensor.so" />
+                <plugin name="sdcBackLidarSensor" filename="build/libsdcBackLidarSensor.so" />
                 <always_on>1</always_on>
                 <update_rate>30</update_rate>
                 <visualize>true</visualize>
@@ -414,7 +414,7 @@
                         <resolution>0.01</resolution>
                     </range>
                 </ray>
-                <plugin name="sdcTopLaserSensor" filename="build/libsdcTopLaserSensor.so" />
+                <plugin name="sdcTopLidarSensor" filename="build/libsdcTopLidarSensor.so" />
                 <always_on>1</always_on>
                 <update_rate>30</update_rate>
                 <visualize>false</visualize>
@@ -436,7 +436,7 @@
                         <resolution>0.01</resolution>
                     </range>
                 </ray>
-                <plugin name="sdcTopLaserSensor" filename="build/libsdcTopLaserSensor.so" />
+                <plugin name="sdcTopLidarSensor" filename="build/libsdcTopLidarSensor.so" />
                 <always_on>1</always_on>
                 <update_rate>30</update_rate>
                 <visualize>false</visualize>
@@ -458,7 +458,7 @@
                         <resolution>0.01</resolution>
                     </range>
                 </ray>
-                <plugin name="sdcTopLaserSensor" filename="build/libsdcTopLaserSensor.so" />
+                <plugin name="sdcTopLidarSensor" filename="build/libsdcTopLidarSensor.so" />
                 <always_on>1</always_on>
                 <update_rate>30</update_rate>
                 <visualize>false</visualize>
@@ -480,7 +480,7 @@
                         <resolution>0.01</resolution>
                     </range>
                 </ray>
-                <plugin name="sdcTopLaserSensor" filename="build/libsdcTopLaserSensor.so" />
+                <plugin name="sdcTopLidarSensor" filename="build/libsdcTopLidarSensor.so" />
                 <always_on>1</always_on>
                 <update_rate>30</update_rate>
                 <visualize>false</visualize>
@@ -546,7 +546,7 @@
                         <resolution>0.01</resolution>
                     </range>
                 </ray>
-                <plugin name="sdcSideLaserSensor" filename="build/libsdcSideLaserSensor.so" />
+                <plugin name="sdcSideLidarSensor" filename="build/libsdcSideLidarSensor.so" />
                 <always_on>1</always_on>
                 <update_rate>30</update_rate>
                 <visualize>true</visualize>
@@ -564,11 +564,11 @@
                     </scan>
                     <range>
                         <min>0.08</min>
-                        <max>1.0</max>
+                        <max>0.5</max>
                         <resolution>0.01</resolution>
                     </range>
                 </ray>
-                <plugin name="sdcSideLaserSensor" filename="build/libsdcSideLaserSensor.so" />
+                <plugin name="sdcSideLidarSensor" filename="build/libsdcSideLidarSensor.so" />
                 <always_on>1</always_on>
                 <update_rate>30</update_rate>
                 <visualize>true</visualize>
@@ -630,7 +630,7 @@
                         <resolution>0.01</resolution>
                     </range>
                 </ray>
-                <plugin name="sdcSideLaserSensor" filename="build/libsdcSideLaserSensor.so" />
+                <plugin name="sdcSideLidarSensor" filename="build/libsdcSideLidarSensor.so" />
                 <always_on>1</always_on>
                 <update_rate>30</update_rate>
                 <visualize>true</visualize>
@@ -648,11 +648,11 @@
                     </scan>
                     <range>
                         <min>0.08</min>
-                        <max>1.0</max>
+                        <max>0.5</max>
                         <resolution>0.01</resolution>
                     </range>
                 </ray>
-                <plugin name="sdcSideLaserSensor" filename="build/libsdcSideLaserSensor.so" />
+                <plugin name="sdcSideLidarSensor" filename="build/libsdcSideLidarSensor.so" />
                 <always_on>1</always_on>
                 <update_rate>30</update_rate>
                 <visualize>true</visualize>

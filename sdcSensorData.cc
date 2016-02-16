@@ -14,6 +14,9 @@ using namespace gazebo;
 sdcAngle sdcSensorData::frontMinAngle = sdcAngle(0);
 double sdcSensorData::frontAngleResolution = 0;
 
+sdcAngle sdcSensorData::backMinAngle = sdcAngle(0);
+double sdcSensorData::backAngleResolution = 0;
+
 // The rays from each lidar
 std::vector<double>* sdcSensorData::frontLidarRays = new std::vector<double>();
 std::vector<double>* sdcSensorData::backLidarRays = new std::vector<double>();
@@ -43,6 +46,8 @@ void sdcSensorData::InitLidar(LidarPos lidar, double minAngle, double angleResol
         break;
 
         case BACK:
+        backMinAngle = sdcAngle(minAngle);
+        backAngleResolution = angleResolution;
         break;
 
         case TOP_FORWARD:
@@ -206,6 +211,67 @@ std::vector<std::pair<sdcAngle,double>> sdcSensorData::GetBlockedFrontRays(){
         }
     }
     return objectsInFront;
+}
+
+/*
+ * Return a vector of pairs (ray angle, ray length) which represents objects in view of back lidar
+ */
+std::vector<std::pair<sdcAngle,double>> sdcSensorData::GetBlockedBackRays(){
+    std::vector<std::pair<sdcAngle,double>> objectsInBack;
+    for (int i = 0; i < backLidarRays->size(); i++) {
+        if (!std::isinf((*backLidarRays)[i])) {
+            sdcAngle angle = sdcAngle(i*backAngleResolution+backMinAngle);
+            objectsInBack.push_back(std::make_pair(angle, (*backLidarRays)[i]));
+        }
+    }
+    return objectsInBack;
+}
+
+/*
+ * Returns a vector of pairs that each contain a pair with the minimum and maximum angle
+ * corresponding to an object in the front lidar, and the minimum distance the object is
+ * away
+ */
+std::vector<std::pair<std::pair<sdcAngle,sdcAngle>,double>> sdcSensorData::GetObjectsInFront(){
+    std::vector<std::pair<std::pair<sdcAngle,sdcAngle>,double>> objectList;
+
+    std::vector<std::pair<sdcAngle,double>> blockedRays = GetBlockedFrontRays();
+    if(blockedRays.size() == 0) return objectList;
+
+    double distMargin = 0.5;
+    double angleMargin = 0.005;
+
+    bool ignorePrev = true;
+
+    sdcAngle objMinAngle;
+    double objMinDist;
+
+    sdcAngle prevAngle;
+    double prevDist;
+
+    for (int i = 0; i < blockedRays.size(); i++) {
+        sdcAngle curAngle = blockedRays[i].first;
+        double curDist = blockedRays[i].second;
+
+        if(!ignorePrev){
+            objMinDist = curDist < objMinDist ? curDist : objMinDist;
+
+            if(!((curAngle - prevAngle).withinMargin(angleMargin) && fabs(curDist - prevDist) < distMargin)){
+                objectList.push_back(std::make_pair(std::make_pair(objMinAngle, curAngle), objMinDist));
+                ignorePrev = true;
+            }
+        }else{
+            ignorePrev = false;
+            objMinAngle = curAngle;
+            objMinDist = curDist;
+        }
+
+        prevAngle = curAngle;
+        prevDist = curDist;
+    }
+
+    objectList.push_back(std::make_pair(std::make_pair(objMinAngle, prevAngle), objMinDist));
+    return objectList;
 }
 
 // New gps system using 2d vector

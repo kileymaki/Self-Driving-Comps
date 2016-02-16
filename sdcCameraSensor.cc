@@ -178,7 +178,7 @@ lane_midpoint = (leftp2.x + rightp2.x)/2;
 
 //lane midpoint - image midpoint
 n = lane_midpoint - (image.cols/2);
-std::cout << "n: " << n << "\tlane midpoint: " << lane_midpoint << std::endl;
+// std::cout << "n: " << n << "\tlane midpoint: " << lane_midpoint << std::endl;
 a = leftNearLaneSlope/2;
 b = (v+n)/2;
 c = pow(leftNearLaneSlope,2)/4;

@@ -40,8 +40,8 @@ target_link_libraries(sdcGpsSensor sdcSensorData ${GAZEBO_LIBRARIES} ${Boost_LIB
 add_library(sdcCameraSensor SHARED sdcCameraSensor.cc)
 target_link_libraries(sdcCameraSensor sdcSensorData ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES} ${OpenCV_LIBS})
 
-# add_library(Waypoint SHARED Waypoint.cc)
-# target_link_libraries(Waypoint ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
+add_library(sdcWaypoint SHARED sdcWaypoint.cc)
+target_link_libraries(sdcWaypoint ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
 
 add_library(sdcCar SHARED sdcCar.cc)
-target_link_libraries(sdcCar sdcAngle sdcSensorData ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
+target_link_libraries(sdcCar sdcWaypoint sdcAngle sdcSensorData ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})

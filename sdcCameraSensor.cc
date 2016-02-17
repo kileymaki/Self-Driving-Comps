@@ -54,9 +54,13 @@ void sdcCameraSensor::OnUpdate() {
   const unsigned char* img = this->parentSensor->GetImageData(0);
   Mat image = Mat(this->parentSensor->GetImageHeight(0), this->parentSensor->GetImageWidth(0), CV_8UC3, const_cast<unsigned char*>(img));
 
-  //Select Region of Interest (ROI) for lane detection - this is the bottom half of the image.
-  //Mat imageROI = image(cv::Rect(0, (4*image.rows)/5, image.cols, image.rows/5));
-  Mat imageROI = image(cv::Rect(0, image.rows/2, image.cols, image.rows/2));
+  //Select Region of Interest (ROI) for lane detection - currently this is the bottom half of the image.
+  //set area for ROI as a rectangle
+  //Rect ROI = image(cv::Rect(0, (4*image.rows)/5, image.cols, image.rows/5));
+  Rect ROI = cv::Rect(0, image.rows/2, image.cols, image.rows/2);
+  Mat imageROI = image(ROI);
+  //rectangle(image,ROI,Scalar(0,255,0),2);
+
   // Canny algorithm for edge dectection
   Mat contours;
   Canny(imageROI,contours,50,150);
@@ -76,8 +80,8 @@ void sdcCameraSensor::OnUpdate() {
   std::vector<Vec2f>::const_iterator it = lines.begin();
 
   // white line grid overlay for reference points on displayed image
-  line(imageROI, Point((imageROI.cols/2)-10,0), Point((imageROI.cols/2)+10,0), Scalar(255,255,255), 2);
-  line(imageROI, Point(imageROI.cols/2,10), Point(imageROI.cols/2,-10), Scalar(255,255,255), 2);
+  //line(imageROI, Point((imageROI.cols/2)-10,0), Point((imageROI.cols/2)+10,0), Scalar(255,255,255), 2);
+  //line(imageROI, Point(imageROI.cols/2,10), Point(imageROI.cols/2,-10), Scalar(255,255,255), 2);
 
   Vec2f left_lane_marker = Vec2f(0.0, PI);
   Vec2f right_lane_marker = Vec2f(0.0, 0.0);
@@ -101,17 +105,21 @@ void sdcCameraSensor::OnUpdate() {
 
       ++it;
   }
+  // ATTN: need to have ROI.rows in numerator because of trig stuff. It isnt an oversight!
+  // Changed things so the lines are drawn on the image, not the region of interest. hopefully 
+  // this will make some of the issues easier to debug
 
   //draw left lane marker
-  Point leftp1 = Point(left_lane_marker[0]/cos(left_lane_marker[1]),0);
-  Point leftp2 = Point((left_lane_marker[0] - imageROI.rows * sin(left_lane_marker[1])) / cos(left_lane_marker[1]), imageROI.rows);
-  line(imageROI, leftp1, leftp2, Scalar(255), 3);
+  Point leftp1 = Point(left_lane_marker[0]/cos(left_lane_marker[1]),240);
+  Point leftp2 = Point((left_lane_marker[0] - (imageROI.rows) * sin(left_lane_marker[1])) / cos(left_lane_marker[1]), (image.rows));
+  line(image, leftp1, leftp2, Scalar(255), 3);
 
   //draw right lane marker
-  Point rightp1 = Point(right_lane_marker[0]/cos(right_lane_marker[1]),0);
-  Point rightp2 = Point((right_lane_marker[0] - imageROI.rows * sin(right_lane_marker[1])) / cos(right_lane_marker[1]), imageROI.rows);
-  line(imageROI, rightp1, rightp2, Scalar(255), 3);
+  Point rightp1 = Point(right_lane_marker[0]/cos(right_lane_marker[1]),240);
+  Point rightp2 = Point((right_lane_marker[0] - (imageROI.rows) * sin(right_lane_marker[1])) / cos(right_lane_marker[1]), (image.rows));
+  line(image, rightp1, rightp2, Scalar(255), 3);
 
+  std::cout << leftp1 << "\t" << leftp2 << "\t" << rightp1 << "\t" << rightp2 << "\t" << std::endl;
 
   //BEGIN HAAR CASCADE OBJECT DETECTION
 /*
@@ -137,8 +145,8 @@ void sdcCameraSensor::OnUpdate() {
 */
 
 // BEGIN LCF LANE DETECTION
-double leftNearLaneSlope = 1., rightNearLaneSlope = 1., leftLaneIntercept, rightLaneIntercept;
-double a, b, c, d, e, v, n, k, lane_midpoint, eps = 25.0;
+double leftNearLaneSlope, rightNearLaneSlope, leftLaneIntercept, rightLaneIntercept;
+double a, b, c, d, e, u, v, n, k, lane_midpoint, eps = 25.0;
 float FOCAL_LENGTH = 554.382; //lambda in Park et. al.
 float Tz = 0.85; // in meters
 // float xf = leftp1.x;
@@ -158,21 +166,33 @@ vec_of_i_vals.push_back(-48.);
 // Using the two lane markers
 Point vanishingPoint;
 
+// using the left lane
+if (leftp1.x - leftp2.x != 0) {
+    leftNearLaneSlope = (1.*leftp2.y - leftp1.y)/(leftp2.x - leftp1.x);
+}
+
 // using the right lane
 if (rightp2.x - rightp1.x != 0) {
     rightNearLaneSlope = (1.*rightp2.y - rightp1.y)/(rightp2.x - rightp1.x);
 }
+std::cout << "left slope: " << leftNearLaneSlope << "\t|\t" << "right slope: "<< rightNearLaneSlope << std::endl;
 
-// using the left lane
-if (leftp1.x - leftp2.x != 0) {
-    leftNearLaneSlope = (1.*leftp1.y - leftp2.y)/(leftp2.x - leftp1.x);
-}
+// Calculate y-intercepts of the lanes
+//b = y - mx
+leftLaneIntercept = leftp1.y - leftNearLaneSlope*leftp1.x; //((0-leftp1.y)/leftNearLaneSlope)+leftp1.x;
+rightLaneIntercept = rightp1.y - rightNearLaneSlope*rightp1.x;// ((0-rightp1.y)/rightNearLaneSlope)+rightp1.x;
+std::cout << "left intercept: " << leftLaneIntercept << "\t|\t" << "right intecept: "<< rightLaneIntercept << std::endl;
 
-// The intercept is appearing on the midline, also the top of the ROI, for some reason
-rightLaneIntercept = ((0-rightp1.y)/rightNearLaneSlope)+rightp1.x;
-leftLaneIntercept = ((0-leftp1.y)/leftNearLaneSlope)+leftp1.x;
+// SOLVE VANISHING POINT (u,v), which is intersection of two lines
 //v is the height component of the vanishing point, described as vp = (u,v)
-v = image.rows/2;
+//v = image.rows/2;
+//au + c = bu + d
+//u = (d - c) / (a - b)
+u = abs((leftLaneIntercept - rightLaneIntercept) / (leftNearLaneSlope - rightNearLaneSlope));
+v = abs((leftNearLaneSlope * u)) + rightLaneIntercept;
+Point vp = Point(u,v);
+std::cout << "Vanishing Point: " << vp.x << "|" << vp.y << std::endl;
+circle(image,vp, 4, Scalar(0,255,0), 3);
 
 lane_midpoint = (leftp2.x + rightp2.x)/2;
 
@@ -184,7 +204,7 @@ b = (v+n)/2;
 c = pow(leftNearLaneSlope,2)/4;
 d = a * (n-v);
 
-//DRAW NEAR FIELD AND FAR FIELD ASYMPTOTES
+//DRAW LEFT NEAR FIELD AND FAR FIELD ASYMPTOTES
 Point nfa_p1, nfa_p2, ffa_p1, ffa_p2;
 //Yf = (a+ sqrt(c)x_f + (b + c(d/(2*sqrt(c)))))
 nfa_p1.x = 0.;
@@ -193,12 +213,11 @@ ffa_p1.x = 0.;
 ffa_p2.x = 320.;
 nfa_p1.y = (a + sqrt(c))*(nfa_p1.x) + (b + c*(d/(2*sqrt(c))));
 nfa_p2.y = (a + sqrt(c))*(nfa_p2.x) + (b + c*(d/(2*sqrt(c))));
-ffa_p1.y = (a - sqrt(c))*(nfa_p1.x) + (b - c*(d/(2*sqrt(c))));
-ffa_p2.y = (a - sqrt(c))*(nfa_p2.x) + (b - c*(d/(2*sqrt(c))));
+ffa_p1.y = (a - sqrt(c))*(ffa_p1.x) + (b - (d/(2*sqrt(c))));
+ffa_p2.y = (a - sqrt(c))*(ffa_p2.x) + (b - (d/(2*sqrt(c))));
 line(image, nfa_p1, nfa_p2, Scalar(255,255,0), 1, CV_AA);
 line(image, ffa_p1, ffa_p2, Scalar(255,255,0), 1, CV_AA);
-
-
+std::cout << "ASYMPTOTES: " << nfa_p1 << "\t" << nfa_p2 << "\t" << ffa_p1 << "\t" << ffa_p2 << "\t" << std::endl;
 //e = (b-v)^2 + ka
 //e =  pow((b-v),2) + (k*a);
 //Mat curves = image.clone();
@@ -218,23 +237,21 @@ for (std::vector<double>::const_iterator i = vec_of_i_vals.begin(); i != vec_of_
 
   }
   for (int i = 0; i < curve_points_bot.size() - 1; i++){
-    line(image, curve_points_top[i], curve_points_top[i + 1], Scalar(255), 1, CV_AA);
-    line(image, curve_points_bot[i], curve_points_bot[i + 1], Scalar(255), 1, CV_AA);
+    line(image, curve_points_top[i], curve_points_top[i + 1], Scalar(255,0,255), 1, CV_AA);
+    line(image, curve_points_bot[i], curve_points_bot[i + 1], Scalar(255,0,255), 1, CV_AA);
   }
 }
 //std::cout << "=====================================\n";
-
-
-
 // Uncomment to see the wonders of opencv in action
 //line(image, rightp1, rightp2, Scalar(0,255,0),2);
-
 //std::cout << rightLaneIntercept << "   " << rightNearLaneSlope << std::endl;
 ///////// END LCF LANE DETECTION
 
   //namedWindow("Lane Detection", WINDOW_AUTOSIZE);
   //imshow("Lane Detection", contours);
-
+  
+  //draw roi boundary last so it is on top!
+  //rectangle(image,ROI,Scalar(0,255,0),2);
   namedWindow("Camera View", WINDOW_AUTOSIZE);
   imshow("Camera View", image);
   waitKey(4);

@@ -89,7 +89,7 @@ void sdcCar::Drive()
         // Default state; drive straight to target location
         case waypoint:
         // Handle lane driving
-        // this->LanedDriving();
+        this->LanedDriving();
         this->Accelerate();
         // this->WaypointDriving(WAYPOINT_VEC);
         break;
@@ -907,7 +907,7 @@ sdcCar::sdcCar(){
     this->maxCarSpeed = 6;
     this->maxCarReverseSpeed = -10;
 
-    this->currentState = follow;
+    this->currentState = waypoint;
 
     this->currentParkingState = backPark;
 

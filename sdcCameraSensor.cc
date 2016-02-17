@@ -206,26 +206,26 @@ sdcSensorData::UpdateCameraData(n);
 line(image, Point(lane_midpoint, 480), Point(lane_midpoint, 0), Scalar(0, 255, 0), 1);
 // std::cout << "n: " << n << "\tlane midpoint: " << lane_midpoint << std::endl;
 a = leftNearLaneSlope/2;
-b = (v+n)/2;
+b = (v+leftLaneIntercept)/2;
 c = pow(leftNearLaneSlope,2)/4;
-d = a * (n-v);
+d = a * (leftLaneIntercept-v);
 
 //DRAW LEFT NEAR FIELD AND FAR FIELD ASYMPTOTES
 Point nfa_p1, nfa_p2, ffa_p1, ffa_p2;
-nfa_p1.x = 0.;
-nfa_p2.x = 320.;
-nfa_p1.y = v; //Cy, center of computer image
-nfa_p2.y = v;
-
 ffa_p1.x = 0.;
-ffa_p2.x = 320.;
-ffa_p1.y = (a - sqrt(c))*(ffa_p1.x) + (b - (d/(2*sqrt(c)))) +480;
-ffa_p2.y = (a - sqrt(c))*(ffa_p2.x) + (b - (d/(2*sqrt(c)))) +480;
+ffa_p2.x = u;
+ffa_p1.y = v; //Cy, center of computer image
+ffa_p2.y = v;
 
+nfa_p1.x = 0.;
+nfa_p2.x = u;
+nfa_p1.y = (leftNearLaneSlope)*(nfa_p1.x) + leftLaneIntercept;//(b + (d/(2*sqrt(c))));
+nfa_p2.y = (leftNearLaneSlope)*(nfa_p2.x) + leftLaneIntercept;//(b + (d/(2*sqrt(c))));
+std::cout << (b + (d/(2*sqrt(c)))) << "\t" << leftLaneIntercept << std::endl;
 line(image, nfa_p1, nfa_p2, Scalar(255,255,0), 1, CV_AA);
 line(image, ffa_p1, ffa_p2, Scalar(255,255,0), 1, CV_AA);
-std::cout << "ASYMPTOTES: " << nfa_p1 << "\t" << nfa_p2 << "\t" << ffa_p1 << "\t" << ffa_p2 << "\t" << std::endl;
-//std::cout << "VARIABLES: " << a << "\t" << b << "\t" << c << "\t" << d << "\t" << std::endl;
+//std::cout << "ASYMPTOTES: " << nfa_p1 << "\t" << nfa_p2 << "\t" << ffa_p1 << "\t" << ffa_p2 << "\t" << std::endl;
+std::cout << "VARIABLES: " << a << "\t" << b << "\t" << c << "\t" << d << "\t" << std::endl;
 
 //e = (b-v)^2 + ka
 //e =  pow((b-v),2) + (k*a);
@@ -240,10 +240,10 @@ for (std::vector<double>::const_iterator i = vec_of_i_vals.begin(); i != vec_of_
     float y_top = (a * x) + b + sqrt( c*pow(x,2) + (d * x) + e);
     float y_bot = (a * x) + b - sqrt( c*pow(x,2) + (d * x) + e);
 
-    Point curve_point_top = Point(x,y_top+240);
+    Point curve_point_top = Point(x,y_top);
     curve_points_top.push_back(curve_point_top);
 
-    Point curve_point_bot = Point(x,y_bot+240);
+    Point curve_point_bot = Point(x,y_bot);
     // std::cout << curve_point_top.x << "\t" << curve_point_top.y << std::endl;
     curve_points_bot.push_back(curve_point_bot);
 
@@ -264,6 +264,8 @@ for (std::vector<double>::const_iterator i = vec_of_i_vals.begin(); i != vec_of_
 
   //draw roi boundary last so it is on top!
   //rectangle(image,ROI,Scalar(0,255,0),2);
+  line(image, nfa_p1, nfa_p2, Scalar(255,255,0), 1, CV_AA);
+  line(image, ffa_p1, ffa_p2, Scalar(255,255,0), 1, CV_AA);
   namedWindow("Camera View", WINDOW_AUTOSIZE);
   imshow("Camera View", image);
   waitKey(4);

@@ -192,17 +192,18 @@ std::cout << "left intercept: " << leftLaneIntercept << "\t|\t" << "right intece
 u = abs((leftLaneIntercept - rightLaneIntercept) / (leftNearLaneSlope - rightNearLaneSlope));
 v = abs((leftNearLaneSlope * u)) + rightLaneIntercept;
 Point vp = Point(u,v);
-std::cout << "Vanishing Point: " << vp.x << "|" << vp.y << std::endl;
+//std::cout << "Vanishing Point: " << vp.x << "|" << vp.y << std::endl;
 circle(image,vp, 4, Scalar(0,255,0), 3);
 
 lane_midpoint = (leftp2.x + rightp2.x)/2;
 
 // n is our position relative to the center of the lane directly in front of us.
 n = (image.cols/2) - lane_midpoint;
+
 // Naive lane detection is better than no lane detection
 sdcSensorData::UpdateCameraData(n);
 
-line(image, Point(lane_midpoint, 480), Point(lane_midpoint, 20), Scalar(0, 255, 0), 1);
+line(image, Point(lane_midpoint, 480), Point(lane_midpoint, 0), Scalar(0, 255, 0), 1);
 // std::cout << "n: " << n << "\tlane midpoint: " << lane_midpoint << std::endl;
 a = leftNearLaneSlope/2;
 b = (v+n)/2;
@@ -214,15 +215,19 @@ Point nfa_p1, nfa_p2, ffa_p1, ffa_p2;
 //Yf = (a+ sqrt(c)x_f + (b + c(d/(2*sqrt(c)))))
 nfa_p1.x = 0.;
 nfa_p2.x = 320.;
+nfa_p1.y = (a + sqrt(c))*(nfa_p1.x) + (b + (d/(2*sqrt(c))));
+nfa_p2.y = (a + sqrt(c))*(nfa_p2.x) + (b + (d/(2*sqrt(c))));
+
 ffa_p1.x = 0.;
 ffa_p2.x = 320.;
-nfa_p1.y = (a + sqrt(c))*(nfa_p1.x) + (b + c*(d/(2*sqrt(c))));
-nfa_p2.y = (a + sqrt(c))*(nfa_p2.x) + (b + c*(d/(2*sqrt(c))));
-ffa_p1.y = (a - sqrt(c))*(ffa_p1.x) + (b - (d/(2*sqrt(c))));
-ffa_p2.y = (a - sqrt(c))*(ffa_p2.x) + (b - (d/(2*sqrt(c))));
+ffa_p1.y = (a - sqrt(c))*(ffa_p1.x) + (b - (d/(2*sqrt(c)))) +480;
+ffa_p2.y = (a - sqrt(c))*(ffa_p2.x) + (b - (d/(2*sqrt(c)))) +480;
+
 line(image, nfa_p1, nfa_p2, Scalar(255,255,0), 1, CV_AA);
 line(image, ffa_p1, ffa_p2, Scalar(255,255,0), 1, CV_AA);
 std::cout << "ASYMPTOTES: " << nfa_p1 << "\t" << nfa_p2 << "\t" << ffa_p1 << "\t" << ffa_p2 << "\t" << std::endl;
+std::cout << "VARIABLES: " << a << "\t" << b << "\t" << c << "\t" << d << "\t" << std::endl;
+
 //e = (b-v)^2 + ka
 //e =  pow((b-v),2) + (k*a);
 //Mat curves = image.clone();

@@ -71,8 +71,11 @@ void sdcCar::Drive()
         // this->currentState = avoidance;
     }
 
-    std::vector<sdcVisibleObject> v = sdcSensorData::GetObjectsInFront();
-    std::cout << v.size() << std::endl;
+    // if(this->frontLidarLastUpdate != sdcSensorData::frontLidarLastUpdate){
+    //     std::vector<sdcVisibleObject> v = sdcSensorData::GetObjectsInFront();
+    //     this->UpdateFrontObjects(v);
+    //     this->frontLidarLastUpdate = sdcSensorData::frontLidarLastUpdate;
+    // }
 
     // std::cout << this->currentState << std::endl;
     // Possible states: stop, waypoint, intersection, follow, avoidance
@@ -86,7 +89,7 @@ void sdcCar::Drive()
         // Default state; drive straight to target location
         case waypoint:
         // Handle lane driving
-        this->LanedDriving();
+        // this->LanedDriving();
         this->Accelerate();
         // this->WaypointDriving(WAYPOINT_VEC);
         break;
@@ -437,7 +440,7 @@ void sdcCar::DetectIntersection(){
 }
 
 //Generates a series of waypoint to get to the desired destination
-std::vector<sdcWaypoint> sdcCar::generateWaypoints(sdcWaypoint dest){
+std::vector<sdcWaypoint> sdcCar::GenerateWaypoints(sdcWaypoint dest){
     //Get the current direction
     std::string curDir;
     if((this->yaw - WEST).withinMargin(PI/4)){
@@ -493,7 +496,7 @@ std::vector<sdcWaypoint> sdcCar::generateWaypoints(sdcWaypoint dest){
 ////////////////////
 
 //Updates Front LIDAR data
-void sdcCar::frontLidarUpdate(){
+void sdcCar::FrontLidarUpdate(){
   this->flViews.clear();
   this->fl = sdcSensorData::GetLidarRays(FRONT);
   this->flRayLengths = 0;
@@ -544,6 +547,52 @@ void sdcCar::frontLidarUpdate(){
     this->flViews.push_back(rightView);
     rightView.clear();
   }
+}
+
+void sdcCar::UpdateFrontObjects(std::vector<sdcVisibleObject> newObjects){
+    if(this->frontObjects.size() == 0){
+        if(newObjects.size() > 0) std::cout << "Added " << newObjects.size() << " new object(s)" << std::endl;
+        this->frontObjects = newObjects;
+        return;
+    }
+
+    std::vector<bool> isOldObjectMissing;
+    std::vector<bool> isBrandNewObject;
+    for(int i = 0; i < newObjects.size(); i++){
+        isBrandNewObject.push_back(true);
+    }
+
+    for (int i = 0; i < this->frontObjects.size(); i++) {
+        sdcVisibleObject oldObj = this->frontObjects[i];
+        isOldObjectMissing.push_back(true);
+
+        for (int j = 0; j < newObjects.size(); j++) {
+            if(!isBrandNewObject[j]) continue;
+            sdcVisibleObject newObj = newObjects[j];
+
+            if(oldObj.IsSameObject(newObj)){
+                oldObj.Update(newObj);
+                this->frontObjects[i] = oldObj;
+                isOldObjectMissing[i] = false;
+                isBrandNewObject[j] = false;
+                break;
+            }
+        }
+    }
+
+    for(int i = isOldObjectMissing.size() - 1; i >= 0; i--){
+        if(isOldObjectMissing[i]){
+            std::cout << "Erased missing object" << std::endl;
+            this->frontObjects.erase(this->frontObjects.begin() + i);
+        }
+    }
+
+    for(int i = 0; i < newObjects.size(); i++){
+        if(isBrandNewObject[i]){
+            std::cout << "Added new object" << std::endl;
+            this->frontObjects.push_back(newObjects[i]);
+        }
+    }
 }
 
 /*
@@ -740,7 +789,7 @@ void sdcCar::Init()
     this->yaw = sdcAngle(pose.rot.GetYaw());
     this->x = pose.pos.x;
     this->y = pose.pos.y;
-    generateWaypoints(sdcWaypoint(1,{200,200}));
+    GenerateWaypoints(sdcWaypoint(1,{200,200}));
 }
 
 /*
@@ -759,10 +808,10 @@ void sdcCar::OnUpdate()
     this->yaw = sdcSensorData::GetYaw();
 
     // Call our Drive function, which is the brain for the car
-    this->frontLidarUpdate();
+    this->FrontLidarUpdate();
     this->Drive();
 
-    // generateWaypoints(sdcWaypoint(1,{200,200}));
+    // GenerateWaypoints(sdcWaypoint(1,{200,200}));
 
 
 
@@ -858,7 +907,7 @@ sdcCar::sdcCar(){
     this->maxCarSpeed = 6;
     this->maxCarReverseSpeed = -10;
 
-    this->currentState = waypoint;
+    this->currentState = follow;
 
     this->currentParkingState = backPark;
 

@@ -2,8 +2,14 @@
 
 using namespace gazebo;
 
+// How far off our estimates can be before we assume we're seeing a differnt object
 const double sdcVisibleObject::UNCERTAINTY_RATIO = 5.;
 
+/*
+ * Visible objects are obstructions detected by Lidar rays. They have estimated
+ * movement parameters in order to help us predict their motion and track them
+ * across multiple sensor readings.
+ */
 sdcVisibleObject::sdcVisibleObject(sdcLidarRay left, sdcLidarRay right, double dist){
     this->left = left;
     this->right = right;
@@ -18,19 +24,35 @@ sdcVisibleObject::sdcVisibleObject(sdcLidarRay left, sdcLidarRay right, double d
     this->tracking = false;
 }
 
+/*
+ * Returns true if the given object is a possible new position of this object
+ */
 bool sdcVisibleObject::IsSameObject(sdcVisibleObject other){
     math::Vector2d estPos = this->EstimateUpdate();
     double uncertainty = sqrt(pow(estPos.x - other.centerpoint.x, 2) + pow(estPos.y - other.centerpoint.y, 2));
 
+    std::cout << "CUR \t" << this->centerpoint.x << "\t" << this->centerpoint.y << std::endl;
+    std::cout << "EST \t" << estPos.x << "\t" << estPos.y << std::endl;
+    std::cout << "OTH \t" << other.centerpoint.x << "\t" << other.centerpoint.y << std::endl;
+    std::cout << "Uncertainty\t" << uncertainty << std::endl;
+
     return uncertainty * confidence < UNCERTAINTY_RATIO;
 }
 
+/*
+ * Calculates an estimated new position this object would be at with it's given estimated
+ * speed and direction
+ */
 math::Vector2d sdcVisibleObject::EstimateUpdate(){
     double newX = this->centerpoint.x + sin(this->estimatedDirection.angle) * this->estimatedSpeed;
     double newY = this->centerpoint.y + cos(this->estimatedDirection.angle) * this->estimatedSpeed;
     return math::Vector2d(newX, newY);
 }
 
+/*
+ * Given new readings for the location of this object, update the stored parameters
+ * to learn it's projected speed and direction
+ */
 void sdcVisibleObject::Update(sdcLidarRay newLeft, sdcLidarRay newRight, double newDist){
     this->confidence = fmin(1.0, this->confidence + 0.01);
 
@@ -44,21 +66,34 @@ void sdcVisibleObject::Update(sdcLidarRay newLeft, sdcLidarRay newRight, double 
     this->estimatedSpeed = newEstimatedSpeed;
     this->estimatedDirection = sdcAngle(atan2(this->centerpoint.x - newCenterpoint.x, this->centerpoint.y - newCenterpoint.y));
 
+    this->centerpoint = newCenterpoint;
+
     this->left = newLeft;
     this->right = newRight;
     this->dist = newDist;
 }
 
+void sdcVisibleObject::Update(sdcVisibleObject newObject){
+    this->Update(newObject.left, newObject.right, newObject.dist);
+}
+
+/*
+ * Set whether we are tracking this object
+ */
 void sdcVisibleObject::SetTracking(bool isTracking){
     this->tracking = isTracking;
 }
 
+/*
+ * Gets the centerpoint of this object based on the left and right rays
+ */
 math::Vector2d sdcVisibleObject::GetCenterPoint(){
-    double x = (this->left.GetLateralDist() + this->right.GetLateralDist()) / 2.;
-    double y = (this->left.GetLongitudinalDist() + this->right.GetLongitudinalDist()) / 2.;
-    return math::Vector2d(x, y);
+    return this->GetCenterPoint(this->left, this->right);
 }
 
+/*
+ * Gets the centerpoint of the two given rays in (x,y) coordinates
+ */
 math::Vector2d sdcVisibleObject::GetCenterPoint(sdcLidarRay left, sdcLidarRay right){
     double x = (left.GetLateralDist() + right.GetLateralDist()) / 2.;
     double y = (left.GetLongitudinalDist() + right.GetLongitudinalDist()) / 2.;

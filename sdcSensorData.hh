@@ -61,6 +61,8 @@ namespace gazebo
         static std::vector<double>* sideRightBackLidarRays;
 
     public:
+        static int frontLidarLastUpdate;
+
         static bool stopSignInLeftCamera;
         static bool stopSignInRightCamera;
         static int lanePosition;

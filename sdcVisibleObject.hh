@@ -13,6 +13,7 @@ namespace gazebo
         bool IsSameObject(sdcVisibleObject other);
         math::Vector2d EstimateUpdate();
         void Update(sdcLidarRay newLeft, sdcLidarRay newRight, double newDist);
+        void Update(sdcVisibleObject newObject);
         void SetTracking(bool isTracking);
         math::Vector2d GetCenterPoint();
         math::Vector2d GetCenterPoint(sdcLidarRay left, sdcLidarRay right);
@@ -28,7 +29,7 @@ namespace gazebo
 
         double estimatedSpeed;
         sdcAngle estimatedDirection;
-        double confidence;
+        public: double confidence;
 
         bool tracking;
     };

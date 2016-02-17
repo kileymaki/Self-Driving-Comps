@@ -13,6 +13,7 @@ using namespace gazebo;
 // Angle information for each lidar
 sdcAngle sdcSensorData::frontMinAngle = sdcAngle(0);
 double sdcSensorData::frontAngleResolution = 0;
+int sdcSensorData::frontLidarLastUpdate = 0;
 
 sdcAngle sdcSensorData::backMinAngle = sdcAngle(0);
 double sdcSensorData::backAngleResolution = 0;
@@ -88,6 +89,7 @@ void sdcSensorData::UpdateLidar(LidarPos lidar, std::vector<double>* newRays){
     switch (lidar) {
         case FRONT:
         frontLidarRays = newRays;
+        frontLidarLastUpdate = (frontLidarLastUpdate + 1) % 100000000;
         break;
 
         case BACK:
@@ -256,6 +258,8 @@ std::vector<sdcVisibleObject> sdcSensorData::GetObjectsInFront(){
     bool ignorePrev = true;
 
     sdcAngle objMinAngle;
+    double objFirstDist;
+
     double objMinDist;
 
     sdcAngle prevAngle;
@@ -269,20 +273,21 @@ std::vector<sdcVisibleObject> sdcSensorData::GetObjectsInFront(){
             objMinDist = curDist < objMinDist ? curDist : objMinDist;
 
             if(!((curAngle - prevAngle).withinMargin(angleMargin) && fabs(curDist - prevDist) < distMargin)){
-                objectList.push_back(sdcVisibleObject(sdcLidarRay(objMinAngle, objMinDist), sdcLidarRay(curAngle, objMinDist), objMinDist));
+                objectList.push_back(sdcVisibleObject(sdcLidarRay(objMinAngle, objFirstDist), sdcLidarRay(curAngle, curDist), objMinDist));
                 ignorePrev = true;
             }
         }else{
             ignorePrev = false;
             objMinAngle = curAngle;
             objMinDist = curDist;
+            objFirstDist = curDist;
         }
 
         prevAngle = curAngle;
         prevDist = curDist;
     }
 
-    objectList.push_back(sdcVisibleObject(sdcLidarRay(objMinAngle, objMinDist), sdcLidarRay(prevAngle, objMinDist), objMinDist));
+    objectList.push_back(sdcVisibleObject(sdcLidarRay(objMinAngle, objMinDist), sdcLidarRay(prevAngle, prevDist), objMinDist));
     return objectList;
 }
 

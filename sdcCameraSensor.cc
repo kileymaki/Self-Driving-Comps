@@ -107,7 +107,7 @@ void sdcCameraSensor::OnUpdate() {
       ++it;
   }
   // ATTN: need to have ROI.rows in numerator because of trig stuff. It isnt an oversight!
-  // Changed things so the lines are drawn on the image, not the region of interest. hopefully 
+  // Changed things so the lines are drawn on the image, not the region of interest. hopefully
   // this will make some of the issues easier to debug
 
   //draw left lane marker
@@ -120,7 +120,7 @@ void sdcCameraSensor::OnUpdate() {
   Point rightp2 = Point((right_lane_marker[0] - (imageROI.rows) * sin(right_lane_marker[1])) / cos(right_lane_marker[1]), (image.rows));
   line(image, rightp1, rightp2, Scalar(255), 3);
 
-  std::cout << leftp1 << "\t" << leftp2 << "\t" << rightp1 << "\t" << rightp2 << "\t" << std::endl;
+  // std::cout << leftp1 << "\t" << leftp2 << "\t" << rightp1 << "\t" << rightp2 << "\t" << std::endl;
 
   //BEGIN HAAR CASCADE OBJECT DETECTION
 /*
@@ -156,7 +156,7 @@ float Tz = 0.85; // in meters
 
 //TBH THIS STUFF SHOULD NOT BE SET EVERY UPDATE NEEDS TO BE MOVED ~~~~~~~
 std::vector<double> vec_of_i_vals(79);// = {-48., -39., -38., -37., -36., -34., -32., -31., -30., -29., -28., -27., -26., -25.}
-std::iota(std::begin(vec_of_i_vals), std::end(vec_of_i_vals), -39.);
+//std::iota(std::begin(vec_of_i_vals), std::end(vec_of_i_vals), -39.);
 vec_of_i_vals.push_back(48.);
 vec_of_i_vals.push_back(-48.);
 // for (std::vector<double>::const_iterator i = vec_of_i_vals.begin(); i != vec_of_i_vals.end(); ++i)
@@ -176,7 +176,7 @@ if (leftp1.x - leftp2.x != 0) {
 if (rightp2.x - rightp1.x != 0) {
     rightNearLaneSlope = (1.*rightp2.y - rightp1.y)/(rightp2.x - rightp1.x);
 }
-std::cout << "left slope: " << leftNearLaneSlope << "\t|\t" << "right slope: "<< rightNearLaneSlope << std::endl;
+ std::cout << "left slope: " << leftNearLaneSlope << "\t|\t" << "right slope: "<< rightNearLaneSlope << std::endl;
 
 // Calculate y-intercepts of the lanes
 //b = y - mx
@@ -190,9 +190,9 @@ std::cout << "left intercept: " << leftLaneIntercept << "\t|\t" << "right intece
 //au + c = bu + d
 //u = (d - c) / (a - b)
 u = abs((leftLaneIntercept - rightLaneIntercept) / (leftNearLaneSlope - rightNearLaneSlope));
-v = abs((leftNearLaneSlope * u)) + rightLaneIntercept;
+v = (leftNearLaneSlope * u) + leftLaneIntercept;
 Point vp = Point(u,v);
-//std::cout << "Vanishing Point: " << vp.x << "|" << vp.y << std::endl;
+std::cout << "Vanishing Point: " << vp.x << "|" << vp.y << std::endl;
 circle(image,vp, 4, Scalar(0,255,0), 3);
 
 lane_midpoint = (leftp2.x + rightp2.x)/2;
@@ -214,8 +214,8 @@ d = a * (n-v);
 Point nfa_p1, nfa_p2, ffa_p1, ffa_p2;
 nfa_p1.x = 0.;
 nfa_p2.x = 320.;
-nfa_p1.y = 240.; //Cy, center of computer image
-nfa_p2.y = 240.;
+nfa_p1.y = v; //Cy, center of computer image
+nfa_p2.y = v;
 
 ffa_p1.x = 0.;
 ffa_p2.x = 320.;
@@ -224,7 +224,7 @@ ffa_p2.y = (a - sqrt(c))*(ffa_p2.x) + (b - (d/(2*sqrt(c)))) +480;
 
 line(image, nfa_p1, nfa_p2, Scalar(255,255,0), 1, CV_AA);
 line(image, ffa_p1, ffa_p2, Scalar(255,255,0), 1, CV_AA);
-// std::cout << "ASYMPTOTES: " << nfa_p1 << "\t" << nfa_p2 << "\t" << ffa_p1 << "\t" << ffa_p2 << "\t" << std::endl;
+std::cout << "ASYMPTOTES: " << nfa_p1 << "\t" << nfa_p2 << "\t" << ffa_p1 << "\t" << ffa_p2 << "\t" << std::endl;
 //std::cout << "VARIABLES: " << a << "\t" << b << "\t" << c << "\t" << d << "\t" << std::endl;
 
 //e = (b-v)^2 + ka
@@ -239,12 +239,12 @@ for (std::vector<double>::const_iterator i = vec_of_i_vals.begin(); i != vec_of_
   for (float x = 0.; x < 320. ; x++ ) {
     float y_top = (a * x) + b + sqrt( c*pow(x,2) + (d * x) + e);
     float y_bot = (a * x) + b - sqrt( c*pow(x,2) + (d * x) + e);
-    
-    Point curve_point_top = Point(x,y_top);
+
+    Point curve_point_top = Point(x,y_top+240);
     curve_points_top.push_back(curve_point_top);
 
-    Point curve_point_bot = Point(x,y_bot);
-    //std::cout << curve_point_top.x << "\t" << curve_point_top.y << std::endl;
+    Point curve_point_bot = Point(x,y_bot+240);
+    // std::cout << curve_point_top.x << "\t" << curve_point_top.y << std::endl;
     curve_points_bot.push_back(curve_point_bot);
 
   }
@@ -261,7 +261,7 @@ for (std::vector<double>::const_iterator i = vec_of_i_vals.begin(); i != vec_of_
 
   //namedWindow("Lane Detection", WINDOW_AUTOSIZE);
   //imshow("Lane Detection", contours);
-  
+
   //draw roi boundary last so it is on top!
   //rectangle(image,ROI,Scalar(0,255,0),2);
   namedWindow("Camera View", WINDOW_AUTOSIZE);

@@ -125,6 +125,9 @@ namespace gazebo {
         double lastPosition;
         double currentPosition;
 
+        std::vector<sdcVisibleObject> frontObjects;
+        int frontLidarLastUpdate;
+
         double x;
         double y;
 
@@ -161,8 +164,9 @@ namespace gazebo {
         void PerpendicularPark();
 
         // Helper methods
-        void frontLidarUpdate();
-        std::vector<sdcWaypoint> generateWaypoints(sdcWaypoint dest);
+        void FrontLidarUpdate();
+        std::vector<sdcWaypoint> GenerateWaypoints(sdcWaypoint dest);
+        void UpdateFrontObjects(std::vector<sdcVisibleObject> newObjects);
 
         sdcAngle AngleToTarget(math::Vector2d target);
         static bool ObjectDirectlyAhead();

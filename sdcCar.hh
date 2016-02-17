@@ -103,8 +103,7 @@ namespace gazebo {
         double brakeRate;
 
         // Position/rotation variables
-        double yaw;
-        double lon;
+        sdcAngle yaw;
 
         int waypointProgress;
 

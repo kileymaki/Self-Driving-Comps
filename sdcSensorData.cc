@@ -244,8 +244,8 @@ std::vector<sdcLidarRay> sdcSensorData::GetBlockedBackRays(){
  * corresponding to an object in the front lidar, and the minimum distance the object is
  * away
  */
-std::vector<std::pair<sdcLidarRay, sdcLidarRay>> sdcSensorData::GetObjectsInFront(){
-    std::vector<std::pair<sdcLidarRay, sdcLidarRay>> objectList;
+std::vector<sdcVisibleObject> sdcSensorData::GetObjectsInFront(){
+    std::vector<sdcVisibleObject> objectList;
 
     std::vector<sdcLidarRay> blockedRays = GetBlockedFrontRays();
     if(blockedRays.size() == 0) return objectList;
@@ -269,7 +269,7 @@ std::vector<std::pair<sdcLidarRay, sdcLidarRay>> sdcSensorData::GetObjectsInFron
             objMinDist = curDist < objMinDist ? curDist : objMinDist;
 
             if(!((curAngle - prevAngle).withinMargin(angleMargin) && fabs(curDist - prevDist) < distMargin)){
-                objectList.push_back(std::make_pair(sdcLidarRay(objMinAngle, objMinDist), sdcLidarRay(curAngle, objMinDist)));
+                objectList.push_back(sdcVisibleObject(sdcLidarRay(objMinAngle, objMinDist), sdcLidarRay(curAngle, objMinDist), objMinDist));
                 ignorePrev = true;
             }
         }else{
@@ -282,44 +282,25 @@ std::vector<std::pair<sdcLidarRay, sdcLidarRay>> sdcSensorData::GetObjectsInFron
         prevDist = curDist;
     }
 
-    objectList.push_back(std::make_pair(sdcLidarRay(objMinAngle, objMinDist), sdcLidarRay(prevAngle, objMinDist)));
+    objectList.push_back(sdcVisibleObject(sdcLidarRay(objMinAngle, objMinDist), sdcLidarRay(prevAngle, objMinDist), objMinDist));
     return objectList;
 }
 
 // New gps system using 2d vector
-math::Vector2d sdcSensorData::coordinate;
+double sdcSensorData::gpsX = 0;
+double sdcSensorData::gpsY = 0;
+sdcAngle sdcSensorData::gpsYaw = sdcAngle(0);
 
-void sdcSensorData::UpdateGPS(math::Vector2d newCoordinate){
-    coordinate = newCoordinate;
+void sdcSensorData::UpdateGPS(double x, double y, double yaw){
+    gpsX = x;
+    gpsY = y;
+    gpsYaw = sdcAngle(yaw);
 }
 
-math::Vector2d sdcSensorData::GetCurrentCoord(){
-    return coordinate;
+math::Vector2d sdcSensorData::GetPosition(){
+    return math::Vector2d(gpsX, gpsY);
 }
 
-double sdcSensorData::GetLatitude(){
-    return coordinate[1];
+sdcAngle sdcSensorData::GetYaw(){
+    return gpsYaw;
 }
-
-double sdcSensorData::GetLongitude(){
-    return coordinate[0];
-}
-
-/* Old coordinate system
-math::Angle* sdcSensorData::targetLon = new math::Angle(0);
-math::Angle* sdcSensorData::lat = new math::Angle(0);
-math::Angle* sdcSensorData::lon = new math::Angle(0);
-
- void sdcSensorData::UpdateGPS(math::Angle* newLat, math::Angle* newLon){
- lat = newLat;
- lon = newLon;
- }
-
-double sdcSensorData::GetLongitude(){
-    return lon->Degree();
-}
-
-double sdcSensorData::GetLatitude(){
-    return lat->Degree();
-}
-*/

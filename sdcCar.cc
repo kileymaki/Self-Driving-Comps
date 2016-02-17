@@ -71,8 +71,8 @@ void sdcCar::Drive()
         // this->currentState = avoidance;
     }
 
-    // std::vector<std::pair<sdcLidarRay, sdcLidarRay>> v = sdcSensorData::GetObjectsInFront();
-    // std::cout << v.size() << std::endl;
+    std::vector<sdcVisibleObject> v = sdcSensorData::GetObjectsInFront();
+    std::cout << v.size() << std::endl;
 
     // std::cout << this->currentState << std::endl;
     // Possible states: stop, waypoint, intersection, follow, avoidance
@@ -312,10 +312,10 @@ void sdcCar::TurnAround(){
 }
 
 /*
- * Perpendicular parking algorithm
+ * Perpendicular back parking algorithm
  */
 void sdcCar::PerpendicularPark(){
-    // Get rays that detect whether the front left and right bumpers of the car
+    // Get rays that detect whether the back left and right bumpers of the car
     // will collide with other objects
     std::vector<double> backLidar = sdcSensorData::GetLidarRays(BACK);
     std::vector<double> rightSideLidar = sdcSensorData::GetLidarRays(SIDE_RIGHT_BACK);
@@ -336,8 +336,14 @@ void sdcCar::PerpendicularPark(){
                 if(backLidar[i] < 2.0){
                     this->StopReverse();
                     this->SetTargetSpeed(0.5);
-                    this->SetTargetDirection(this->GetOrientation() + PI/2);
-                    std::cout << this->GetOrientation() << std::endl;
+                    sdcAngle margin = this->GetOrientation() - this->targetParkingAngle;
+                    if(margin.withinMargin(0.005)){
+                        this->parkingAngleSet = false;
+                        this->currentParkingState = straightPark;
+                    }
+                    // this->SetTargetDirection(this->GetOrientation() + PI/2);
+                    this->SetTargetDirection(targetParkingAngle);
+                    std::cout << "target direction: " << this->targetDirection << std::endl;
                     break;
                 } else {
                     this->currentParkingState = backPark;
@@ -349,6 +355,7 @@ void sdcCar::PerpendicularPark(){
 
         case straightPark:
         std::cout << "in straight park" << std::endl;
+        this->Reverse();
         this->SetTargetSpeed(0.5);
         if(backLidar[320] < 3){
             this->currentParkingState = donePark;
@@ -362,6 +369,7 @@ void sdcCar::PerpendicularPark(){
         break;
 
         case backPark:
+        std::cout << "in back park" << std::endl;
         // If the car is too close to anything on the back or sides, stop and fix it
         if(backLidar.size() != 0){
             for(int i = 0; i < backLidar.size(); i++){
@@ -370,22 +378,37 @@ void sdcCar::PerpendicularPark(){
                 }
             }
         }
+        if(leftSideLidar.size() != 0){
+            for(int i = 0; i < leftSideLidar.size(); i++){
+                if(leftSideLidar[i] < 0.25){
+                    this->currentParkingState = stopPark;
+                }
+            }
+        }
+        if(rightSideLidar.size() != 0){
+            for(int i = 0; i < rightSideLidar.size(); i++){
+                if(rightSideLidar[i] < 0.25){
+                    this->currentParkingState = stopPark;
+                }
+            }
+        }
         // Sets a target angle for the car for when it's done parking
         if(!parkingAngleSet){
-            this->targetParkingAngle = (this->GetOrientation() - PI/2);
-            this->SetTargetDirection(this->targetParkingAngle);
+            this->targetParkingAngle = (this->GetOrientation() - (3*PI)/2);
+            this->SetTargetDirection(2*PI - this->targetParkingAngle);
             this->parkingAngleSet = true;
             break;
         } else {
-            this->SetTargetDirection(this->targetParkingAngle);
-            std::cout << this->GetOrientation() << std::endl;
+            this->SetTargetDirection(2*PI - this->targetParkingAngle);
             this->Reverse();
             this->SetTargetSpeed(0.5);
         }
         // Check to see if current direction is the same as targetParkingAngle
         sdcAngle margin = this->GetOrientation() - this->targetParkingAngle;
         if(rightSideLidar.size() > 0 && leftSideLidar.size() > 0){
-            if((margin.withinMargin(0.005) && rightSideLidar[320] == leftSideLidar[320])){
+            double sideMargins = std::abs(rightSideLidar[320] - leftSideLidar[320]);
+            if((margin.withinMargin(0.005) && sideMargins < 0.1)){
+            // if(margin.withinMargin(0.005)){
                 this->parkingAngleSet = false;
                 this->currentParkingState = straightPark;
             }
@@ -529,7 +552,7 @@ void sdcCar::frontLidarUpdate(){
  */
 bool sdcCar::IsMovingForwards(){
     sdcAngle velAngle = GetDirection();
-    sdcAngle carAngle = sdcAngle(this->yaw);
+    sdcAngle carAngle = this->yaw;
     return (carAngle - velAngle).isFrontFacing();
 }
 
@@ -552,15 +575,15 @@ sdcAngle sdcCar::GetDirection(){
  * Gets the direction the car is facing
  */
 sdcAngle sdcCar::GetOrientation(){
-    return sdcAngle(this->yaw);
+    return this->yaw;
 }
 
 /*
  * Returns the angle from the car's current position to a target position
  */
 sdcAngle sdcCar::AngleToTarget(math::Vector2d target) {
-    math::Vector2d position = sdcSensorData::GetCurrentCoord();
-    math::Vector2d targetVector = math::Vector2d(target.x - this->x, target.y - this->y);
+    math::Vector2d position = sdcSensorData::GetPosition();
+    math::Vector2d targetVector = math::Vector2d(target.x - position.x, target.y - position.y);
     return sdcAngle(atan2(targetVector.y, targetVector.x));
 }
 
@@ -571,8 +594,7 @@ sdcAngle sdcCar::AngleToTarget(math::Vector2d target) {
 bool sdcCar::ObjectDirectlyAhead() {
     std::vector<sdcLidarRay> blockedRays = sdcSensorData::GetBlockedFrontRays();
     for (int i = 0; i < blockedRays.size(); i++) {
-        double distanceFromCenter = sin(blockedRays[i].angle.angle) * blockedRays[i].dist;
-        if (fabs(distanceFromCenter) < CAR_WIDTH / 2. + 0.25){
+        if (blockedRays[i].GetLateralDist() < CAR_WIDTH / 2. + 0.25){
             return true;
         }
     }
@@ -702,13 +724,6 @@ void sdcCar::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
     this->rearPower = _sdf->Get<double>("rear_power");
     this->wheelRadius = _sdf->Get<double>("wheel_radius");
 
-    math::Pose pose = this->chassis->GetWorldPose();
-    this->yaw = pose.rot.GetYaw();
-    this->x = pose.pos.x;
-    this->y = pose.pos.y;
-    generateWaypoints(sdcWaypoint(1,{200,200}));
-
-
     // Tell Gazebo to call OnUpdate whenever the car needs an update
     this->connections.push_back(event::Events::ConnectWorldUpdateBegin(boost::bind(&sdcCar::OnUpdate, this)));
 }
@@ -718,8 +733,14 @@ void sdcCar::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
  */
 void sdcCar::Init()
 {
-  // Compute the angle ratio between the steering wheel and the tires
-  this->steeringRatio = STEERING_RANGE / this->tireAngleRange;
+    // Compute the angle ratio between the steering wheel and the tires
+    this->steeringRatio = STEERING_RANGE / this->tireAngleRange;
+
+    math::Pose pose = this->chassis->GetWorldPose();
+    this->yaw = sdcAngle(pose.rot.GetYaw());
+    this->x = pose.pos.x;
+    this->y = pose.pos.y;
+    generateWaypoints(sdcWaypoint(1,{200,200}));
 }
 
 /*
@@ -730,12 +751,12 @@ void sdcCar::OnUpdate()
     // Get the current velocity of the car
     this->velocity = this->chassis->GetWorldLinearVel();
     // Get the cars current position
-    math::Pose pose = this->chassis->GetWorldPose();
-    this->x = pose.pos.x;
-    this->y = pose.pos.y;
+    math::Vector2d pose = sdcSensorData::GetPosition();
+    this->x = pose.x;
+    this->y = pose.y;
 
     // Get the cars current rotation
-    this->yaw = pose.rot.GetYaw();
+    this->yaw = sdcSensorData::GetYaw();
 
     // Call our Drive function, which is the brain for the car
     this->frontLidarUpdate();

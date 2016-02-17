@@ -18,6 +18,7 @@
 #include <vector>
 #include "sdcAngle.hh"
 #include "sdcLidarRay.hh"
+#include "sdcVisibleObject.hh"
 
 namespace gazebo
 {
@@ -37,7 +38,7 @@ namespace gazebo
 
         static std::vector<sdcLidarRay> GetBlockedFrontRays();
         static std::vector<sdcLidarRay> GetBlockedBackRays();
-        static std::vector<std::pair<sdcLidarRay, sdcLidarRay>> GetObjectsInFront();
+        static std::vector<sdcVisibleObject> GetObjectsInFront();
 
         static sdcAngle frontMinAngle;
         static double frontAngleResolution;
@@ -65,16 +66,13 @@ namespace gazebo
         static int lanePosition;
 
         // GPS variables and methods
-        static math::Vector2d GetCurrentCoord();
-        static double GetLongitude();
-        static double GetLatitude();
-        //private: static math::Angle* targetLon;
-        //private: static math::Angle* lat;
-        //private: static math::Angle* lon;
-        static math::Vector2d coordinate;
+        static double gpsX;
+        static double gpsY;
+        static sdcAngle gpsYaw;
 
-        //public: static void UpdateGPS(math::Angle* newLat, math::Angle* newLon);
-        static void UpdateGPS(math::Vector2d newCoordinate);
+        static math::Vector2d GetPosition();
+        static sdcAngle GetYaw();
+        static void UpdateGPS(double x, double y, double yaw);
     };
 }
 

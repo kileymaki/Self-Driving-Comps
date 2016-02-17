@@ -48,6 +48,10 @@ sdcAngle operator-(const sdcAngle& a, const double& b){
  return sdcAngle(a.angle - b);
 }
 
+sdcAngle operator/(const sdcAngle& a, const double& b){
+  return sdcAngle(a.angle / b);
+}
+
 bool operator<(const sdcAngle& a, const sdcAngle& b){
   return (a.angle-b.angle) > PI;
 }

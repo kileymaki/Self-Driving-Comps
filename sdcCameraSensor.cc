@@ -212,20 +212,30 @@ d = a * (n-v);
 
 //DRAW LEFT NEAR FIELD AND FAR FIELD ASYMPTOTES
 Point nfa_p1, nfa_p2, ffa_p1, ffa_p2;
-//Yf = (a+ sqrt(c)x_f + (b + c(d/(2*sqrt(c)))))
 nfa_p1.x = 0.;
 nfa_p2.x = 320.;
-nfa_p1.y = (a + sqrt(c))*(nfa_p1.x) + (b + (d/(2*sqrt(c))));
-nfa_p2.y = (a + sqrt(c))*(nfa_p2.x) + (b + (d/(2*sqrt(c))));
+nfa_p1.y = 240.; //Cy, center of computer image
+nfa_p2.y = 240.;
 
 ffa_p1.x = 0.;
 ffa_p2.x = 320.;
 ffa_p1.y = (a - sqrt(c))*(ffa_p1.x) + (b - (d/(2*sqrt(c)))) +480;
 ffa_p2.y = (a - sqrt(c))*(ffa_p2.x) + (b - (d/(2*sqrt(c)))) +480;
 
+//Yf = (a+ sqrt(c)x_f + (b + c(d/(2*sqrt(c)))))
+// nfa_p1.x = 0.;
+// nfa_p2.x = 320.;
+// nfa_p1.y = (a + sqrt(c))*(nfa_p1.x) + (b + (d/(2*sqrt(c))));
+// nfa_p2.y = (a + sqrt(c))*(nfa_p2.x) + (b + (d/(2*sqrt(c))));
+
+// ffa_p1.x = 0.;
+// ffa_p2.x = 320.;
+// ffa_p1.y = (a - sqrt(c))*(ffa_p1.x) + (b - (d/(2*sqrt(c)))) +480;
+// ffa_p2.y = (a - sqrt(c))*(ffa_p2.x) + (b - (d/(2*sqrt(c)))) +480;
+
 line(image, nfa_p1, nfa_p2, Scalar(255,255,0), 1, CV_AA);
 line(image, ffa_p1, ffa_p2, Scalar(255,255,0), 1, CV_AA);
-std::cout << "ASYMPTOTES: " << nfa_p1 << "\t" << nfa_p2 << "\t" << ffa_p1 << "\t" << ffa_p2 << "\t" << std::endl;
+// std::cout << "ASYMPTOTES: " << nfa_p1 << "\t" << nfa_p2 << "\t" << ffa_p1 << "\t" << ffa_p2 << "\t" << std::endl;
 std::cout << "VARIABLES: " << a << "\t" << b << "\t" << c << "\t" << d << "\t" << std::endl;
 
 //e = (b-v)^2 + ka

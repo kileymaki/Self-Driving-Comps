@@ -66,6 +66,7 @@ void sdcCameraSensor::OnUpdate() {
   Canny(imageROI,contours,50,150);
   //Mat contoursInv;
   //threshold(contours,contoursInv,128,255,THRESH_BINARY_INV);
+  // Hough Transform detects lines within the edge map, stores result in lines.
   float PI = 3.14159;
   std::vector<Vec2f> lines;
   HoughLines(contours,lines,1,PI/180, 100);
@@ -196,8 +197,12 @@ circle(image,vp, 4, Scalar(0,255,0), 3);
 
 lane_midpoint = (leftp2.x + rightp2.x)/2;
 
-//lane midpoint - image midpoint
-n = lane_midpoint - (image.cols/2);
+// n is our position relative to the center of the lane directly in front of us.
+n = (image.cols/2) - lane_midpoint;
+// Naive lane detection is better than no lane detection
+sdcSensorData::UpdateCameraData(n);
+
+line(image, Point(lane_midpoint, 480), Point(lane_midpoint, 20), Scalar(0, 255, 0), 1);
 // std::cout << "n: " << n << "\tlane midpoint: " << lane_midpoint << std::endl;
 a = leftNearLaneSlope/2;
 b = (v+n)/2;

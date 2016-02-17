@@ -103,8 +103,7 @@ namespace gazebo {
         double brakeRate;
 
         // Position/rotation variables
-        double yaw;
-        double lon;
+        sdcAngle yaw;
 
         int waypointProgress;
 
@@ -154,6 +153,7 @@ namespace gazebo {
 
         // Driving algorithms
         void WalledDriving();
+        void LanedDriving();
         void GridTurning();
         void TurnAround();
         void WaypointDriving(std::vector<sdcWaypoint> waypoints);

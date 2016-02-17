@@ -1,5 +1,6 @@
 #ifndef _sdcAngle_hh_
 #define _sdcAngle_hh_
+
 #include <math.h>
 #include <iostream>
 
@@ -16,6 +17,7 @@ public:
     friend sdcAngle operator+(const double& a, const sdcAngle& b);
     friend sdcAngle operator-(const sdcAngle& a, const sdcAngle& b);
     friend sdcAngle operator-(const sdcAngle& a, const double& b);
+    friend sdcAngle operator/(const sdcAngle& a, const double& b);
     friend bool operator<(const sdcAngle& a, const sdcAngle& b);
     friend bool operator>(const sdcAngle& a, const sdcAngle& b);
     friend bool operator==(const sdcAngle& a, const sdcAngle& b);

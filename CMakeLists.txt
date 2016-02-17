@@ -19,8 +19,14 @@ target_link_libraries(sdcFlyingBox ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
 add_library(sdcAngle SHARED sdcAngle.cc)
 target_link_libraries(sdcAngle ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
 
+add_library(sdcLidarRay SHARED sdcLidarRay.cc)
+target_link_libraries(sdcLidarRay sdcAngle ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
+
+add_library(sdcVisibleObject SHARED sdcVisibleObject.cc)
+target_link_libraries(sdcVisibleObject sdcAngle sdcLidarRay ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
+
 add_library(sdcSensorData SHARED sdcSensorData.cc)
-target_link_libraries(sdcSensorData sdcAngle ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
+target_link_libraries(sdcSensorData sdcVisibleObject sdcLidarRay sdcAngle ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
 
 add_library(sdcFrontLidarSensor SHARED sdcFrontLidarSensor.cc)
 target_link_libraries(sdcFrontLidarSensor sdcSensorData ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})

@@ -147,7 +147,7 @@ void sdcCameraSensor::OnUpdate() {
 
 // BEGIN LCF LANE DETECTION
 double leftNearLaneSlope, rightNearLaneSlope, leftLaneIntercept, rightLaneIntercept;
-double a, b, c, d, e, u, v, n, k, lane_midpoint, eps = 25.0;
+double a, b, c, d, e, u, v, n, k, lane_midpoint, eps = 50.0;
 float FOCAL_LENGTH = 554.382; //lambda in Park et. al.
 float Tz = 0.85; // in meters
 // float xf = leftp1.x;
@@ -156,7 +156,7 @@ float Tz = 0.85; // in meters
 
 //TBH THIS STUFF SHOULD NOT BE SET EVERY UPDATE NEEDS TO BE MOVED ~~~~~~~
 std::vector<double> vec_of_i_vals(79);// = {-48., -39., -38., -37., -36., -34., -32., -31., -30., -29., -28., -27., -26., -25.}
-//std::iota(std::begin(vec_of_i_vals), std::end(vec_of_i_vals), -39.);
+std::iota(std::begin(vec_of_i_vals), std::end(vec_of_i_vals), -39.);
 vec_of_i_vals.push_back(48.);
 vec_of_i_vals.push_back(-48.);
 // for (std::vector<double>::const_iterator i = vec_of_i_vals.begin(); i != vec_of_i_vals.end(); ++i)
@@ -240,17 +240,27 @@ for (std::vector<double>::const_iterator i = vec_of_i_vals.begin(); i != vec_of_
     float y_top = (a * x) + b + sqrt( c*pow(x,2) + (d * x) + e);
     float y_bot = (a * x) + b - sqrt( c*pow(x,2) + (d * x) + e);
 
-    Point curve_point_top = Point(x,y_top);
-    curve_points_top.push_back(curve_point_top);
+    if(y_top >= v){
+        Point curve_point_top = Point(x,y_top);
+        curve_points_top.push_back(curve_point_top);
+    }
 
-    Point curve_point_bot = Point(x,y_bot);
-    // std::cout << curve_point_top.x << "\t" << curve_point_top.y << std::endl;
-    curve_points_bot.push_back(curve_point_bot);
-
+    if(y_bot >= v){
+        Point curve_point_bot = Point(x,y_bot);
+        curve_points_bot.push_back(curve_point_bot);
+    }
   }
-  for (int i = 0; i < curve_points_bot.size() - 1; i++){
-    line(image, curve_points_top[i], curve_points_top[i + 1], Scalar(255,0,255), 1, CV_AA);
-    line(image, curve_points_bot[i], curve_points_bot[i + 1], Scalar(255,0,255), 1, CV_AA);
+
+  if(curve_points_bot.size() > 1){
+      for (int i = 0; i < curve_points_bot.size() - 1; i++){
+        line(image, curve_points_bot[i], curve_points_bot[i + 1], Scalar(255,0,255), 1, CV_AA);
+      }
+  }
+
+  if(curve_points_top.size() > 1){
+      for (int i = 0; i < curve_points_top.size() - 1; i++){
+        line(image, curve_points_top[i], curve_points_top[i + 1], Scalar(255,0,255), 1, CV_AA);
+      }
   }
 }
 //std::cout << "=====================================\n";

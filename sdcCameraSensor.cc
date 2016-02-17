@@ -222,21 +222,10 @@ ffa_p2.x = 320.;
 ffa_p1.y = (a - sqrt(c))*(ffa_p1.x) + (b - (d/(2*sqrt(c)))) +480;
 ffa_p2.y = (a - sqrt(c))*(ffa_p2.x) + (b - (d/(2*sqrt(c)))) +480;
 
-//Yf = (a+ sqrt(c)x_f + (b + c(d/(2*sqrt(c)))))
-// nfa_p1.x = 0.;
-// nfa_p2.x = 320.;
-// nfa_p1.y = (a + sqrt(c))*(nfa_p1.x) + (b + (d/(2*sqrt(c))));
-// nfa_p2.y = (a + sqrt(c))*(nfa_p2.x) + (b + (d/(2*sqrt(c))));
-
-// ffa_p1.x = 0.;
-// ffa_p2.x = 320.;
-// ffa_p1.y = (a - sqrt(c))*(ffa_p1.x) + (b - (d/(2*sqrt(c)))) +480;
-// ffa_p2.y = (a - sqrt(c))*(ffa_p2.x) + (b - (d/(2*sqrt(c)))) +480;
-
 line(image, nfa_p1, nfa_p2, Scalar(255,255,0), 1, CV_AA);
 line(image, ffa_p1, ffa_p2, Scalar(255,255,0), 1, CV_AA);
 // std::cout << "ASYMPTOTES: " << nfa_p1 << "\t" << nfa_p2 << "\t" << ffa_p1 << "\t" << ffa_p2 << "\t" << std::endl;
-std::cout << "VARIABLES: " << a << "\t" << b << "\t" << c << "\t" << d << "\t" << std::endl;
+//std::cout << "VARIABLES: " << a << "\t" << b << "\t" << c << "\t" << d << "\t" << std::endl;
 
 //e = (b-v)^2 + ka
 //e =  pow((b-v),2) + (k*a);
@@ -250,9 +239,12 @@ for (std::vector<double>::const_iterator i = vec_of_i_vals.begin(); i != vec_of_
   for (float x = 0.; x < 320. ; x++ ) {
     float y_top = (a * x) + b + sqrt( c*pow(x,2) + (d * x) + e);
     float y_bot = (a * x) + b - sqrt( c*pow(x,2) + (d * x) + e);
+    
     Point curve_point_top = Point(x,y_top);
     curve_points_top.push_back(curve_point_top);
+
     Point curve_point_bot = Point(x,y_bot);
+    //std::cout << curve_point_top.x << "\t" << curve_point_top.y << std::endl;
     curve_points_bot.push_back(curve_point_bot);
 
   }

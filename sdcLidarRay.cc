@@ -12,9 +12,9 @@ sdcLidarRay::sdcLidarRay(sdcAngle angle, double dist){
 }
 
 double sdcLidarRay::GetLateralDist(){
-    return fabs(sin(this->angle.angle) * dist);
+    return sin(this->angle.angle) * dist * (-1);
 }
 
 double sdcLidarRay::GetLongitudinalDist(){
-    return fabs(cos(this->angle.angle) * dist);
+    return cos(this->angle.angle) * dist;
 }

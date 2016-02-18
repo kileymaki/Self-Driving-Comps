@@ -9,7 +9,7 @@ namespace gazebo
 {
     class sdcVisibleObject {
     public:
-        sdcVisibleObject(sdcLidarRay left, sdcLidarRay right, double dist);
+        sdcVisibleObject(sdcLidarRay right, sdcLidarRay left, double dist);
         bool IsSameObject(sdcVisibleObject other);
         math::Vector2d EstimateUpdate();
         void Update(sdcLidarRay newLeft, sdcLidarRay newRight, double newDist);

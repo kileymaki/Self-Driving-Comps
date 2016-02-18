@@ -10,7 +10,7 @@ const double sdcVisibleObject::UNCERTAINTY_RATIO = 5.;
  * movement parameters in order to help us predict their motion and track them
  * across multiple sensor readings.
  */
-sdcVisibleObject::sdcVisibleObject(sdcLidarRay left, sdcLidarRay right, double dist){
+sdcVisibleObject::sdcVisibleObject(sdcLidarRay right, sdcLidarRay left, double dist){
     this->left = left;
     this->right = right;
     this->dist = dist;
@@ -31,10 +31,11 @@ bool sdcVisibleObject::IsSameObject(sdcVisibleObject other){
     math::Vector2d estPos = this->EstimateUpdate();
     double uncertainty = sqrt(pow(estPos.x - other.centerpoint.x, 2) + pow(estPos.y - other.centerpoint.y, 2));
 
-    std::cout << "CUR \t" << this->centerpoint.x << "\t" << this->centerpoint.y << std::endl;
-    std::cout << "EST \t" << estPos.x << "\t" << estPos.y << std::endl;
-    std::cout << "OTH \t" << other.centerpoint.x << "\t" << other.centerpoint.y << std::endl;
-    std::cout << "Uncertainty\t" << uncertainty << std::endl;
+    // std::cout << "CUR \t" << this->centerpoint.x << "\t" << this->centerpoint.y << std::endl;
+    // std::cout << "EST \t" << estPos.x << "\t" << estPos.y << std::endl;
+    // std::cout << "OTH \t" << other.centerpoint.x << "\t" << other.centerpoint.y << std::endl;
+    // std::cout << "Uncertainty\t" << uncertainty << "\t" << confidence << std::endl;
+    // std::cout << (uncertainty * confidence < UNCERTAINTY_RATIO) << std::endl;
 
     return uncertainty * confidence < UNCERTAINTY_RATIO;
 }
@@ -95,7 +96,10 @@ math::Vector2d sdcVisibleObject::GetCenterPoint(){
  * Gets the centerpoint of the two given rays in (x,y) coordinates
  */
 math::Vector2d sdcVisibleObject::GetCenterPoint(sdcLidarRay left, sdcLidarRay right){
+    std::cout << "LEFT\t" << left.angle << "\t" << left.dist << std::endl;
+    std::cout << "RIGHT\t" << right.angle << "\t" << right.dist << std::endl;
     double x = (left.GetLateralDist() + right.GetLateralDist()) / 2.;
     double y = (left.GetLongitudinalDist() + right.GetLongitudinalDist()) / 2.;
+    std::cout << x << "\t" << y << std::endl;
     return math::Vector2d(x, y);
 }

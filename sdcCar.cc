@@ -71,11 +71,11 @@ void sdcCar::Drive()
         // this->currentState = avoidance;
     }
 
-    // if(this->frontLidarLastUpdate != sdcSensorData::frontLidarLastUpdate){
-    //     std::vector<sdcVisibleObject> v = sdcSensorData::GetObjectsInFront();
-    //     this->UpdateFrontObjects(v);
-    //     this->frontLidarLastUpdate = sdcSensorData::frontLidarLastUpdate;
-    // }
+    if(this->frontLidarLastUpdate != sdcSensorData::frontLidarLastUpdate){
+        std::vector<sdcVisibleObject> v = sdcSensorData::GetObjectsInFront();
+        this->UpdateFrontObjects(v);
+        this->frontLidarLastUpdate = sdcSensorData::frontLidarLastUpdate;
+    }
 
     // std::cout << this->currentState << std::endl;
     // Possible states: stop, waypoint, intersection, follow, avoidance
@@ -89,7 +89,7 @@ void sdcCar::Drive()
         // Default state; drive straight to target location
         case waypoint:
         // Handle lane driving
-        this->LanedDriving();
+        // this->LanedDriving();
         this->Accelerate();
         // this->WaypointDriving(WAYPOINT_VEC);
         break;
@@ -643,7 +643,7 @@ sdcAngle sdcCar::AngleToTarget(math::Vector2d target) {
 bool sdcCar::ObjectDirectlyAhead() {
     std::vector<sdcLidarRay> blockedRays = sdcSensorData::GetBlockedFrontRays();
     for (int i = 0; i < blockedRays.size(); i++) {
-        if (blockedRays[i].GetLateralDist() < CAR_WIDTH / 2. + 0.25){
+        if (fabs(blockedRays[i].GetLateralDist()) < CAR_WIDTH / 2. + 0.25){
             return true;
         }
     }

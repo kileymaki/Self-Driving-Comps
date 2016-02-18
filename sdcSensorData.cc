@@ -45,6 +45,7 @@ void sdcSensorData::InitLidar(LidarPos lidar, double minAngle, double angleResol
         case FRONT:
         frontMinAngle = sdcAngle(minAngle);
         frontAngleResolution = angleResolution;
+        std::cout << "MIN ANGLE\t" << minAngle << "\t" << frontMinAngle << "\t" << frontAngleResolution << std::endl;
         break;
 
         case BACK:
@@ -220,7 +221,8 @@ std::vector<sdcLidarRay> sdcSensorData::GetBlockedFrontRays(){
     std::vector<sdcLidarRay> objectsInFront;
     for (int i = 0; i < frontLidarRays->size(); i++) {
         if (!std::isinf((*frontLidarRays)[i])) {
-            sdcAngle angle = sdcAngle(i*frontAngleResolution+frontMinAngle);
+            sdcAngle angle = sdcAngle(frontMinAngle + i*frontAngleResolution);
+            // std::cout << "GetBlocked\t" << i << "\t" << angle << std::endl;
             objectsInFront.push_back(sdcLidarRay(angle, (*frontLidarRays)[i]));
         }
     }
@@ -273,7 +275,8 @@ std::vector<sdcVisibleObject> sdcSensorData::GetObjectsInFront(){
             objMinDist = curDist < objMinDist ? curDist : objMinDist;
 
             if(!((curAngle - prevAngle).withinMargin(angleMargin) && fabs(curDist - prevDist) < distMargin)){
-                objectList.push_back(sdcVisibleObject(sdcLidarRay(objMinAngle, objFirstDist), sdcLidarRay(curAngle, curDist), objMinDist));
+                std::cout << "AddedOjbect1\t" << objMinAngle << "\t" << curAngle << std::endl;
+                objectList.push_back(sdcVisibleObject(sdcLidarRay(objMinAngle, objFirstDist), sdcLidarRay(prevAngle, prevDist), objMinDist));
                 ignorePrev = true;
             }
         }else{
@@ -287,7 +290,8 @@ std::vector<sdcVisibleObject> sdcSensorData::GetObjectsInFront(){
         prevDist = curDist;
     }
 
-    objectList.push_back(sdcVisibleObject(sdcLidarRay(objMinAngle, objMinDist), sdcLidarRay(prevAngle, prevDist), objMinDist));
+    std::cout << "AddedOjbect2\t" << objMinAngle << "\t" << prevAngle << std::endl;
+    objectList.push_back(sdcVisibleObject(sdcLidarRay(objMinAngle, objFirstDist), sdcLidarRay(prevAngle, prevDist), objMinDist));
     return objectList;
 }
 

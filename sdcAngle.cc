@@ -65,6 +65,6 @@ bool operator==(const sdcAngle& a, const sdcAngle& b){
 }
 
 std::ostream& operator<<(std::ostream& os, const sdcAngle& a){
-  os << a.angle << std::endl;
+  os << a.angle;
   return os;
 }

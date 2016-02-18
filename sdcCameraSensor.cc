@@ -176,13 +176,13 @@ if (leftp1.x - leftp2.x != 0) {
 if (rightp2.x - rightp1.x != 0) {
     rightNearLaneSlope = (1.*rightp2.y - rightp1.y)/(rightp2.x - rightp1.x);
 }
- std::cout << "left slope: " << leftNearLaneSlope << "\t|\t" << "right slope: "<< rightNearLaneSlope << std::endl;
+ // std::cout << "left slope: " << leftNearLaneSlope << "\t|\t" << "right slope: "<< rightNearLaneSlope << std::endl;
 
 // Calculate y-intercepts of the lanes
 //b = y - mx
 leftLaneIntercept = leftp1.y - leftNearLaneSlope*leftp1.x; //((0-leftp1.y)/leftNearLaneSlope)+leftp1.x;
 rightLaneIntercept = rightp1.y - rightNearLaneSlope*rightp1.x;// ((0-rightp1.y)/rightNearLaneSlope)+rightp1.x;
-std::cout << "left intercept: " << leftLaneIntercept << "\t|\t" << "right intecept: "<< rightLaneIntercept << std::endl;
+// std::cout << "left intercept: " << leftLaneIntercept << "\t|\t" << "right intecept: "<< rightLaneIntercept << std::endl;
 
 // SOLVE VANISHING POINT (u,v), which is intersection of two lines
 //v is the height component of the vanishing point, described as vp = (u,v)
@@ -192,7 +192,7 @@ std::cout << "left intercept: " << leftLaneIntercept << "\t|\t" << "right intece
 u = abs((leftLaneIntercept - rightLaneIntercept) / (leftNearLaneSlope - rightNearLaneSlope));
 v = (leftNearLaneSlope * u) + leftLaneIntercept;
 Point vp = Point(u,v);
-std::cout << "Vanishing Point: " << vp.x << "|" << vp.y << std::endl;
+// std::cout << "Vanishing Point: " << vp.x << "|" << vp.y << std::endl;
 circle(image,vp, 4, Scalar(0,255,0), 3);
 
 lane_midpoint = (leftp2.x + rightp2.x)/2;
@@ -221,11 +221,11 @@ nfa_p1.x = 0.;
 nfa_p2.x = u;
 nfa_p1.y = (leftNearLaneSlope)*(nfa_p1.x) + leftLaneIntercept;//(b + (d/(2*sqrt(c))));
 nfa_p2.y = (leftNearLaneSlope)*(nfa_p2.x) + leftLaneIntercept;//(b + (d/(2*sqrt(c))));
-std::cout << (b + (d/(2*sqrt(c)))) << "\t" << leftLaneIntercept << std::endl;
+// std::cout << (b + (d/(2*sqrt(c)))) << "\t" << leftLaneIntercept << std::endl;
 line(image, nfa_p1, nfa_p2, Scalar(255,255,0), 1, CV_AA);
 line(image, ffa_p1, ffa_p2, Scalar(255,255,0), 1, CV_AA);
 //std::cout << "ASYMPTOTES: " << nfa_p1 << "\t" << nfa_p2 << "\t" << ffa_p1 << "\t" << ffa_p2 << "\t" << std::endl;
-std::cout << "VARIABLES: " << a << "\t" << b << "\t" << c << "\t" << d << "\t" << std::endl;
+// std::cout << "VARIABLES: " << a << "\t" << b << "\t" << c << "\t" << d << "\t" << std::endl;
 
 //e = (b-v)^2 + ka
 //e =  pow((b-v),2) + (k*a);

@@ -25,7 +25,7 @@
         </gui>
 
         <model name="box">
-            <pose>10 0 0.5 0 0 0</pose>
+            <pose>-10 -20 100 0 0 0</pose>
             <link name="link">
                 <collision name="collision">
                     <geometry>

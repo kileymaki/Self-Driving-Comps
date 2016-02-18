@@ -806,7 +806,7 @@
             </collision>
             <sensor name="gps" type="gps">
                 <pose>0.0 0 0.0 0 0 0</pose>
-                <plugin name="sdcGpsSensor" filename="build/libsdcGpsSensor.so" />
+                <!-- <plugin name="sdcGpsSensor" filename="build/libsdcGpsSensor.so" /> -->
                 <always_on>1</always_on>
                 <update_rate>30</update_rate>
             </sensor>
@@ -847,6 +847,10 @@
             <!-- Factor for the down-force applied as the car travels faster -->
             <!-- A larger number increases the down force -->
             <aero_load>1.0</aero_load>
+        </plugin>
+
+        <plugin name="sdcGpsSensor" filename="build/libsdcGpsSensor.so">
+            <gps>gps</gps>
         </plugin>
     </model>
 </sdf>

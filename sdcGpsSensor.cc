@@ -10,33 +10,16 @@
 
 using namespace gazebo;
 // Register this plugin with the simulator
-GZ_REGISTER_SENSOR_PLUGIN(sdcGpsSensor)
+GZ_REGISTER_MODEL_PLUGIN(sdcGpsSensor);
 
-sensors::GpsSensorPtr parentSensor;
-
-void sdcGpsSensor::Load(sensors::SensorPtr _sensor, sdf::ElementPtr /*_sdf*/){
-    // Get the parent sensor.
-    this->parentSensor =
-    boost::dynamic_pointer_cast<sensors::GpsSensor>(_sensor);
-
-    // Make sure the parent sensor is valid.
-    if (!this->parentSensor)
-    {
-        gzerr << "Couldn't find a gps\n";
-        return;
-    }
-
-    // Connect to the sensor update event.
-    this->updateConnection = this->parentSensor->ConnectUpdated(boost::bind(&sdcGpsSensor::OnUpdate, this));
-
-    // Make sure the parent sensor is active.
-    this->parentSensor->SetActive(true);
+void sdcGpsSensor::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf){
+    this->gpsLink = _model->GetLink(_sdf->Get<std::string>("gps"));
+    this->connections.push_back(event::Events::ConnectWorldUpdateBegin(boost::bind(&sdcGpsSensor::OnUpdate, this)));
 }
 
 // Called by the world update start event
 void sdcGpsSensor::OnUpdate(){
-    math::Pose pose = this->parentSensor->GetPose();
-    // std::cout << "Updating gps for pos x, pos y, yaw: " << pose.pos.x << pose.pos.y << pose.rot.GetYaw() << std::endl;
+    math::Pose pose = this->gpsLink->GetWorldPose();
     sdcSensorData::UpdateGPS(pose.pos.x, pose.pos.y, pose.rot.GetYaw());
 }
 

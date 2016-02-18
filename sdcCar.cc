@@ -89,7 +89,7 @@ void sdcCar::Drive()
         // Default state; drive straight to target location
         case waypoint:
         // Handle lane driving
-        // this->LanedDriving();
+        this->LanedDriving();
         this->Accelerate();
         // this->WaypointDriving(WAYPOINT_VEC);
         break;
@@ -484,56 +484,237 @@ void sdcCar::DetectIntersection(){
     }
 }
 
-//Generates a series of waypoint to get to the desired destination
+//Generates a series of waypoints to get to the desired destination
 std::vector<sdcWaypoint> sdcCar::GenerateWaypoints(sdcWaypoint dest){
+    std::pair<double,double> firstIntr;
+    std::vector<sdcWaypoint> waypoints;
+
     //Get the current direction
-    std::string curDir;
     if((this->yaw - WEST).withinMargin(PI/4)){
-        curDir = "WEST";
+        this->currentDir = west;
     } else if((this->yaw - SOUTH).withinMargin(PI/4)){
-        curDir = "SOUTH";
+        this->currentDir = south;
     } else if((this->yaw - EAST).withinMargin(PI/4)){
-        curDir = "EAST";
+        this->currentDir = east;
     } else {
-        curDir = "NORTH";
+        this->currentDir = north;
     }
+    std::cout << this->currentDir << std::endl;
 
-    std::cout << curDir << std::endl;
-    std::pair<double,double> firstIntersection;
+    std::cout << "curPos: " << this->x << " " << this->y << std::endl;
 
-    std::cout << this->x << std::endl;
-    std::cout << this->y << std::endl;
-    if (curDir == "WEST"){
-        firstIntersection = {-1000,0};
-        for(int i = 0; i < GRID_INTERSECTIONS.size();++i){
-            if(this->y < GRID_INTERSECTIONS[i].second+5 && this->y > GRID_INTERSECTIONS[i].second-5 && GRID_INTERSECTIONS[i].first < this->x - 10 && GRID_INTERSECTIONS[i].first > firstIntersection.first)
-                firstIntersection = GRID_INTERSECTIONS[i];
-        }
-    } else if (curDir == "EAST"){
-        firstIntersection = {1000,0};
-        for(int i = 0; i < GRID_INTERSECTIONS.size();++i){
-            if(this->y < GRID_INTERSECTIONS[i].second+5 && this->y > GRID_INTERSECTIONS[i].second-5 && GRID_INTERSECTIONS[i].first > this->x + 10 && GRID_INTERSECTIONS[i].first < firstIntersection.first){
-                firstIntersection = GRID_INTERSECTIONS[i];
+    //Generates the coordinates for the first intersection the car will hit
+    switch(this->currentDir){
+
+        case west:
+            firstIntr = {-1000,0};
+            for(int i = 0; i < GRID_INTERSECTIONS.size();++i){
+                if(this->y < GRID_INTERSECTIONS[i].second+5 && this->y > GRID_INTERSECTIONS[i].second-5 && GRID_INTERSECTIONS[i].first < this->x - 10 && GRID_INTERSECTIONS[i].first > firstIntr.first)
+                    firstIntr = GRID_INTERSECTIONS[i];
             }
-        }
-    } else if (curDir == "NORTH"){
-        firstIntersection = {0,1000};
-        for(int i = 0; i < GRID_INTERSECTIONS.size();++i){
-            if(this->x < GRID_INTERSECTIONS[i].first+5 && this->x > GRID_INTERSECTIONS[i].first-5 && GRID_INTERSECTIONS[i].second > this->y + 10 && GRID_INTERSECTIONS[i].second < firstIntersection.second)
-                firstIntersection = GRID_INTERSECTIONS[i];
-        }
-    } else if (curDir == "SOUTH"){
-        firstIntersection = {0,-1000};
-        for(int i = 0; i < GRID_INTERSECTIONS.size();++i){
-            if(this->x < GRID_INTERSECTIONS[i].first+5 && this->x > GRID_INTERSECTIONS[i].first-5 && GRID_INTERSECTIONS[i].second < this->y - 10 && GRID_INTERSECTIONS[i].second > firstIntersection.second)
-                firstIntersection = GRID_INTERSECTIONS[i];
-        }
+            break;
+
+        case east:
+            firstIntr = {1000,0};
+            for(int i = 0; i < GRID_INTERSECTIONS.size();++i){
+                if(this->y < GRID_INTERSECTIONS[i].second+5 && this->y > GRID_INTERSECTIONS[i].second-5 && GRID_INTERSECTIONS[i].first > this->x + 10 && GRID_INTERSECTIONS[i].first < firstIntr.first){
+                    firstIntr = GRID_INTERSECTIONS[i];
+                }
+            }
+            break;
+
+        case north:
+            firstIntr = {0,1000};
+            for(int i = 0; i < GRID_INTERSECTIONS.size();++i){
+                if(this->x < GRID_INTERSECTIONS[i].first+5 && this->x > GRID_INTERSECTIONS[i].first-5 && GRID_INTERSECTIONS[i].second > this->y + 10 && GRID_INTERSECTIONS[i].second < firstIntr.second)
+                    firstIntr = GRID_INTERSECTIONS[i];
+            }
+            break;
+
+        case south:
+            firstIntr = {0,-1000};
+            for(int i = 0; i < GRID_INTERSECTIONS.size();++i){
+                if(this->x < GRID_INTERSECTIONS[i].first+5 && this->x > GRID_INTERSECTIONS[i].first-5 && GRID_INTERSECTIONS[i].second < this->y - 10 && GRID_INTERSECTIONS[i].second > firstIntr.second)
+                    firstIntr = GRID_INTERSECTIONS[i];
+            }
+            break;
     }
 
-    std::cout << firstIntersection.first << " " << firstIntersection.second << std::endl;
-    sdcWaypoint retW = {1,firstIntersection};
-    std::vector<sdcWaypoint> ret = {retW};
-    return ret;
+
+    std::cout << "first interection: " << firstIntr.first << " " << firstIntr.second << std::endl;
+
+    //Identifies what direction the destination is from the first intersection
+    switch(this->currentDir){
+        case west:
+            if(dest.pos.first < firstIntr.first)
+                destDir = forward;
+            else if (dest.pos.first == firstIntr.first)
+                destDir = aligned;
+            else
+                destDir = backward;
+            if(dest.pos.second > firstIntr.second)
+                destDirSide = right;
+            else if (dest.pos.second == firstIntr.second)
+                destDirSide = aligned;
+            else
+                destDirSide = left;
+            break;
+
+        case east:
+            if(dest.pos.first > firstIntr.first)
+                destDir = forward;
+            else if (dest.pos.first == firstIntr.first)
+                destDir = aligned;
+            else
+                destDir = backward;
+            if(dest.pos.second < firstIntr.second)
+                destDirSide = right;
+            else if (dest.pos.second == firstIntr.second)
+                destDirSide = aligned;
+            else
+                destDirSide = left;
+            break;
+
+        case north:
+            if(dest.pos.second > firstIntr.second)
+                destDir = forward;
+            else if (dest.pos.second == firstIntr.second)
+                destDir = aligned;
+            else
+                destDir = backward;
+            if(dest.pos.first > firstIntr.first)
+                destDirSide = right;
+            else if (dest.pos.first == firstIntr.first)
+                destDirSide = aligned;
+            else
+                destDirSide = left;
+            break;
+
+        case south:
+            if(dest.pos.second < firstIntr.second)
+                destDir = forward;
+            else if (dest.pos.second == firstIntr.second)
+                destDir = aligned;
+            else
+                destDir = backward;
+            if(dest.pos.first < firstIntr.first)
+                destDirSide = right;
+            else if (dest.pos.first == firstIntr.first)
+                destDirSide = aligned;
+            else
+                destDirSide = left;
+            break;
+    }
+
+    //Generates the waypoint vector
+    switch(destDir){
+        case aligned:
+            switch(destDirSide){
+                case aligned:
+                    waypoints.push_back(dest);
+                    break;
+                case right:
+                    switch(this->currentDir){
+                        case north:
+                            break;
+                        case south:
+                            break;
+                        case east:
+                            break;
+                        case west:
+                            break;
+                    }
+                    break;
+                case left:
+                    switch(this->currentDir){
+                        case north:
+                            break;
+                        case south:
+                            break;
+                        case east:
+                            break;
+                        case west:
+                            break;
+                    }
+                    break;
+            }
+            break;
+
+        case forward:
+            switch(destDirSide){
+                case aligned:
+                    waypoints.push_back(dest);
+                    break;
+                case right:
+                    int waypointType;
+                    switch(this->currentDir){
+                        case north:
+                        case south:
+                            waypoints.push_back(sdcWaypoint(2,std::pair<double,double>(firstIntr.first,dest.pos.second)));
+                            waypoints.push_back(dest);
+                            break;
+                        case east:
+                        case west:
+                            waypoints.push_back(sdcWaypoint(2,std::pair<double,double>(dest.pos.first,firstIntr.second)));
+                            waypoints.push_back(dest);
+                            break;
+                    }
+                    break;
+                case left:
+                    switch(this->currentDir){
+                        case north:
+                        case south:
+                            waypoints.push_back(sdcWaypoint(1,std::pair<double,double>(firstIntr.first,dest.pos.second)));
+                            waypoints.push_back(dest);
+                            break;
+                        case east:
+                        case west:
+                            waypoints.push_back(sdcWaypoint(1,std::pair<double,double>(dest.pos.first,firstIntr.second)));
+                            waypoints.push_back(dest);
+                            break;
+                    }
+                    break;
+            }
+            break;
+
+        case backward:
+            switch(destDirSide){
+                case aligned:
+                    break;
+                case right:
+                    switch(this->currentDir){
+                        case north:
+                            break;
+                        case south:
+                            break;
+                        case east:
+                            break;
+                        case west:
+                            break;
+                    }
+                    break;
+                case left:
+                    switch(this->currentDir){
+                        case north:
+                            break;
+                        case south:
+                            break;
+                        case east:
+                            break;
+                        case west:
+                            break;
+                    }
+                    break;
+            }
+            break;
+    }
+
+    // sdcWaypoint retW = {1,firstIntr};
+    // std::vector<sdcWaypoint> ret = {retW};
+    for(int i =0; i < waypoints.size();++i){
+        std::cout << waypoints[i].waypointType << " " << waypoints[i].pos.first << " " << waypoints[i].pos.second << std::endl;
+    }
+    return waypoints;
 }
 
 ////////////////////
@@ -834,7 +1015,7 @@ void sdcCar::Init()
     this->yaw = sdcAngle(pose.rot.GetYaw());
     this->x = pose.pos.x;
     this->y = pose.pos.y;
-    GenerateWaypoints(sdcWaypoint(1,{200,200}));
+    GenerateWaypoints(sdcWaypoint(3,{150,150}));
 }
 
 /*
@@ -856,7 +1037,6 @@ void sdcCar::OnUpdate()
     this->FrontLidarUpdate();
     this->Drive();
 
-    // GenerateWaypoints(sdcWaypoint(1,{200,200}));
 
 
 
@@ -952,7 +1132,7 @@ sdcCar::sdcCar(){
     this->maxCarSpeed = 6;
     this->maxCarReverseSpeed = -10;
 
-    this->currentState = parking;
+    this->currentState = waypoint;
 
     this->currentParkingState = backPark;
     this->currentParallelState = rightBack;

@@ -91,12 +91,19 @@ namespace gazebo {
         // parallel park
         enum ParallelParkingState { rightBack, leftBack, rightForward, straightForward, doneParallel };
 
+        enum Direction { north, south, east, west };
+
+        enum relativeDirection { forward, aligned, backward, right, left };
+
         ///////////////////////////
         // SDC-defined variables //
         ///////////////////////////
 
         // The current state of the car
         CarState currentState;
+        Direction currentDir;
+        relativeDirection destDir;
+        relativeDirection destDirSide;
         PerpendicularParkingState currentParkingState;
         ParallelParkingState currentParallelState;
 

@@ -12,6 +12,6 @@ enum WaypointType {
 
 
 sdcWaypoint::sdcWaypoint(int waypointType, std::pair<double,double> pos) {
-    this->waypointType = WaypointType_DriveStraight;
+    this->waypointType = waypointType;
     this->pos = pos;
 }

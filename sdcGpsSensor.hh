@@ -21,14 +21,17 @@
 
 namespace gazebo
 {
-    class GAZEBO_VISIBLE sdcGpsSensor : public SensorPlugin
+    class GAZEBO_VISIBLE sdcGpsSensor : public ModelPlugin
     {
-        public: virtual void Load(sensors::SensorPtr _sensor, sdf::ElementPtr /*_sdf*/);
-        
-        public: void OnUpdate();
-        
-        private: sensors::GpsSensorPtr parentSensor;
-        private: event::ConnectionPtr updateConnection;
+        public:
+            virtual void Load(physics::ModelPtr _model, sdf::ElementPtr _sdf);
+            void OnUpdate();
+            math::Pose pose;
+
+        private:
+            physics::LinkPtr gpsLink;
+            sensors::GpsSensorPtr parentSensor;
+            std::vector<event::ConnectionPtr> connections;
     };
 }
 

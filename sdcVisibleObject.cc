@@ -96,10 +96,10 @@ math::Vector2d sdcVisibleObject::GetCenterPoint(){
  * Gets the centerpoint of the two given rays in (x,y) coordinates
  */
 math::Vector2d sdcVisibleObject::GetCenterPoint(sdcLidarRay left, sdcLidarRay right){
-    std::cout << "LEFT\t" << left.angle << "\t" << left.dist << std::endl;
-    std::cout << "RIGHT\t" << right.angle << "\t" << right.dist << std::endl;
+    // std::cout << "LEFT\t" << left.angle << "\t" << left.dist << std::endl;
+    // std::cout << "RIGHT\t" << right.angle << "\t" << right.dist << std::endl;
     double x = (left.GetLateralDist() + right.GetLateralDist()) / 2.;
     double y = (left.GetLongitudinalDist() + right.GetLongitudinalDist()) / 2.;
-    std::cout << x << "\t" << y << std::endl;
+    // std::cout << x << "\t" << y << std::endl;
     return math::Vector2d(x, y);
 }

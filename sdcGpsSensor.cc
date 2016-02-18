@@ -36,6 +36,7 @@ void sdcGpsSensor::Load(sensors::SensorPtr _sensor, sdf::ElementPtr /*_sdf*/){
 // Called by the world update start event
 void sdcGpsSensor::OnUpdate(){
     math::Pose pose = this->parentSensor->GetPose();
+    // std::cout << "Updating gps for pos x, pos y, yaw: " << pose.pos.x << pose.pos.y << pose.rot.GetYaw() << std::endl;
     sdcSensorData::UpdateGPS(pose.pos.x, pose.pos.y, pose.rot.GetYaw());
 }
 

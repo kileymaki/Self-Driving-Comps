@@ -83,9 +83,13 @@ namespace gazebo {
         // sensor readings affecting the decision to transition states
         enum CarState { stop, waypoint, intersection, follow, avoidance, parking};
 
-        // The different states the car can be in while performing a front
+        // The different states the car can be in while performing a back
         // perpendicular park
-        enum ParkingState { stopPark, frontPark, straightPark, backPark, donePark };
+        enum PerpendicularParkingState { stopPark, frontPark, straightPark, backPark, donePark };
+
+        // The different states the car can be in while performing a back
+        // parallel park
+        enum ParallelParkingState { rightBack, leftBack, rightForward, straightForward, doneParallel };
 
         ///////////////////////////
         // SDC-defined variables //
@@ -93,7 +97,8 @@ namespace gazebo {
 
         // The current state of the car
         CarState currentState;
-        ParkingState currentParkingState;
+        PerpendicularParkingState currentParkingState;
+        ParallelParkingState currentParallelState;
 
         double gas; //variable that accelerates the car
         double brake; //variable that brakes the car
@@ -162,6 +167,7 @@ namespace gazebo {
         void WaypointDriving(std::vector<sdcWaypoint> waypoints);
         void Follow();
         void PerpendicularPark();
+        void ParallelPark();
 
         // Helper methods
         void FrontLidarUpdate();

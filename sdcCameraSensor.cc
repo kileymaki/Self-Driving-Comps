@@ -10,10 +10,10 @@
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
 #include <opencv2/opencv.hpp>
-
-
 #include "sdcCameraSensor.hh"
+#include "fadiff.h"
 
+using namespace fadbad;
 using namespace gazebo;
 using namespace cv;
 
@@ -91,15 +91,15 @@ void sdcCameraSensor::OnUpdate() {
   while (it!=lines.end()) {
       float rho= (*it)[0];   // first element is distance rho
       float theta= (*it)[1]; // second element is angle theta
+      
+        if ( 0.1 < theta < PI/2 && theta < left_lane_marker[1]) {
+          left_lane_marker = Vec2f(rho,theta);
+        }
 
-      if ( 0 < theta < PI/2 && theta < left_lane_marker[1]) {
-        left_lane_marker = Vec2f(rho,theta);
-      }
-
-      if (PI/2 < theta < PI && theta > right_lane_marker[1]) {
-        right_lane_marker = Vec2f(rho,theta);
-      }
-
+        if ((PI/2 + 0.1) < theta < PI && theta > right_lane_marker[1]) {
+          right_lane_marker = Vec2f(rho,theta);
+        }
+      
       // Point pt1(rho/cos(theta),0);
       // Point pt2((rho-imageROI.rows*sin(theta))/cos(theta),imageROI.rows);
       // line(imageROI, pt1, pt2, Scalar(0,0,255), 3);
@@ -142,6 +142,7 @@ void sdcCameraSensor::OnUpdate() {
 // BEGIN LCF LANE DETECTION
 double leftNearLaneSlope, rightNearLaneSlope, leftLaneIntercept, rightLaneIntercept;
 double a, b, c, d, e, u, v, n, k, lane_midpoint, eps = 50.0;
+double Gx, Gy, yprime_f, phase_angle_alpha;
 float FOCAL_LENGTH = 554.382; //lambda in Park et. al.
 float Tz = 0.85; // in meters
 // float xf = leftp1.x;
@@ -248,12 +249,14 @@ for (std::vector<double>::const_iterator i = vec_of_i_vals.begin(); i != vec_of_
   if(curve_points_bot.size() > 1){
       for (int i = 0; i < curve_points_bot.size() - 1; i++){
         line(image, curve_points_bot[i], curve_points_bot[i + 1], Scalar(255,0,255), 1, CV_AA);
+        //This is where we would do LROI calculations
       }
   }
 
   if(curve_points_top.size() > 1){
       for (int i = 0; i < curve_points_top.size() - 1; i++){
         line(image, curve_points_top[i], curve_points_top[i + 1], Scalar(255,0,255), 1, CV_AA);
+         //This is where we would do LROI calculations
       }
   }
 }

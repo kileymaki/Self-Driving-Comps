@@ -338,7 +338,7 @@
                 <ray>
                     <scan>
                         <horizontal>
-                            <samples>640</samples>
+                            <samples>120</samples>
                             <resolution>1</resolution>
                             <min_angle>-1.5709</min_angle>
                             <max_angle>1.5709</max_angle>
@@ -353,7 +353,7 @@
                 <plugin name="sdcBackLidarSensor" filename="build/libsdcBackLidarSensor.so" />
                 <always_on>1</always_on>
                 <update_rate>30</update_rate>
-                <visualize>false</visualize>
+                <visualize>true</visualize>
             </sensor>
           </link>
 
@@ -549,7 +549,7 @@
                 <plugin name="sdcSideLidarSensor" filename="build/libsdcSideLidarSensor.so" />
                 <always_on>1</always_on>
                 <update_rate>30</update_rate>
-                <visualize>false</visualize>
+                <visualize>true</visualize>
             </sensor>
             <sensor name="side_right_back_laser" type="ray">
                 <pose>-0.6 -0.02 0.0 0 0.0 -1.5708</pose>
@@ -571,7 +571,7 @@
                 <plugin name="sdcSideLidarSensor" filename="build/libsdcSideLidarSensor.so" />
                 <always_on>1</always_on>
                 <update_rate>30</update_rate>
-                <visualize>false</visualize>
+                <visualize>true</visualize>
             </sensor>
         </link>
 
@@ -633,7 +633,7 @@
                 <plugin name="sdcSideLidarSensor" filename="build/libsdcSideLidarSensor.so" />
                 <always_on>1</always_on>
                 <update_rate>30</update_rate>
-                <visualize>false</visualize>
+                <visualize>true</visualize>
             </sensor>
             <sensor name="side_left_back_laser" type="ray">
                 <pose>-0.6 0.02 0.0 0 0.0 1.5708</pose>
@@ -655,7 +655,7 @@
                 <plugin name="sdcSideLidarSensor" filename="build/libsdcSideLidarSensor.so" />
                 <always_on>1</always_on>
                 <update_rate>30</update_rate>
-                <visualize>false</visualize>
+                <visualize>true</visualize>
             </sensor>
         </link>
 

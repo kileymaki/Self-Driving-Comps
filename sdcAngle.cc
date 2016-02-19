@@ -56,8 +56,16 @@ bool operator<(const sdcAngle& a, const sdcAngle& b){
   return (a.angle-b.angle) > PI;
 }
 
+bool operator<(const sdcAngle& a, const double& b){
+  return a.angle < b;
+}
+
 bool operator>(const sdcAngle& a, const sdcAngle& b){
   return (a.angle-b.angle) < PI && (a.angle-b.angle) > 0;
+}
+
+bool operator>(const sdcAngle& a, const double& b){
+  return a.angle > b;
 }
 
 bool operator==(const sdcAngle& a, const sdcAngle& b){

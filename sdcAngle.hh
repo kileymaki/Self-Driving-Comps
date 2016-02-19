@@ -19,7 +19,9 @@ public:
     friend sdcAngle operator-(const sdcAngle& a, const double& b);
     friend sdcAngle operator/(const sdcAngle& a, const double& b);
     friend bool operator<(const sdcAngle& a, const sdcAngle& b);
+    friend bool operator<(const sdcAngle& a, const double& b);
     friend bool operator>(const sdcAngle& a, const sdcAngle& b);
+    friend bool operator>(const sdcAngle& a, const double& b);
     friend bool operator==(const sdcAngle& a, const sdcAngle& b);
     friend std::ostream& operator<<(std::ostream& os, const sdcAngle& a);
 };

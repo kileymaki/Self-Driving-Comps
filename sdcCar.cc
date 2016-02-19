@@ -117,7 +117,7 @@ void sdcCar::Drive()
     }
 
     // Attempts to turn towards the target direction
-    // this->MatchTargetDirection();
+    this->MatchTargetDirection();
     // Attempts to match the target speed
     this->MatchTargetSpeed();
 
@@ -325,11 +325,27 @@ void sdcCar::PerpendicularPark(){
     std::vector<double> leftBackSideLidar = sdcSensorData::GetLidarRays(SIDE_LEFT_BACK);
     std::vector<double> rightFrontSideLidar = sdcSensorData::GetLidarRays(SIDE_RIGHT_FRONT);
     std::vector<double> leftFrontSideLidar = sdcSensorData::GetLidarRays(SIDE_LEFT_FRONT);
+    // std::cout << backLidar[0] << "  " << backLidar[5] << std::endl; // 0.7
+    // std::cout << backLidar[320] << "  " << backLidar[322] << std::endl; // 0.9
+    std::vector<double> rightBound;
+    std::vector<double> midBound;
+    std::vector<double> leftBound;
+    if(backLidar.size() != 0){
+        for(int i = 0; i < 6; i++){
+            rightBound.push_back(backLidar[i]);
+        }
+        for(int j = 57; j < 63; j++){
+            midBound.push_back(backLidar[j]);
+        }
+        for(int k = 114; k < 120; k++){
+            leftBound.push_back(backLidar[k]);
+        }
+    }
     switch(this->currentParkingState)
     {
         case donePark:
         std::cout << "in done park" << std::endl;
-        this->StopReverse();
+        // this->StopReverse();
         this->Stop();
         this->currentState = stop;
         break;
@@ -341,18 +357,19 @@ void sdcCar::PerpendicularPark(){
                 if(backLidar[i] < 2.0){
                     this->StopReverse();
                     this->SetTargetSpeed(0.5);
-                    sdcAngle margin = this->GetOrientation() - this->targetParkingAngle;
+                    sdcAngle margin = sdcAngle(std::abs(this->GetOrientation().angle - this->targetParkingAngle.angle));
                     // std::cout << "front margin: " << margin << std::endl;
                     if(rightFrontSideLidar.size() > 0 && leftFrontSideLidar.size() > 0 && rightBackSideLidar.size() && leftBackSideLidar.size()){
-                            double rightSideMargins = std::abs(rightFrontSideLidar[80] - rightBackSideLidar[80]);
-                            double leftSideMargins = std::abs(leftFrontSideLidar[80] - leftBackSideLidar[80]);
+                        double rightSideMargins = std::abs(rightFrontSideLidar[80] - rightBackSideLidar[80]);
+                        double leftSideMargins = std::abs(leftFrontSideLidar[80] - leftBackSideLidar[80]);
+                        // std::cout << "margin, rightMargin, leftMargin: " << margin << "  " <<  rightSideMargins << "  " << leftSideMargins << std::endl;
                         if(margin < 0.05 && rightSideMargins < 0.05 && leftSideMargins < 0.05){
                             this->parkingAngleSet = false;
                             this->currentParkingState = straightPark;
                         }
                     }
                     this->SetTargetDirection(targetParkingAngle);
-                    // std::cout << "Target direction/current orientation: " << this->targetDirection << "\t" << this->GetOrientation() << std::endl;
+                    // std::cout << "Target direction/current orientation: " << this->targetParkingAngle << "\t" << this->GetOrientation() << std::endl;
                     break;
                 } else {
                     this->currentParkingState = backPark;
@@ -366,7 +383,7 @@ void sdcCar::PerpendicularPark(){
         // std::cout << "in straight park" << std::endl;
         this->Reverse();
         this->SetTargetSpeed(0.5);
-        if(backLidar[320] < 2){
+        if(backLidar[60] < 0.5){
             this->currentParkingState = donePark;
         }
         break;
@@ -380,8 +397,18 @@ void sdcCar::PerpendicularPark(){
         // std::cout << "in back park" << std::endl;
         // If the car is too close to anything on the back or sides, stop and fix it
         if(backLidar.size() != 0){
-            for(int i = 0; i < backLidar.size(); i++){
-                if(backLidar[i] < 0.5){
+            for(int i = 0; i < rightBound.size(); i++) {
+                if(rightBound[i] < 0.7){
+                    this->currentParkingState = stopPark;
+                }
+            }
+            for(int i = 0; i < midBound.size(); i++) {
+                if(midBound[i] < 0.5){
+                    this->currentParkingState = stopPark;
+                }
+            }
+            for(int i = 0; i < leftBound.size(); i++) {
+                if(leftBound[i] < 0.7){
                     this->currentParkingState = stopPark;
                 }
             }
@@ -405,19 +432,22 @@ void sdcCar::PerpendicularPark(){
             this->targetParkingAngle = (this->GetOrientation() - (3*PI)/2);
             this->SetTargetDirection(2*PI - this->targetParkingAngle);
             this->parkingAngleSet = true;
+            // std::cout << "Target direction/current orientation: " << this->targetParkingAngle << "\t" << this->GetOrientation() << std::endl;
             break;
         } else {
             this->SetTargetDirection(2*PI - this->targetParkingAngle);
             this->Reverse();
             this->SetTargetSpeed(0.5);
-            std::cout << "Target direction/current orientation: " << this->targetParkingAngle << "\t" << this->GetOrientation() << std::endl;
+            // std::cout << "Target direction/current orientation: " << this->targetParkingAngle << "\t" << this->GetOrientation() << std::endl;
         }
         // Check to see if current direction is the same as targetParkingAngle
-        sdcAngle margin = this->GetOrientation() - (this->targetParkingAngle - PI);
+        sdcAngle margin = sdcAngle(std::abs(this->GetOrientation().angle - this->targetParkingAngle.angle));
         // std::cout << "back margin: " << margin << std::endl;
         if(rightFrontSideLidar.size() > 0 && leftFrontSideLidar.size() > 0 && rightBackSideLidar.size() && leftBackSideLidar.size()){
             double rightSideMargins = std::abs(rightFrontSideLidar[80] - rightBackSideLidar[80]);
             double leftSideMargins = std::abs(leftFrontSideLidar[80] - leftBackSideLidar[80]);
+            // std::cout << "margin, rightMargin, leftMargin: " << margin << "  " <<  rightSideMargins << "  " << leftSideMargins << std::endl;
+            std::cout << (margin < 0.05) << std::endl;
             if(margin < 0.05 && rightSideMargins < 0.05 && leftSideMargins < 0.05){
                 this->parkingAngleSet = false;
                 this->currentParkingState = straightPark;
@@ -1143,7 +1173,7 @@ sdcCar::sdcCar(){
     this->maxCarSpeed = 6;
     this->maxCarReverseSpeed = -10;
 
-    this->currentState = waypoint;
+    this->currentState = parking;
 
     this->currentParkingState = backPark;
     this->currentParallelState = rightBack;

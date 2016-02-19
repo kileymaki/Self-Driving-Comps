@@ -182,7 +182,7 @@ namespace gazebo {
         void UpdateFrontObjects(std::vector<sdcVisibleObject> newObjects);
 
         sdcAngle AngleToTarget(math::Vector2d target);
-        static bool ObjectDirectlyAhead();
+        bool ObjectDirectlyAhead();
 
         bool IsMovingForwards();
         double GetSpeed();

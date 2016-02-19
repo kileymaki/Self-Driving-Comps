@@ -16,12 +16,16 @@ sdcVisibleObject::sdcVisibleObject(sdcLidarRay right, sdcLidarRay left, double d
     this->dist = dist;
 
     this->centerpoint = this->GetCenterPoint();
+    this->prevPoints.push_back(this->centerpoint);
 
-    this->estimatedSpeed = 0;
+    this->estimatedXSpeed = 0;
+    this->estimatedYSpeed = 0;
     this->estimatedDirection = (left.angle + right.angle) / 2.;
     this->confidence = 0.01;
 
     this->tracking = false;
+
+    // std::cout << left.GetLateralDist() << "\t" << left.GetLongitudinalDist() << "\t" << right.GetLateralDist() << "\t" << right.GetLongitudinalDist() << std::endl;
 }
 
 /*
@@ -35,6 +39,7 @@ bool sdcVisibleObject::IsSameObject(sdcVisibleObject other){
     // std::cout << "EST \t" << estPos.x << "\t" << estPos.y << std::endl;
     // std::cout << "OTH \t" << other.centerpoint.x << "\t" << other.centerpoint.y << std::endl;
     // std::cout << "UNC \t" << uncertainty << "\t" << confidence << std::endl;
+    // std::cout << "LINE \t" << this->lineSlope << "\t" << this->lineIntercept << std::endl;
     // std::cout << (uncertainty * confidence < UNCERTAINTY_RATIO) << std::endl << std::endl;
 
     return uncertainty * confidence < UNCERTAINTY_RATIO;
@@ -45,8 +50,17 @@ bool sdcVisibleObject::IsSameObject(sdcVisibleObject other){
  * speed and direction
  */
 math::Vector2d sdcVisibleObject::EstimateUpdate(){
-    double newX = this->centerpoint.x + sin(this->estimatedDirection.angle) * this->estimatedSpeed;
-    double newY = this->centerpoint.y + cos(this->estimatedDirection.angle) * this->estimatedSpeed;
+    // double newX = this->centerpoint.x + sin(this->estimatedDirection.angle) * this->estimatedSpeed;
+    // double newY = this->centerpoint.y + cos(this->estimatedDirection.angle) * this->estimatedSpeed;
+    // return math::Vector2d(newX, newY);
+    double newX = this->centerpoint.x + this->estimatedXSpeed;
+    double newY = this->centerpoint.y + this->estimatedYSpeed;
+    return math::Vector2d(newX, newY);
+}
+
+math::Vector2d sdcVisibleObject::GetProjectedPosition(int numSteps){
+    double newX = this->centerpoint.x + this->estimatedXSpeed * numSteps;
+    double newY = this->centerpoint.y + this->estimatedYSpeed * numSteps;
     return math::Vector2d(newX, newY);
 }
 
@@ -59,19 +73,60 @@ void sdcVisibleObject::Update(sdcLidarRay newLeft, sdcLidarRay newRight, double 
 
     math::Vector2d newCenterpoint = this->GetCenterPoint(newLeft, newRight, newDist);
 
-    double newEstimatedSpeed = sqrt(pow(this->centerpoint.x - newCenterpoint.x, 2) + pow(this->centerpoint.y - newCenterpoint.y, 2));
+    double newEstimatedXSpeed = newCenterpoint.x - this->centerpoint.x;
+    double newEstimatedYSpeed = newCenterpoint.y - this->centerpoint.y;
 
-    double alpha = fmax((newDist * .005), (.1 - newDist * .005));
-    newEstimatedSpeed = (alpha * newEstimatedSpeed) + ((1 - alpha) * this->estimatedSpeed);
+    double alpha = fmax((.1 + newDist * .005), (.2 - newDist * .005));
+    newEstimatedXSpeed = (alpha * newEstimatedXSpeed) + ((1 - alpha) * this->estimatedXSpeed);
+    newEstimatedYSpeed = (alpha * newEstimatedYSpeed) + ((1 - alpha) * this->estimatedYSpeed);
 
-    this->estimatedSpeed = newEstimatedSpeed;
-    this->estimatedDirection = sdcAngle(atan2(newCenterpoint.x - this->centerpoint.x, newCenterpoint.y - this->centerpoint.y));
+    this->estimatedXSpeed = newEstimatedXSpeed;
+    this->estimatedYSpeed = newEstimatedYSpeed;
+    // this->estimatedDirection = sdcAngle(atan2(newCenterpoint.x - this->centerpoint.x, newCenterpoint.y - this->centerpoint.y));
+
+
+    alpha = .036197; // Determined through repeated experimentation (a.k.a. Divine Inspiration (a.a.k.a. Jon made it up))
+    math::Vector2d newLineCoefficients = this->FitLineToPoints(this->prevPoints, newCenterpoint);
+    this->lineSlope = newLineCoefficients.x;
+    this->lineIntercept = newLineCoefficients.y;
+
+    if(this->prevPoints.size() > 15){
+        this->prevPoints.erase(this->prevPoints.begin());
+    }
+    this->prevPoints.push_back(newCenterpoint);
 
     this->centerpoint = newCenterpoint;
 
     this->left = newLeft;
     this->right = newRight;
     this->dist = newDist;
+}
+
+math::Vector2d sdcVisibleObject::FitLineToPoints(std::vector<math::Vector2d> points, math::Vector2d newPoint){
+    int numPoints = points.size();
+
+    double sumX=0, sumY=0, sumXY=0, sumX2=0;
+    for(int i=0; i<numPoints; i++) {
+      sumX += points[i].x;
+      sumY += points[i].y;
+      sumXY += points[i].x * points[i].y;
+      sumX2 += points[i].x * points[i].x;
+    }
+
+    sumX += newPoint.x;
+    sumY += newPoint.y;
+    sumXY += newPoint.x * newPoint.y;
+    sumX2 += newPoint.x * newPoint.x;
+
+    double xMean = sumX / (numPoints + 1);
+    double yMean = sumY / (numPoints + 1);
+
+    double denom = sumX2 - sumX * xMean;
+
+    double slope = (sumXY - sumX * yMean) / denom;
+    double yInt = yMean - slope * xMean;
+
+    return math::Vector2d(slope, yInt);
 }
 
 void sdcVisibleObject::Update(sdcVisibleObject newObject){

@@ -9,29 +9,40 @@ namespace gazebo
 {
     class sdcVisibleObject {
     public:
-        sdcVisibleObject(sdcLidarRay right, sdcLidarRay left, double dist);
-        bool IsSameObject(sdcVisibleObject other);
-        math::Vector2d EstimateUpdate();
-        void Update(sdcLidarRay newLeft, sdcLidarRay newRight, double newDist);
-        void Update(sdcVisibleObject newObject);
-        void SetTracking(bool isTracking);
-        math::Vector2d GetCenterPoint();
-        math::Vector2d GetCenterPoint(sdcLidarRay left, sdcLidarRay right, double dist);
-
-    private:
-        static const double UNCERTAINTY_RATIO;
-
         sdcLidarRay left;
         sdcLidarRay right;
         double dist;
 
-        math::Vector2d centerpoint;
+        sdcVisibleObject(sdcLidarRay right, sdcLidarRay left, double dist);
 
-        double estimatedSpeed;
+        bool IsSameObject(sdcVisibleObject other);
+        math::Vector2d EstimateUpdate();
+        math::Vector2d GetProjectedPosition(int numSteps);
+        void Update(sdcLidarRay newLeft, sdcLidarRay newRight, double newDist);
+        void Update(sdcVisibleObject newObject);
+
+        void SetTracking(bool isTracking);
+        math::Vector2d GetCenterPoint();
+
+        math::Vector2d FitLineToPoints(std::vector<math::Vector2d> points, math::Vector2d newPoint);
+
+    private:
+        static const double UNCERTAINTY_RATIO;
+
+        math::Vector2d centerpoint;
+        double lineSlope;
+        double lineIntercept;
+
+        std::vector<math::Vector2d> prevPoints;
+
+        double estimatedXSpeed;
+        double estimatedYSpeed;
         sdcAngle estimatedDirection;
-        public: double confidence;
+        double confidence;
 
         bool tracking;
+
+        math::Vector2d GetCenterPoint(sdcLidarRay left, sdcLidarRay right, double dist);
     };
 }
 #endif

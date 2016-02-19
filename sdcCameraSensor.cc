@@ -26,7 +26,7 @@ sensors::MultiCameraSensorPtr parentSensor;
 
 // Cascade Classifier information using CPU
 CascadeClassifier cpu_stop_sign;
-String cascade_file_path = "/Users/selfcar/Desktop/Self-Driving-Comps/OpenCV/haarcascade_stop.xml";
+String cascade_file_path = "/Users/Charles/Self-Driving-Comps/OpenCV/haarcascade_stop.xml";
 
 void sdcCameraSensor::Load(sensors::SensorPtr _sensor, sdf::ElementPtr /*_sdf*/){
     // Get the parent sensor.
@@ -56,8 +56,8 @@ void sdcCameraSensor::OnUpdate() {
 
   //Select Region of Interest (ROI) for lane detection - currently this is the bottom half of the image.
   //set area for ROI as a rectangle
-  //Rect ROI = image(cv::Rect(0, (4*image.rows)/5, image.cols, image.rows/5));
-  Rect ROI = cv::Rect(0, image.rows/2, image.cols, image.rows/2);
+  Rect ROI = cv::Rect(0, (4*image.rows)/5, image.cols, image.rows/5);
+  //Rect ROI = cv::Rect(0, image.rows/2, image.cols, image.rows/2);
   Mat imageROI = image(ROI);
   //rectangle(image,ROI,Scalar(0,255,0),2);
 
@@ -111,39 +111,32 @@ void sdcCameraSensor::OnUpdate() {
   // this will make some of the issues easier to debug
 
   //draw left lane marker
-  Point leftp1 = Point(left_lane_marker[0]/cos(left_lane_marker[1]),240);
+  Point leftp1 = Point(left_lane_marker[0]/cos(left_lane_marker[1]),0.8*image.rows);
   Point leftp2 = Point((left_lane_marker[0] - (imageROI.rows) * sin(left_lane_marker[1])) / cos(left_lane_marker[1]), (image.rows));
   line(image, leftp1, leftp2, Scalar(255), 3);
 
   //draw right lane marker
-  Point rightp1 = Point(right_lane_marker[0]/cos(right_lane_marker[1]),240);
+  Point rightp1 = Point(right_lane_marker[0]/cos(right_lane_marker[1]),0.8*image.rows);
   Point rightp2 = Point((right_lane_marker[0] - (imageROI.rows) * sin(right_lane_marker[1])) / cos(right_lane_marker[1]), (image.rows));
   line(image, rightp1, rightp2, Scalar(255), 3);
 
   // std::cout << leftp1 << "\t" << leftp2 << "\t" << rightp1 << "\t" << rightp2 << "\t" << std::endl;
 
   //BEGIN HAAR CASCADE OBJECT DETECTION
-/*
+
   if(!cpu_stop_sign.load(cascade_file_path)){ printf("--(!)Error loading face cascade\n");};
-  std::vector<Rect> stopSigns_left, stopSigns;
-  cpu_stop_sign.detectMultiScale( image_left, stopSigns_left, 1.1, 2, 0|CASCADE_SCALE_IMAGE, Size(30, 30) );
+  std::vector<Rect> stopSigns;
+  //cpu_stop_sign.detectMultiScale( image_left, stopSigns_left, 1.1, 2, 0|CASCADE_SCALE_IMAGE, Size(30, 30) );
   cpu_stop_sign.detectMultiScale( image, stopSigns, 1.1, 2, 0|CASCADE_SCALE_IMAGE, Size(30, 30) );
-  sdcSensorData::stopSignInLeftCamera = false;
-  for( int i = 0; i < stopSigns_left.size(); i++ )
-  {
-     cv::rectangle(image_left, stopSigns_left[i], Scalar(0,0,255),3,LINE_8,0);
-     std::cout << "stop sign found in left image" <<std::endl;
-     sdcSensorData::stopSignInLeftCamera = true;
-  }
 
   sdcSensorData::stopSignInRightCamera = false;
   for( int i = 0; i < stopSigns.size(); i++ )
   {
      cv::rectangle(image, stopSigns[i], Scalar(0,0,255),3,LINE_8,0);
-     std::cout << "stop sign found in right image" <<std::endl;
-     sdcSensorData::stopSignInRightCamera = true;
+     std::cout << "stop sign found!" <<std::endl;
+     //sdcSensorData::stopSignInRightCamera = true;
   }
-*/
+
 
 // BEGIN LCF LANE DETECTION
 double leftNearLaneSlope, rightNearLaneSlope, leftLaneIntercept, rightLaneIntercept;

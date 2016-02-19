@@ -4,6 +4,9 @@ find_package(gazebo REQUIRED)
 include_directories(${GAZEBO_INCLUDE_DIRS})
 link_directories(${GAZEBO_LIBRARY_DIRS})
 
+
+include_directories(FADBAD++)
+
 find_package(OpenCV REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
 # link_directories(${OpenCV_LIBS}) Spits out error messages, and also doesn't seem necessary to work

@@ -1,0 +1,101 @@
+<?xml version="1.0" ?>
+
+<sdf version="1.5">
+  <world name="default">
+    <gui>
+      <camera name="user_camera">
+        <pose>-20.43 -37.35 23 0 0.30 0.78</pose>
+      </camera>
+    </gui>
+
+    <include>
+      <uri>model://sun</uri>
+    </include>
+
+    <scene>
+      <sky>
+        <clouds>
+          <speed>5</speed>
+        </clouds>
+      </sky>
+    </scene>
+
+    <include>
+        <uri>/models/sdcCar</uri>
+        <pose>2 9 0 0 0 0</pose>
+    </include>
+
+    <include>
+        <uri>model://jersey_barrier</uri>
+        <pose>89 10 0 0 0 -1.5707</pose>
+    </include>
+
+    <include>
+        <uri>model://bookshelf</uri>
+        <pose>15 9 0 0 0 -1.5707</pose>
+    </include>
+
+    <model name='ground_plane'>
+      <static>1</static>
+      <link name='link'>
+        <pose> 50 10 0 0 0 0 </pose>
+        <collision name='collision'>
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>100 20</size>
+            </plane>
+          </geometry>
+        </collision>
+        <visual name='visual'>
+          <cast_shadows>0</cast_shadows>
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>100 20</size>
+            </plane>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Grass</name>
+            </script>
+          </material>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+    </model>
+
+    <model name='road_2_0_1'>
+      <pose>50 10 0.05 0 0 0</pose>
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>100 5 .1</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>100 5 .1</size>
+            </box>
+          </geometry>
+        <material>
+            <script>
+                <uri>models/comps_road/materials/scripts</uri>
+                <uri>models/comps_road/materials/textures</uri>
+                <name>comps_road</name>
+            </script>
+        </material>
+      </visual>
+    </link>
+    </model>
+
+  </world>
+</sdf>

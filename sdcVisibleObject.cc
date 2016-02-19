@@ -3,7 +3,7 @@
 using namespace gazebo;
 
 // How far off our estimates can be before we assume we're seeing a differnt object
-const double sdcVisibleObject::UNCERTAINTY_RATIO = 5.;
+const double sdcVisibleObject::UNCERTAINTY_RATIO = 0.3;
 
 /*
  * Visible objects are obstructions detected by Lidar rays. They have estimated
@@ -34,8 +34,8 @@ bool sdcVisibleObject::IsSameObject(sdcVisibleObject other){
     // std::cout << "CUR \t" << this->centerpoint.x << "\t" << this->centerpoint.y << std::endl;
     // std::cout << "EST \t" << estPos.x << "\t" << estPos.y << std::endl;
     // std::cout << "OTH \t" << other.centerpoint.x << "\t" << other.centerpoint.y << std::endl;
-    // std::cout << "Uncertainty\t" << uncertainty << "\t" << confidence << std::endl;
-    // std::cout << (uncertainty * confidence < UNCERTAINTY_RATIO) << std::endl;
+    // std::cout << "UNC \t" << uncertainty << "\t" << confidence << std::endl;
+    // std::cout << (uncertainty * confidence < UNCERTAINTY_RATIO) << std::endl << std::endl;
 
     return uncertainty * confidence < UNCERTAINTY_RATIO;
 }
@@ -57,15 +57,15 @@ math::Vector2d sdcVisibleObject::EstimateUpdate(){
 void sdcVisibleObject::Update(sdcLidarRay newLeft, sdcLidarRay newRight, double newDist){
     this->confidence = fmin(1.0, this->confidence + 0.01);
 
-    math::Vector2d newCenterpoint = this->GetCenterPoint(newLeft, newRight);
+    math::Vector2d newCenterpoint = this->GetCenterPoint(newLeft, newRight, newDist);
 
     double newEstimatedSpeed = sqrt(pow(this->centerpoint.x - newCenterpoint.x, 2) + pow(this->centerpoint.y - newCenterpoint.y, 2));
 
-    double alpha = fmax((newDist * .005), (.1 - newDist * -.005));
-    newEstimatedSpeed = fmin(6, (alpha * newEstimatedSpeed) + ((1 - alpha) * this->estimatedSpeed));
+    double alpha = fmax((newDist * .005), (.1 - newDist * .005));
+    newEstimatedSpeed = (alpha * newEstimatedSpeed) + ((1 - alpha) * this->estimatedSpeed);
 
     this->estimatedSpeed = newEstimatedSpeed;
-    this->estimatedDirection = sdcAngle(atan2(this->centerpoint.x - newCenterpoint.x, this->centerpoint.y - newCenterpoint.y));
+    this->estimatedDirection = sdcAngle(atan2(newCenterpoint.x - this->centerpoint.x, newCenterpoint.y - this->centerpoint.y));
 
     this->centerpoint = newCenterpoint;
 
@@ -89,17 +89,19 @@ void sdcVisibleObject::SetTracking(bool isTracking){
  * Gets the centerpoint of this object based on the left and right rays
  */
 math::Vector2d sdcVisibleObject::GetCenterPoint(){
-    return this->GetCenterPoint(this->left, this->right);
+    return this->GetCenterPoint(this->left, this->right, this->dist);
 }
 
 /*
  * Gets the centerpoint of the two given rays in (x,y) coordinates
  */
-math::Vector2d sdcVisibleObject::GetCenterPoint(sdcLidarRay left, sdcLidarRay right){
-    // std::cout << "LEFT\t" << left.angle << "\t" << left.dist << std::endl;
-    // std::cout << "RIGHT\t" << right.angle << "\t" << right.dist << std::endl;
-    double x = (left.GetLateralDist() + right.GetLateralDist()) / 2.;
-    double y = (left.GetLongitudinalDist() + right.GetLongitudinalDist()) / 2.;
-    // std::cout << x << "\t" << y << std::endl;
+math::Vector2d sdcVisibleObject::GetCenterPoint(sdcLidarRay left, sdcLidarRay right, double dist){
+    sdcAngle midAngle = (left.angle + right.angle) / 2.;
+    sdcLidarRay midRay = sdcLidarRay(midAngle, dist);
+    double x = midRay.GetLateralDist();
+    double y = midRay.GetLongitudinalDist();
+
+    // double x = (left.GetLateralDist() + right.GetLateralDist()) / 2.;
+    // double y = (left.GetLongitudinalDist() + right.GetLongitudinalDist()) / 2.;
     return math::Vector2d(x, y);
 }

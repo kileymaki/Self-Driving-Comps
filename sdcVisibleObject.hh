@@ -16,7 +16,7 @@ namespace gazebo
         void Update(sdcVisibleObject newObject);
         void SetTracking(bool isTracking);
         math::Vector2d GetCenterPoint();
-        math::Vector2d GetCenterPoint(sdcLidarRay left, sdcLidarRay right);
+        math::Vector2d GetCenterPoint(sdcLidarRay left, sdcLidarRay right, double dist);
 
     private:
         static const double UNCERTAINTY_RATIO;

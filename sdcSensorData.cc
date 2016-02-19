@@ -222,7 +222,6 @@ std::vector<sdcLidarRay> sdcSensorData::GetBlockedFrontRays(){
     for (int i = 0; i < frontLidarRays->size(); i++) {
         if (!std::isinf((*frontLidarRays)[i])) {
             sdcAngle angle = sdcAngle(frontMinAngle + i*frontAngleResolution);
-            // std::cout << "GetBlocked\t" << i << "\t" << angle << std::endl;
             objectsInFront.push_back(sdcLidarRay(angle, (*frontLidarRays)[i]));
         }
     }
@@ -254,8 +253,8 @@ std::vector<sdcVisibleObject> sdcSensorData::GetObjectsInFront(){
     std::vector<sdcLidarRay> blockedRays = GetBlockedFrontRays();
     if(blockedRays.size() == 0) return objectList;
 
-    double distMargin = 0.5;
-    double angleMargin = 0.005;
+    double distMargin = 1;
+    double angleMargin = 0.01;
 
     bool ignorePrev = true;
 
@@ -275,7 +274,7 @@ std::vector<sdcVisibleObject> sdcSensorData::GetObjectsInFront(){
             objMinDist = curDist < objMinDist ? curDist : objMinDist;
 
             if(!((curAngle - prevAngle).withinMargin(angleMargin) && fabs(curDist - prevDist) < distMargin)){
-                // std::cout << "AddedOjbect1\t" << objMinAngle << "\t" << curAngle << std::endl;
+                // std::cout << "AddedOjbect1\t" << objMinAngle << "\t" << prevAngle << std::endl;
                 objectList.push_back(sdcVisibleObject(sdcLidarRay(objMinAngle, objFirstDist), sdcLidarRay(prevAngle, prevDist), objMinDist));
                 ignorePrev = true;
             }

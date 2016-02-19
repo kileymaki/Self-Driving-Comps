@@ -26,7 +26,7 @@ sensors::MultiCameraSensorPtr parentSensor;
 
 // Cascade Classifier information using CPU
 CascadeClassifier cpu_stop_sign;
-String cascade_file_path = "/Users/Charles/Self-Driving-Comps/OpenCV/haarcascade_stop.xml";
+String cascade_file_path = "OpenCV/haarcascade_stop.xml";
 
 void sdcCameraSensor::Load(sensors::SensorPtr _sensor, sdf::ElementPtr /*_sdf*/){
     // Get the parent sensor.
@@ -123,10 +123,11 @@ void sdcCameraSensor::OnUpdate() {
   // std::cout << leftp1 << "\t" << leftp2 << "\t" << rightp1 << "\t" << rightp2 << "\t" << std::endl;
 
   //BEGIN HAAR CASCADE OBJECT DETECTION
-
-  if(!cpu_stop_sign.load(cascade_file_path)){ printf("--(!)Error loading face cascade\n");};
+  //We should have some sort of object permanence for this, and only trigger
+  //a postive detection if there have been x amount of consecutive frames with
+  //a stop sign
+  if(!cpu_stop_sign.load(cascade_file_path)){ printf("--(!)Error loading cascade\n");};
   std::vector<Rect> stopSigns;
-  //cpu_stop_sign.detectMultiScale( image_left, stopSigns_left, 1.1, 2, 0|CASCADE_SCALE_IMAGE, Size(30, 30) );
   cpu_stop_sign.detectMultiScale( image, stopSigns, 1.1, 2, 0|CASCADE_SCALE_IMAGE, Size(30, 30) );
 
   sdcSensorData::stopSignInRightCamera = false;

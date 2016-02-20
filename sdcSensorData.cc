@@ -11,9 +11,7 @@
 using namespace gazebo;
 
 // Angle information for each lidar
-sdcAngle sdcSensorData::frontMinAngle = sdcAngle(0);
-double sdcSensorData::frontAngleResolution = 0;
-int sdcSensorData::frontLidarLastUpdate = 0;
+std::map<LidarPos, sdcLidarSensorInfo> sdcSensorData::lidarInfoMap = std::map<LidarPos, sdcLidarSensorInfo>();
 
 sdcAngle sdcSensorData::backMinAngle = sdcAngle(0);
 double sdcSensorData::backAngleResolution = 0;
@@ -40,46 +38,15 @@ int sdcSensorData::lanePosition = 0;
 /*
  * Initializes the lidar in the given position to store its minimum angle, as well as the resolution
  */
-void sdcSensorData::InitLidar(LidarPos lidar, double minAngle, double angleResolution){
+void sdcSensorData::InitLidar(LidarPos lidar, double minAngle, double angleResolution, double maxRange, int numRays){
     switch (lidar) {
-        case FRONT:
-        frontMinAngle = sdcAngle(minAngle);
-        frontAngleResolution = angleResolution;
-        std::cout << "MIN ANGLE\t" << minAngle << "\t" << frontMinAngle << "\t" << frontAngleResolution << std::endl;
+        case TOP:
+        case SIDE_LEFT:
+        case SIDE_RIGHT:
+        // Don't init for enums that correspond to more than one sensor
         break;
-
-        case BACK:
-        backMinAngle = sdcAngle(minAngle);
-        backAngleResolution = angleResolution;
-        break;
-
-        case TOP_FORWARD:
-        break;
-
-        case TOP_RIGHT:
-        break;
-
-        case TOP_BACKWARD:
-        break;
-
-        case TOP_LEFT:
-        break;
-
-        case SIDE_LEFT_FRONT:
-        break;
-
-        case SIDE_LEFT_BACK:
-        break;
-
-        case SIDE_RIGHT_FRONT:
-        break;
-
-        case SIDE_RIGHT_BACK:
-        break;
-
         default:
-        // The given enum matches more than one lidar sensor, to be safe we'll ignore it
-        break;
+        lidarInfoMap[lidar] = sdcLidarSensorInfo(sdcAngle(minAngle), angleResolution, maxRange, numRays);
     }
 }
 
@@ -87,10 +54,10 @@ void sdcSensorData::InitLidar(LidarPos lidar, double minAngle, double angleResol
  * Updates the lidar in the given position to hold the given rays
  */
 void sdcSensorData::UpdateLidar(LidarPos lidar, std::vector<double>* newRays){
+    lidarInfoMap[lidar].lastUpdate = (lidarInfoMap[lidar].lastUpdate + 1) % 100000000;
     switch (lidar) {
         case FRONT:
         frontLidarRays = newRays;
-        frontLidarLastUpdate = (frontLidarLastUpdate + 1) % 100000000;
         break;
 
         case BACK:
@@ -144,6 +111,26 @@ void sdcSensorData::UpdateCameraData(int lanePos) {
 
 int sdcSensorData::LanePosition() {
     return lanePosition;
+}
+
+int sdcSensorData::GetLidarLastUpdate(LidarPos lidar){
+    return lidarInfoMap[lidar].lastUpdate;
+}
+
+int sdcSensorData::GetLidarNumRays(LidarPos lidar){
+    return lidarInfoMap[lidar].numRays;
+}
+
+sdcAngle sdcSensorData::GetLidarMinAngle(LidarPos lidar){
+    return lidarInfoMap[lidar].minAngle;
+}
+
+double sdcSensorData::GetLidarAngleResolution(LidarPos lidar){
+    return lidarInfoMap[lidar].resolution;
+}
+
+double sdcSensorData::GetLidarMaxRange(LidarPos lidar){
+    return lidarInfoMap[lidar].maxRange;
 }
 
 /*
@@ -221,7 +208,7 @@ std::vector<sdcLidarRay> sdcSensorData::GetBlockedFrontRays(){
     std::vector<sdcLidarRay> objectsInFront;
     for (int i = 0; i < frontLidarRays->size(); i++) {
         if (!std::isinf((*frontLidarRays)[i])) {
-            sdcAngle angle = sdcAngle(frontMinAngle + i*frontAngleResolution);
+            sdcAngle angle = sdcAngle(lidarInfoMap[FRONT].minAngle + i*lidarInfoMap[FRONT].resolution);
             objectsInFront.push_back(sdcLidarRay(angle, (*frontLidarRays)[i]));
         }
     }
@@ -273,7 +260,7 @@ std::vector<sdcVisibleObject> sdcSensorData::GetObjectsInFront(){
         if(!ignorePrev){
             objMinDist = curDist < objMinDist ? curDist : objMinDist;
 
-            if(!((curAngle - prevAngle).withinMargin(angleMargin) && fabs(curDist - prevDist) < distMargin)){
+            if(!((curAngle - prevAngle).WithinMargin(angleMargin) && fabs(curDist - prevDist) < distMargin)){
                 // std::cout << "AddedOjbect1\t" << objMinAngle << "\t" << prevAngle << std::endl;
                 objectList.push_back(sdcVisibleObject(sdcLidarRay(objMinAngle, objFirstDist), sdcLidarRay(prevAngle, prevDist), objMinDist));
                 ignorePrev = true;

@@ -4,6 +4,9 @@ using namespace gazebo;
 
 // How far off our estimates can be before we assume we're seeing a differnt object
 const double sdcVisibleObject::UNCERTAINTY_RATIO = 0.3;
+const double PI = 3.14159265359;
+
+sdcVisibleObject::sdcVisibleObject(){}
 
 /*
  * Visible objects are obstructions detected by Lidar rays. They have estimated
@@ -20,7 +23,6 @@ sdcVisibleObject::sdcVisibleObject(sdcLidarRay right, sdcLidarRay left, double d
 
     this->estimatedXSpeed = 0;
     this->estimatedYSpeed = 0;
-    this->estimatedDirection = (left.angle + right.angle) / 2.;
     this->confidence = 0.01;
 
     this->tracking = false;
@@ -43,6 +45,14 @@ bool sdcVisibleObject::IsSameObject(sdcVisibleObject other){
     // std::cout << (uncertainty * confidence < UNCERTAINTY_RATIO) << std::endl << std::endl;
 
     return uncertainty * confidence < UNCERTAINTY_RATIO;
+}
+
+double sdcVisibleObject::GetEstimatedSpeed(){
+    return sqrt(pow(this->estimatedXSpeed, 2) + pow(this->estimatedYSpeed, 2));
+}
+
+double sdcVisibleObject::GetEstimatedYSpeed(){
+    return this->estimatedYSpeed;
 }
 
 /*
@@ -76,7 +86,7 @@ void sdcVisibleObject::Update(sdcLidarRay newLeft, sdcLidarRay newRight, double 
     double newEstimatedXSpeed = newCenterpoint.x - this->centerpoint.x;
     double newEstimatedYSpeed = newCenterpoint.y - this->centerpoint.y;
 
-    double alpha = fmax((.1 + newDist * .005), (.2 - newDist * .005));
+    double alpha = fmax((newDist * .005), (.1 - newDist * .005));
     newEstimatedXSpeed = (alpha * newEstimatedXSpeed) + ((1 - alpha) * this->estimatedXSpeed);
     newEstimatedYSpeed = (alpha * newEstimatedYSpeed) + ((1 - alpha) * this->estimatedYSpeed);
 
@@ -141,6 +151,13 @@ void sdcVisibleObject::SetTracking(bool isTracking){
 }
 
 /*
+ * Get whetehr this object is being tracked
+ */
+bool sdcVisibleObject::IsTracking(){
+    return this->tracking;
+}
+
+/*
  * Gets the centerpoint of this object based on the left and right rays
  */
 math::Vector2d sdcVisibleObject::GetCenterPoint(){
@@ -151,8 +168,14 @@ math::Vector2d sdcVisibleObject::GetCenterPoint(){
  * Gets the centerpoint of the two given rays in (x,y) coordinates
  */
 math::Vector2d sdcVisibleObject::GetCenterPoint(sdcLidarRay left, sdcLidarRay right, double dist){
-    sdcAngle midAngle = (left.angle + right.angle) / 2.;
-    sdcLidarRay midRay = sdcLidarRay(midAngle, dist);
+    sdcAngle sum = left.angle + right.angle;
+    double avg;
+    if(sum.angle > PI){
+        avg = (sum.angle - 2 * PI) / 2.;
+    }else{
+        avg = sum.angle / 2.;
+    }
+    sdcLidarRay midRay = sdcLidarRay(sdcAngle(avg), dist);
     double x = midRay.GetLateralDist();
     double y = midRay.GetLongitudinalDist();
 

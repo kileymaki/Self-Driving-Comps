@@ -125,6 +125,7 @@ namespace gazebo {
 
         bool turning;
         bool reversing;
+        bool stopping;
         sdcAngle targetDirection;
         double targetSteeringAmount;
         double steeringAmount;
@@ -133,6 +134,7 @@ namespace gazebo {
         bool parkingAngleSet;
 
         // for Follow
+        bool isTrackingObject;
         double estimatedSpeed;
         double lastPosition;
         double currentPosition;
@@ -142,18 +144,6 @@ namespace gazebo {
 
         double x;
         double y;
-
-
-        //fl stands for Front Lidar
-        std::vector<double> fl;
-        int flRayLengths;
-        int flCenterRight;
-        int flSideRight;
-        int flCenterLeft;
-        int flSideLeft;
-        int flNumRays;
-        int flWeight;
-        std::vector<std::vector<int>> flViews;
 
         /////////////////////////
         // SDC-defined methods //
@@ -167,7 +157,6 @@ namespace gazebo {
         void DetectIntersection();
 
         // Driving algorithms
-        void WalledDriving();
         void LanedDriving();
         void GridTurning();
         void TurnAround();
@@ -183,6 +172,7 @@ namespace gazebo {
 
         sdcAngle AngleToTarget(math::Vector2d target);
         bool ObjectDirectlyAhead();
+        bool IsObjectDirectlyAhead(sdcVisibleObject obj);
 
         bool IsMovingForwards();
         double GetSpeed();

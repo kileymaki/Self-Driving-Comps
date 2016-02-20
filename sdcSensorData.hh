@@ -16,7 +16,9 @@
 #include <gazebo/common/common.hh>
 #include <stdio.h>
 #include <vector>
+#include <map>
 #include "sdcAngle.hh"
+#include "sdcLidarSensorInfo.hh"
 #include "sdcLidarRay.hh"
 #include "sdcVisibleObject.hh"
 
@@ -30,7 +32,7 @@ namespace gazebo
     {
         // Lidar variables and methods
     public:
-        static void InitLidar(LidarPos lidar, double minAngle, double angleResolution);
+        static void InitLidar(LidarPos lidar, double minAngle, double angleResolution, double maxRange, int numRays);
         static void UpdateLidar(LidarPos lidar, std::vector<double>* newRays);
         static std::vector<double> GetLidarRays(LidarPos lidar);
         static void UpdateCameraData(int lanePos);
@@ -40,8 +42,11 @@ namespace gazebo
         static std::vector<sdcLidarRay> GetBlockedBackRays();
         static std::vector<sdcVisibleObject> GetObjectsInFront();
 
-        static sdcAngle frontMinAngle;
-        static double frontAngleResolution;
+        static int GetLidarLastUpdate(LidarPos lidar);
+        static int GetLidarNumRays(LidarPos lidar);
+        static sdcAngle GetLidarMinAngle(LidarPos lidar);
+        static double GetLidarAngleResolution(LidarPos lidar);
+        static double GetLidarMaxRange(LidarPos lidar);
 
         static sdcAngle backMinAngle;
         static double backAngleResolution;
@@ -59,6 +64,8 @@ namespace gazebo
         static std::vector<double>* sideLeftBackLidarRays;
         static std::vector<double>* sideRightFrontLidarRays;
         static std::vector<double>* sideRightBackLidarRays;
+
+        static std::map<LidarPos, sdcLidarSensorInfo> lidarInfoMap;
 
     public:
         static int frontLidarLastUpdate;

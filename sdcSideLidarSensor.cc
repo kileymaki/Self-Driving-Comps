@@ -45,6 +45,8 @@ void sdcSideLidarSensor::Load(sensors::SensorPtr _sensor, sdf::ElementPtr /*_sdf
     } else if(name == "side_right_back_laser"){
         this->lidarPos = SIDE_RIGHT_BACK;
     }
+
+    sdcSensorData::InitLidar(this->lidarPos, this->parentSensor->AngleMin().Radian(), this->parentSensor->GetAngleResolution(), this->parentSensor->GetRangeMax(), this->parentSensor->GetRayCount());
 }
 
 // Called by the world update start event

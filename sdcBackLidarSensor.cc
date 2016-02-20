@@ -34,6 +34,8 @@ void sdcBackLidarSensor::Load(sensors::SensorPtr _sensor, sdf::ElementPtr /*_sdf
 
     // Make sure the parent sensor is active.
     this->parentSensor->SetActive(true);
+
+    sdcSensorData::InitLidar(BACK, this->parentSensor->AngleMin().Radian(), this->parentSensor->GetAngleResolution(), this->parentSensor->GetRangeMax(), this->parentSensor->GetRayCount());
 }
 
 // Called by the world update start event

@@ -13,6 +13,7 @@ namespace gazebo
         sdcLidarRay right;
         double dist;
 
+        sdcVisibleObject();
         sdcVisibleObject(sdcLidarRay right, sdcLidarRay left, double dist);
 
         bool IsSameObject(sdcVisibleObject other);
@@ -22,7 +23,10 @@ namespace gazebo
         void Update(sdcVisibleObject newObject);
 
         void SetTracking(bool isTracking);
+        bool IsTracking();
         math::Vector2d GetCenterPoint();
+        double GetEstimatedSpeed();
+        double GetEstimatedYSpeed();
 
         math::Vector2d FitLineToPoints(std::vector<math::Vector2d> points, math::Vector2d newPoint);
 
@@ -37,7 +41,7 @@ namespace gazebo
 
         double estimatedXSpeed;
         double estimatedYSpeed;
-        sdcAngle estimatedDirection;
+
         double confidence;
 
         bool tracking;

@@ -15,16 +15,20 @@ sdcAngle::sdcAngle(){
   angle = 0;
 }
 
-bool sdcAngle::isFrontFacing(){
+bool sdcAngle::IsFrontFacing(){
   return this->angle >= 3*PI/2 || this->angle <= PI/2;
 }
 
-bool sdcAngle::withinMargin(double x){
+bool sdcAngle::WithinMargin(double x){
   // Not to be used with angles x<0 or x>PI
   return this->angle >= 2*PI-x || this->angle <= x;
 }
 
-bool sdcAngle::isBackFacing(){
+sdcAngle sdcAngle::FindMargin(sdcAngle a){
+    return sdcAngle(fabs(this->angle - a.angle));
+}
+
+bool sdcAngle::IsBackFacing(){
   return this->angle < 3*PI/2 && this->angle > PI/2;
 }
 

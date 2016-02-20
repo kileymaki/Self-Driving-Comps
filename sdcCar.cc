@@ -48,11 +48,12 @@ const sdcAngle SOUTH = sdcAngle(3*PI/2);
 const sdcAngle EAST = sdcAngle(0);
 const sdcAngle WEST = sdcAngle(PI);
 const std::vector<std::pair<double,double>> GRID_INTERSECTIONS = {{0,0},{0,50},{0,100},{0,150},{0,200},{0,250},{50,0},{50,50},{50,100},{50,150},{50,200},{50,250},{100,0},{100,50},{100,100},{100,150},{100,200},{100,250},{150,0},{150,50},{150,100},{150,150},{150,200},{150,250},{200,0},{200,50},{200,100},{200,150},{200,200},{200,250},{250,0},{250,50},{250,100},{250,150},{250,200},{250,250}};
+const int farthestIntr = 250;
 
 // const math::Vector2d WAYPOINT_POS = {10,10};
 // const std::vector<math::Vector2d> WAYPOINT_POS_VEC = {{150,100},{150,150}};
-const sdcWaypoint WAYPOINT = sdcWaypoint(1,{150,100});
-const std::vector<sdcWaypoint> WAYPOINT_VEC = {WAYPOINT};
+const sdcWaypoint WAYPOINT = sdcWaypoint(1,{150,0});
+std::vector<sdcWaypoint> WAYPOINT_VEC;
 
 
 std::vector<double> turningVector;
@@ -90,7 +91,7 @@ void sdcCar::Drive()
         // this->LanedDriving();
         this->Accelerate();
         // this->Stop();
-        // this->WaypointDriving(WAYPOINT_VEC);
+        this->WaypointDriving(WAYPOINT_VEC);
         break;
 
         // At a stop sign, performing a turn
@@ -739,7 +740,7 @@ std::vector<sdcWaypoint> sdcCar::GenerateWaypoints(sdcWaypoint dest){
 
     std::cout << "curPos: " << this->x << " " << this->y << std::endl;
 
-    //Generates the coordinates for the first intersection the car will hit
+    //Generates the coordinates for the intersection the car is on or down the road from.
     switch(this->currentDir){
 
         case west:
@@ -778,6 +779,7 @@ std::vector<sdcWaypoint> sdcCar::GenerateWaypoints(sdcWaypoint dest){
 
 
     std::cout << "first interection: " << firstIntr.first << " " << firstIntr.second << std::endl;
+
 
     //Identifies what direction the destination is from the first intersection
     switch(this->currentDir){
@@ -842,6 +844,10 @@ std::vector<sdcWaypoint> sdcCar::GenerateWaypoints(sdcWaypoint dest){
             break;
     }
 
+    std::cout << "destDir: " << destDir << std::endl;
+    std::cout << "destDirSide: " << destDirSide << std::endl;
+    int waypointType;
+    int intrController;
     //Generates the waypoint vector
     switch(destDir){
         case aligned:
@@ -850,26 +856,28 @@ std::vector<sdcWaypoint> sdcCar::GenerateWaypoints(sdcWaypoint dest){
                     waypoints.push_back(dest);
                     break;
                 case right:
-                    switch(this->currentDir){
-                        case north:
-                            break;
-                        case south:
-                            break;
-                        case east:
-                            break;
-                        case west:
-                            break;
-                    }
-                    break;
+                    waypointType = 2;
                 case left:
+                    if(waypointType != 2)
+                        waypointType = 1;
                     switch(this->currentDir){
                         case north:
-                            break;
+                            intrController = 1;
                         case south:
+                            if(intrController != 1)
+                                intrController = -1;
+                            waypoints.push_back(sdcWaypoint(waypointType,std::pair<double,double>(firstIntr.first,firstIntr.second+50*intrController)));
+                            waypoints.push_back(sdcWaypoint(waypointType,std::pair<double,double>(dest.pos.first,firstIntr.second+50*intrController)));
+                            waypoints.push_back(dest);
                             break;
                         case east:
-                            break;
+                            intrController = 1;
                         case west:
+                            if(intrController != 1)
+                                intrController = -1;
+                            waypoints.push_back(sdcWaypoint(waypointType,std::pair<double,double>(firstIntr.first+50*intrController,firstIntr.second)));
+                            waypoints.push_back(sdcWaypoint(waypointType,std::pair<double,double>(firstIntr.first+50*intrController,dest.pos.second)));
+                            waypoints.push_back(dest);
                             break;
                     }
                     break;
@@ -884,30 +892,19 @@ std::vector<sdcWaypoint> sdcCar::GenerateWaypoints(sdcWaypoint dest){
                     waypoints.push_back(dest);
                     break;
                 case right:
-                    int waypointType;
-                    switch(this->currentDir){
-                        case north:
-                        case south:
-                            waypoints.push_back(sdcWaypoint(2,std::pair<double,double>(firstIntr.first,dest.pos.second)));
-                            waypoints.push_back(dest);
-                            break;
-                        case east:
-                        case west:
-                            waypoints.push_back(sdcWaypoint(2,std::pair<double,double>(dest.pos.first,firstIntr.second)));
-                            waypoints.push_back(dest);
-                            break;
-                    }
-                    break;
+                    waypointType = 2;
                 case left:
+                    if(waypointType != 2)
+                        waypointType = 1;
                     switch(this->currentDir){
                         case north:
                         case south:
-                            waypoints.push_back(sdcWaypoint(1,std::pair<double,double>(firstIntr.first,dest.pos.second)));
+                            waypoints.push_back(sdcWaypoint(waypointType,std::pair<double,double>(firstIntr.first,dest.pos.second)));
                             waypoints.push_back(dest);
                             break;
                         case east:
                         case west:
-                            waypoints.push_back(sdcWaypoint(1,std::pair<double,double>(dest.pos.first,firstIntr.second)));
+                            waypoints.push_back(sdcWaypoint(waypointType,std::pair<double,double>(dest.pos.first,firstIntr.second)));
                             waypoints.push_back(dest);
                             break;
                     }
@@ -920,28 +917,84 @@ std::vector<sdcWaypoint> sdcCar::GenerateWaypoints(sdcWaypoint dest){
         case backward:
             switch(destDirSide){
                 case aligned:
-                    break;
-                case right:
                     switch(this->currentDir){
                         case north:
+                            if(firstIntr.first == farthestIntr){
+                                waypointType = 1;
+                                intrController = -1;
+                            } else {
+                                waypointType = 2;
+                                intrController = 1;
+                            }
+                            waypoints.push_back(sdcWaypoint(waypointType,std::pair<double,double>(firstIntr.first,firstIntr.second+50)));
+                            waypoints.push_back(sdcWaypoint(waypointType,std::pair<double,double>(firstIntr.first+50*intrController,firstIntr.second+50)));
+                            waypoints.push_back(sdcWaypoint(waypointType,std::pair<double,double>(firstIntr.first+50*intrController,dest.pos.second)));
+                            waypoints.push_back(dest);
                             break;
                         case south:
+                            if(firstIntr.first == 0){
+                                waypointType = 1;
+                                intrController = 1;
+                            } else {
+                                waypointType = 2;
+                                intrController = -1;
+                            }
+                            waypoints.push_back(sdcWaypoint(waypointType,std::pair<double,double>(firstIntr.first,firstIntr.second-50)));
+                            waypoints.push_back(sdcWaypoint(waypointType,std::pair<double,double>(firstIntr.first+50*intrController,firstIntr.second-50)));
+                            waypoints.push_back(sdcWaypoint(waypointType,std::pair<double,double>(firstIntr.first+50*intrController,dest.pos.second)));
+                            waypoints.push_back(dest);
                             break;
                         case east:
+                            if(firstIntr.second == 0){
+                                waypointType = 1;
+                                intrController = 1;
+                            } else {
+                                waypointType = 2;
+                                intrController = -1;
+                            }
+                            waypoints.push_back(sdcWaypoint(waypointType,std::pair<double,double>(firstIntr.first+50,firstIntr.second)));
+                            waypoints.push_back(sdcWaypoint(waypointType,std::pair<double,double>(firstIntr.first+50,firstIntr.second+50*intrController)));
+                            waypoints.push_back(sdcWaypoint(waypointType,std::pair<double,double>(dest.pos.first,firstIntr.second+50*intrController)));
+                            waypoints.push_back(dest);
                             break;
                         case west:
+                            if(firstIntr.second == farthestIntr){
+                                waypointType = 1;
+                                intrController = -1;
+                            } else {
+                                waypointType = 2;
+                                intrController = 1;
+                            }
+                            waypoints.push_back(sdcWaypoint(waypointType,std::pair<double,double>(firstIntr.first-50,firstIntr.second)));
+                            waypoints.push_back(sdcWaypoint(waypointType,std::pair<double,double>(firstIntr.first-50,firstIntr.second+50*intrController)));
+                            waypoints.push_back(sdcWaypoint(waypointType,std::pair<double,double>(dest.pos.first,firstIntr.second+50*intrController)));
+                            waypoints.push_back(dest);
                             break;
                     }
                     break;
+                case right:
+                    waypointType = 2;
                 case left:
+                    if(waypointType != 2)
+                        waypointType = 1;
                     switch(this->currentDir){
                         case north:
-                            break;
+                            intrController = 1;
                         case south:
+                            if(intrController != 1)
+                                intrController = -1;
+                                waypoints.push_back(sdcWaypoint(waypointType,std::pair<double,double>(firstIntr.first,firstIntr.second+50*intrController)));
+                                waypoints.push_back(sdcWaypoint(waypointType,std::pair<double,double>(dest.pos.first,firstIntr.second+50*intrController)));
+                                waypoints.push_back(dest);
                             break;
                         case east:
-                            break;
+                            intrController = 1;
                         case west:
+                            if(intrController != 1)
+                                intrController = -1;
+                            waypoints.push_back(sdcWaypoint(waypointType,std::pair<double,double>(firstIntr.first+50*intrController,firstIntr.second)));
+                            waypoints.push_back(sdcWaypoint(waypointType,std::pair<double,double>(firstIntr.first+50*intrController,dest.pos.second)));
+                            waypoints.push_back(dest);
                             break;
                     }
                     break;
@@ -1217,7 +1270,7 @@ void sdcCar::Init()
     this->yaw = sdcAngle(pose.rot.GetYaw());
     this->x = pose.pos.x;
     this->y = pose.pos.y;
-    GenerateWaypoints(sdcWaypoint(3,{150,150}));
+    WAYPOINT_VEC = GenerateWaypoints(sdcWaypoint(3,{150,250}));
 }
 
 /*
@@ -1340,7 +1393,7 @@ sdcCar::sdcCar(){
     this->maxCarSpeed = 6;
     this->maxCarReverseSpeed = -10;
 
-    this->currentState = parking;
+    this->currentState = waypoint;
 
     this->currentParkingState = backPark;
     this->currentParallelState = rightBack;

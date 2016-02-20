@@ -146,7 +146,7 @@ void sdcCameraSensor::OnUpdate() {
 
 // BEGIN LCF LANE DETECTION
 double leftNearLaneSlope, rightNearLaneSlope, leftLaneIntercept, rightLaneIntercept;
-double a, b, c, d, e, u, v, n, k, lane_midpoint, eps = 50.0;
+double a, b, c, d, e, u, v, n, k, lane_midpoint, eps = 100.0;
 float FOCAL_LENGTH = 554.382; //lambda in Park et. al.
 float Tz = 0.85; // in meters
 // float xf = leftp1.x;
@@ -205,20 +205,21 @@ n = (image.cols/2) - lane_midpoint;
 sdcSensorData::UpdateCameraData(n);
 
 line(image, Point(lane_midpoint, 480), Point(lane_midpoint, 0), Scalar(0, 255, 0), 1);
-
+Point nfa_p1, nfa_p2, ffa_p1, ffa_p2;
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////LEFT LANE MARKER CALCULATION////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 // std::cout << "n: " << n << "\tlane midpoint: " << lane_midpoint << std::endl;
+/*
 a = leftNearLaneSlope/2;
 b = (v+leftLaneIntercept)/2;
 c = pow(leftNearLaneSlope,2)/4;
 d = a * (leftLaneIntercept-v);
 
 //DRAW LEFT NEAR FIELD AND FAR FIELD ASYMPTOTES
-Point nfa_p1, nfa_p2, ffa_p1, ffa_p2;
+
 ffa_p1.x = 0.;
 ffa_p2.x = u;
 ffa_p1.y = v; //Cy, center of computer image
@@ -233,108 +234,113 @@ nfa_p2.y = (leftNearLaneSlope)*(nfa_p2.x) + leftLaneIntercept;//(b + (d/(2*sqrt(
 //line(image, ffa_p1, ffa_p2, Scalar(255,255,0), 1, CV_AA);
 //std::cout << "ASYMPTOTES: " << nfa_p1 << "\t" << nfa_p2 << "\t" << ffa_p1 << "\t" << ffa_p2 << "\t" << std::endl;
 // std::cout << "VARIABLES: " << a << "\t" << b << "\t" << c << "\t" << d << "\t" << std::endl;
-int lmax_score = 0, loptimal_i = 0;
+int left_max_score = 0, left_optimal_i = 0;
 //generate curvature list
 for (std::vector<double>::const_iterator i = vec_of_i_vals.begin(); i != vec_of_i_vals.end(); i++) {
   e = pow((b-v),2) + (eps * a * *i);
 
-  std::vector<int> lHistogram(31);  
-  std::vector<Point> lcurve_points_top, lcurve_points_bot;
+  std::vector<int> left_Histogram(31);  
+  std::vector<Point> left_curve_points_top, left_curve_points_bot;
 
-  for (float x = 0.; x < 320. ; x++ ) {
-    float ly_top = (a * x) + b + sqrt( c*pow(x,2) + (d * x) + e);
-    float ly_bot = (a * x) + b - sqrt( c*pow(x,2) + (d * x) + e);
+  for (float x = 0.; x < u; x++ ) {
+    float left_y_top = (a * x) + b + sqrt( c*pow(x,2) + (d * x) + e);
+    float left_y_bot = (a * x) + b - sqrt( c*pow(x,2) + (d * x) + e);
 
-    if(ly_top >= v) {
-        Point lcurve_point_top = Point(x,ly_top);
-        lcurve_points_top.push_back(lcurve_point_top);
+    if(left_y_top >= v) {
+        Point left_curve_point_top = Point(x,left_y_top);
+        left_curve_points_top.push_back(left_curve_point_top);
     }
 
-    if(ly_bot >= v) {
-        Point lcurve_point_bot = Point(x,ly_bot);
-        lcurve_points_bot.push_back(lcurve_point_bot);
+    if(left_y_bot >= v) {
+        Point left_curve_point_bot = Point(x,left_y_bot);
+        left_curve_points_bot.push_back(left_curve_point_bot);
     }
   }
 
-  // if(curve_points_bot.size() > 1) {
-  //   for (int i = 0; i < curve_points_bot.size() - 1; i++){
-  //     line(image, curve_points_bot[i], curve_points_bot[i + 1], Scalar(255,0,255), 1, CV_AA);
+  // if(left_curve_points_bot.size() > 1) {
+  //   for (int i = 0; i < left_curve_points_bot.size() - 1; i++){
+  //     //line(image, left_curve_points_top[i], left_curve_points_top[i + 1], Scalar(255,0,255), 1, CV_AA);
+  //     line(image, left_curve_points_bot[i], left_curve_points_bot[i + 1], Scalar(255,0,255), 1, CV_AA);
   //   }
   // }
 
-  if(lcurve_points_top.size() > 1) {
-    for (int i = 0; i < lcurve_points_top.size() - 1; i++) {
+  if(left_curve_points_top.size() > 1) {
+    for (int i = 0; i < left_curve_points_top.size() - 1; i++) {
       //This is where we would do LROI calculations
       //LROI is a triangle, the top point is height of vanishing point.
       //LROI is only calculated for the top half of the LCF
-      //line(image, curve_points_top[i], curve_points_top[i + 1], Scalar(255,0,255), 1, CV_AA);
+      //line(image, left_curve_points_top[i], left_curve_points_top[i + 1], Scalar(255,0,255), 1, CV_AA);
+      
       F<double> x,y,g;
       double ypf_pos, ypf_neg;
       int Dj;
-      x = lcurve_points_top[i].x;
-      y = lcurve_points_top[i].y;
+      x = left_curve_points_top[i].x;
+      y = left_curve_points_top[i].y;
       x.diff(0,2);
       y.diff(1,2);
       g = delG(x,y);
       double Gx = g.d(0); //partial derivative of g wrt x
       double Gy = g.d(1); //partial derivative of g wrt y
       //std::cout << Gx << "\t" << Gy << std::endl;
-      double lphase_angle_alpha = atan2(Gy,Gx);
+      double left_phase_angle_alpha = atan2(Gy,Gx);
       //std::cout << "delG(x_f,y_f)= " << gval << std::endl;
       //std::cout << "phase angle alpha: " << phase_angle_alpha << std::endl;
       ypf_pos = (a + ((2*c*i)+d))/(2*sqrt( c*pow(i,2) + (d * i) + e));
       ypf_neg = (a - ((2*c*i)+d))/(2*sqrt( c*pow(i,2) + (d * i) + e));
-      double lphase_angle_beta = atan2(ypf_pos,ypf_neg);
+      double left_phase_angle_beta = atan2(ypf_pos,ypf_neg);
       //std::cout << "alpha: " << phase_angle_alpha << "\t" << "beta: " << phase_angle_beta << std::endl;
-      Dj = floor(lphase_angle_alpha-lphase_angle_beta);
+      Dj = floor(left_phase_angle_alpha-left_phase_angle_beta);
       //std::cout << Dj << ' ';
       
       if (Dj >= -15 && Dj <= 0) {
-        lHistogram[Dj+15]++;
+        left_Histogram[Dj+15]++;
       }
 
       if (Dj > 0 && Dj <= 15) {
-        lHistogram[Dj]++;
+        left_Histogram[Dj]++;
       }
     }
   }
-  int lscore = std::accumulate(lHistogram.begin(), lHistogram.end(), 0);
+  
+  int left_score = std::accumulate(left_Histogram.begin(), left_Histogram.end(), 0);
 
-  if (lscore > lmax_score) {
-    lmax_score = lscore;
-    loptimal_i = vec_of_i_vals[*i];
+  if (left_score > left_max_score) {
+    left_max_score = left_score;
+    left_optimal_i = vec_of_i_vals[*i];
   } 
+  
   //std::cout << max_score << "\t" << *i << std::endl;
   // for (std::vector<int>::const_iterator i = Histogram.begin(); i != Histogram.end(); ++i){
   //   std::cout << *i << ' '; //<< std::endl;
   //}
 }
+
 //optimal_i = 100;
-e = pow((b-v),2) + (eps * a * loptimal_i);
-std::vector<Point> lcurve_points_top, lcurve_points_bot;
+e = pow((b-v),2) + (eps * a * left_optimal_i);
+std::vector<Point> left_curve_points_top, left_curve_points_bot;
 
-for (float x = 0.; x < 320. ; x++ ) {
-  float ly_top = (a * x) + b + sqrt( c*pow(x,2) + (d * x) + e);
-  float ly_bot = (a * x) + b - sqrt( c*pow(x,2) + (d * x) + e);
+for (float x = 0.; x < u; x++ ) {
+  float left_y_top = (a * x) + b - sqrt( c*pow(x,2) + (d * x) + e);
+  float left_y_bot = (a * x) + b + sqrt( c*pow(x,2) + (d * x) + e);
 
-  if(ly_top >= v) {
-      Point lcurve_point_top = Point(x,ly_top);
-      lcurve_points_top.push_back(lcurve_point_top);
+  if(left_y_top >= v) {
+      Point left_curve_point_top = Point(x,left_y_top);
+      left_curve_points_top.push_back(left_curve_point_top);
   }
 
-  if(ly_bot >= v) {
-      Point lcurve_point_bot = Point(x,ly_bot);
-      lcurve_points_bot.push_back(lcurve_point_bot);
-  }
-}
-
-if(lcurve_points_bot.size() > 1) {
-  for (int i = 0; i < lcurve_points_bot.size() - 1; i++){
-    //line(image, curve_points_bot[i], curve_points_bot[i + 1], Scalar(255,0,255), 3, CV_AA);
-    line(image, lcurve_points_top[i], lcurve_points_top[i + 1], Scalar(255,0,255), 3, CV_AA);
+  if(left_y_bot >= v) {
+      Point left_curve_point_bot = Point(x,left_y_bot);
+      left_curve_points_bot.push_back(left_curve_point_bot);
   }
 }
 
+if(left_curve_points_bot.size() > 1) {
+  for (int i = 0; i < left_curve_points_bot.size() - 1; i++){
+    line(image, left_curve_points_bot[i], left_curve_points_bot[i + 1], Scalar(255,0,255), 3, CV_AA);
+    //line(image, left_curve_points_top[i], left_curve_points_top[i + 1], Scalar(255,0,255), 3, CV_AA);
+  }
+}
+*/
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -363,107 +369,112 @@ nfa_p2.y = (rightNearLaneSlope)*(nfa_p2.x) + rightLaneIntercept;//(b + (d/(2*sqr
 
 //std::cout << "ASYMPTOTES: " << nfa_p1 << "\t" << nfa_p2 << "\t" << ffa_p1 << "\t" << ffa_p2 << "\t" << std::endl;
 // std::cout << "VARIABLES: " << a << "\t" << b << "\t" << c << "\t" << d << "\t" << std::endl;
-int rmax_score = 0, roptimal_i = 0;
+int right_max_score = 0, right_optimal_i = 0;
 //generate curvature list
 for (std::vector<double>::const_iterator i = vec_of_i_vals.begin(); i != vec_of_i_vals.end(); i++) {
   e = pow((b-v),2) + (eps * a * *i);
 
-  std::vector<int> rHistogram(31);  
-  std::vector<Point> rcurve_points_top, rcurve_points_bot;
+  std::vector<int> right_Histogram(31);  
+  std::vector<Point> right_curve_points_top, right_curve_points_bot;
 
-  for (float x = 320.; x < 640. ; x++ ) {
-    float ry_top = (a * x) + b + sqrt( c*pow(x,2) + (d * x) + e);
-    float ry_bot = (a * x) + b - sqrt( c*pow(x,2) + (d * x) + e);
+  for (float x = u+1; x < 640. ; x++ ) {
+    float right_y_top = (a * x) + b - sqrt( c*pow(x,2) + (d * x) + e);
+    float right_y_bot = (a * x) + b + sqrt( c*pow(x,2) + (d * x) + e);
 
-    if(ry_top >= v) {
-        Point rcurve_point_top = Point(x,ry_top);
-        rcurve_points_top.push_back(rcurve_point_top);
+    if(right_y_top >= v) {
+        Point right_curve_point_top = Point(x,right_y_top);
+        right_curve_points_top.push_back(right_curve_point_top);
     }
 
-    if(ry_bot >= v) {
-        Point rcurve_point_bot = Point(x,ry_bot);
-        rcurve_points_bot.push_back(rcurve_point_bot);
+    if(right_y_bot >= v) {
+        Point right_curve_point_bot = Point(x,right_y_bot);
+        right_curve_points_bot.push_back(right_curve_point_bot);
     }
   }
 
-  // if(curve_points_bot.size() > 1) {
-  //   for (int i = 0; i < curve_points_bot.size() - 1; i++){
-  //     line(image, curve_points_bot[i], curve_points_bot[i + 1], Scalar(255,0,255), 1, CV_AA);
-  //   }
-  // }
+  if(right_curve_points_bot.size() > 1) {
+    for (int i = 0; i < right_curve_points_bot.size() - 1; i++){
+      line(image, right_curve_points_bot[i], right_curve_points_bot[i + 1], Scalar(0,0,255), 1, CV_AA);
+      //line(image, right_curve_points_top[i], right_curve_points_top[i + 1], Scalar(255,0,255), 1, CV_AA);
+    }
+  }
 
-  if(rcurve_points_top.size() > 1) {
-    for (int i = 0; i < rcurve_points_top.size() - 1; i++) {
+  if(right_curve_points_top.size() > 1) {
+    for (int i = 0; i < right_curve_points_top.size() - 1; i++) {
       //This is where we would do LROI calculations
       //LROI is a triangle, the top point is height of vanishing point.
       //LROI is only calculated for the top half of the LCF
-      //line(image, curve_points_top[i], curve_points_top[i + 1], Scalar(255,0,255), 1, CV_AA);
+      line(image, right_curve_points_top[i], right_curve_points_top[i + 1], Scalar(0,0,255), 1, CV_AA);
+      
       F<double> x,y,g;
       double ypf_pos, ypf_neg;
       int Dj;
-      x = rcurve_points_top[i].x;
-      y = rcurve_points_top[i].y;
+      x = right_curve_points_top[i].x;
+      y = right_curve_points_top[i].y;
       x.diff(0,2);
       y.diff(1,2);
       g = delG(x,y);
       double Gx = g.d(0); //partial derivative of g wrt x
       double Gy = g.d(1); //partial derivative of g wrt y
       //std::cout << Gx << "\t" << Gy << std::endl;
-      double rphase_angle_alpha = atan2(Gy,Gx);
+      double right_phase_angle_alpha = atan2(Gy,Gx);
       //std::cout << "delG(x_f,y_f)= " << gval << std::endl;
       //std::cout << "phase angle alpha: " << phase_angle_alpha << std::endl;
       ypf_pos = (a + ((2*c*i)+d))/(2*sqrt( c*pow(i,2) + (d * i) + e));
       ypf_neg = (a - ((2*c*i)+d))/(2*sqrt( c*pow(i,2) + (d * i) + e));
-      double rphase_angle_beta = atan2(ypf_pos,ypf_neg);
+      double right_phase_angle_beta = atan2(ypf_pos,ypf_neg);
       //std::cout << "alpha: " << phase_angle_alpha << "\t" << "beta: " << phase_angle_beta << std::endl;
-      Dj = floor(rphase_angle_alpha-rphase_angle_beta);
+      Dj = floor(right_phase_angle_alpha-right_phase_angle_beta);
       //std::cout << Dj << ' ';
       
       if (Dj >= -15 && Dj <= 0) {
-        rHistogram[Dj+15]++;
+        right_Histogram[Dj+15]++;
       }
 
       if (Dj > 0 && Dj <= 15) {
-        rHistogram[Dj]++;
+        right_Histogram[Dj]++;
       }
     }
   }
-  int rscore = std::accumulate(rHistogram.begin(), rHistogram.end(), 0);
+  
+  int right_score = std::accumulate(right_Histogram.begin(), right_Histogram.end(), 0);
 
-  if (rscore > rmax_score) {
-    rmax_score = rscore;
-    roptimal_i = vec_of_i_vals[*i];
+  if (right_score > right_max_score) {
+    right_max_score = right_score;
+    right_optimal_i = vec_of_i_vals[*i];
   } 
   //std::cout << max_score << "\t" << *i << std::endl;
   // for (std::vector<int>::const_iterator i = Histogram.begin(); i != Histogram.end(); ++i){
   //   std::cout << *i << ' '; //<< std::endl;
   //}
+  
 }
+
 //optimal_i = 100;
-e = pow((b-v),2) + (eps * a * roptimal_i);
-std::vector<Point> rcurve_points_top, rcurve_points_bot;
+e = pow((b-v),2) + (eps * a * right_optimal_i);
+std::vector<Point> right_curve_points_top, right_curve_points_bot;
 
 for (float x = 320.; x < 640. ; x++ ) {
-  float ry_top = (a * x) + b + sqrt( c*pow(x,2) + (d * x) + e);
-  float ry_bot = (a * x) + b - sqrt( c*pow(x,2) + (d * x) + e);
+  float right_y_top = (a * x) + b + sqrt( c*pow(x,2) + (d * x) + e);
+  float right_y_bot = (a * x) + b - sqrt( c*pow(x,2) + (d * x) + e);
 
-  if(ry_top >= v) {
-      Point rcurve_point_top = Point(x,ry_top);
-      rcurve_points_top.push_back(rcurve_point_top);
+  if(right_y_top >= v) {
+      Point right_curve_point_top = Point(x,right_y_top);
+      right_curve_points_top.push_back(right_curve_point_top);
   }
 
-  if(ry_bot >= v) {
-      Point rcurve_point_bot = Point(x,ry_bot);
-      rcurve_points_bot.push_back(rcurve_point_bot);
+  if(right_y_bot >= v) {
+      Point right_curve_point_bot = Point(x,right_y_bot);
+      right_curve_points_bot.push_back(right_curve_point_bot);
   }
 }
 
-//if(rcurve_points_bot.size() > 1) {
-  for (int i = 0; i < rcurve_points_bot.size() - 1; i++){
-    //line(image, curve_points_bot[i], curve_points_bot[i + 1], Scalar(255,0,255), 3, CV_AA);
-    line(image, rcurve_points_top[i], rcurve_points_top[i + 1], Scalar(255,0,255), 3, CV_AA);
+if(right_curve_points_bot.size() > 1) {
+  for (int i = 0; i < right_curve_points_bot.size() - 1; i++){
+    //line(image, right_curve_points_bot[i], right_curve_points_bot[i + 1], Scalar(255,0,255), 3, CV_AA);
+    line(image, right_curve_points_top[i], right_curve_points_top[i + 1], Scalar(0,255,0), 3, CV_AA);
   }
-//}
+}
 
 ///////// END LCF LANE DETECTION
 
@@ -476,5 +487,5 @@ for (float x = 320.; x < 640. ; x++ ) {
   //line(image, ffa_p1, ffa_p2, Scalar(255,255,0), 1, CV_AA);
   namedWindow("Camera View", WINDOW_AUTOSIZE);
   imshow("Camera View", image);
-  waitKey(1);
+  waitKey(4);
 }

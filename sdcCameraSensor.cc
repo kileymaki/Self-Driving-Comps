@@ -61,8 +61,8 @@ void sdcCameraSensor::OnUpdate() {
 
   //Select Region of Interest (ROI) for lane detection - currently this is the bottom half of the image.
   //set area for ROI as a rectangle
-  Rect ROI = cv::Rect(0, (4*image.rows)/5, image.cols, image.rows/5);
-  //Rect ROI = cv::Rect(0, image.rows/2, image.cols, image.rows/2);
+  //Rect ROI = cv::Rect(0, (4*image.rows)/5, image.cols, image.rows/5);
+  Rect ROI = cv::Rect(0, image.rows/2, image.cols, image.rows/2);
   Mat imageROI = image(ROI);
   //rectangle(image,ROI,Scalar(0,255,0),2);
 
@@ -96,7 +96,7 @@ void sdcCameraSensor::OnUpdate() {
   while (it!=lines.end()) {
       float rho= (*it)[0];   // first element is distance rho
       float theta= (*it)[1]; // second element is angle theta
-      
+
         if ( 0.1 < theta < PI/2 && theta < left_lane_marker[1]) {
           left_lane_marker = Vec2f(rho,theta);
         }
@@ -104,7 +104,7 @@ void sdcCameraSensor::OnUpdate() {
         if ((PI/2 + 0.1) < theta < PI && theta > right_lane_marker[1]) {
           right_lane_marker = Vec2f(rho,theta);
         }
-      
+
       // Point pt1(rho/cos(theta),0);
       // Point pt2((rho-imageROI.rows*sin(theta))/cos(theta),imageROI.rows);
       // line(imageROI, pt1, pt2, Scalar(0,0,255), 3);
@@ -116,12 +116,12 @@ void sdcCameraSensor::OnUpdate() {
   // this will make some of the issues easier to debug
 
   //draw left lane marker
-  Point leftp1 = Point(left_lane_marker[0]/cos(left_lane_marker[1]),0.8*image.rows);
+  Point leftp1 = Point(left_lane_marker[0]/cos(left_lane_marker[1]),0.5*image.rows);
   Point leftp2 = Point((left_lane_marker[0] - (imageROI.rows) * sin(left_lane_marker[1])) / cos(left_lane_marker[1]), (image.rows));
   line(image, leftp1, leftp2, Scalar(255), 3);
 
   //draw right lane marker
-  Point rightp1 = Point(right_lane_marker[0]/cos(right_lane_marker[1]),0.8*image.rows);
+  Point rightp1 = Point(right_lane_marker[0]/cos(right_lane_marker[1]),0.5*image.rows);
   Point rightp2 = Point((right_lane_marker[0] - (imageROI.rows) * sin(right_lane_marker[1])) / cos(right_lane_marker[1]), (image.rows));
   line(image, rightp1, rightp2, Scalar(255), 3);
 
@@ -145,6 +145,8 @@ void sdcCameraSensor::OnUpdate() {
 
 
 // BEGIN LCF LANE DETECTION
+// This algorithm was decribed in the paper "A lane-curve detection based on an LCF"
+// Each step that corresponds to an equation will be labelled accordingly.
 double leftNearLaneSlope, rightNearLaneSlope, leftLaneIntercept, rightLaneIntercept;
 double a, b, c, d, e, u, v, n, k, lane_midpoint, eps = 50.0;
 float FOCAL_LENGTH = 554.382; //lambda in Park et. al.
@@ -154,10 +156,10 @@ float Tz = 0.85; // in meters
 // A = 25 * i / 471.2247
 
 //TBH THIS STUFF SHOULD NOT BE SET EVERY UPDATE NEEDS TO BE MOVED ~~~~~~~
-std::vector<double> vec_of_i_vals(201);// = {-48., -39., -38., -37., -36., -34., -32., -31., -30., -29., -28., -27., -26., -25.}
-std::iota(std::begin(vec_of_i_vals), std::end(vec_of_i_vals), -100.);
-//vec_of_i_vals.push_back(48.);
-//vec_of_i_vals.push_back(-48.);
+std::vector<double> vec_of_i_vals(79);
+std::iota(std::begin(vec_of_i_vals), std::end(vec_of_i_vals), -39.);
+vec_of_i_vals.push_back(48.);
+vec_of_i_vals.push_back(-48.);
 // for (std::vector<double>::const_iterator i = vec_of_i_vals.begin(); i != vec_of_i_vals.end(); ++i)
 // std::cout << *i << ' ' << std::endl;
 // std::cout << "=====================================\n";
@@ -203,7 +205,7 @@ n = (image.cols/2) - lane_midpoint;
 
 // Naive lane detection is better than no lane detection
 sdcSensorData::UpdateCameraData(n);
-
+//Point nfa_p1, nfa_p2, ffa_p1, ffa_p2;
 line(image, Point(lane_midpoint, 480), Point(lane_midpoint, 0), Scalar(0, 255, 0), 1);
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -229,8 +231,8 @@ nfa_p2.x = u;
 nfa_p1.y = (leftNearLaneSlope)*(nfa_p1.x) + leftLaneIntercept;//(b + (d/(2*sqrt(c))));
 nfa_p2.y = (leftNearLaneSlope)*(nfa_p2.x) + leftLaneIntercept;//(b + (d/(2*sqrt(c))));
 // std::cout << (b + (d/(2*sqrt(c)))) << "\t" << leftLaneIntercept << std::endl;
-//line(image, nfa_p1, nfa_p2, Scalar(255,255,0), 1, CV_AA);
-//line(image, ffa_p1, ffa_p2, Scalar(255,255,0), 1, CV_AA);
+line(image, nfa_p1, nfa_p2, Scalar(255,255,0), 1, CV_AA);
+line(image, ffa_p1, ffa_p2, Scalar(255,255,0), 1, CV_AA);
 //std::cout << "ASYMPTOTES: " << nfa_p1 << "\t" << nfa_p2 << "\t" << ffa_p1 << "\t" << ffa_p2 << "\t" << std::endl;
 // std::cout << "VARIABLES: " << a << "\t" << b << "\t" << c << "\t" << d << "\t" << std::endl;
 int lmax_score = 0, loptimal_i = 0;
@@ -238,7 +240,7 @@ int lmax_score = 0, loptimal_i = 0;
 for (std::vector<double>::const_iterator i = vec_of_i_vals.begin(); i != vec_of_i_vals.end(); i++) {
   e = pow((b-v),2) + (eps * a * *i);
 
-  std::vector<int> lHistogram(31);  
+  std::vector<int> lHistogram(31);
   std::vector<Point> lcurve_points_top, lcurve_points_bot;
 
   for (float x = 0.; x < 320. ; x++ ) {
@@ -288,7 +290,7 @@ for (std::vector<double>::const_iterator i = vec_of_i_vals.begin(); i != vec_of_
       //std::cout << "alpha: " << phase_angle_alpha << "\t" << "beta: " << phase_angle_beta << std::endl;
       Dj = floor(lphase_angle_alpha-lphase_angle_beta);
       //std::cout << Dj << ' ';
-      
+
       if (Dj >= -15 && Dj <= 0) {
         lHistogram[Dj+15]++;
       }
@@ -303,7 +305,7 @@ for (std::vector<double>::const_iterator i = vec_of_i_vals.begin(); i != vec_of_
   if (lscore > lmax_score) {
     lmax_score = lscore;
     loptimal_i = vec_of_i_vals[*i];
-  } 
+  }
   //std::cout << max_score << "\t" << *i << std::endl;
   // for (std::vector<int>::const_iterator i = Histogram.begin(); i != Histogram.end(); ++i){
   //   std::cout << *i << ' '; //<< std::endl;
@@ -358,8 +360,8 @@ nfa_p2.x = u;
 nfa_p1.y = (rightNearLaneSlope)*(nfa_p1.x) + rightLaneIntercept;//(b + (d/(2*sqrt(c))));
 nfa_p2.y = (rightNearLaneSlope)*(nfa_p2.x) + rightLaneIntercept;//(b + (d/(2*sqrt(c))));
 // std::cout << (b + (d/(2*sqrt(c)))) << "\t" << leftLaneIntercept << std::endl;
-//line(image, nfa_p1, nfa_p2, Scalar(255,255,0), 1, CV_AA);
-//line(image, ffa_p1, ffa_p2, Scalar(255,255,0), 1, CV_AA);
+line(image, nfa_p1, nfa_p2, Scalar(255,255,0), 1, CV_AA);
+line(image, ffa_p1, ffa_p2, Scalar(255,255,0), 1, CV_AA);
 
 //std::cout << "ASYMPTOTES: " << nfa_p1 << "\t" << nfa_p2 << "\t" << ffa_p1 << "\t" << ffa_p2 << "\t" << std::endl;
 // std::cout << "VARIABLES: " << a << "\t" << b << "\t" << c << "\t" << d << "\t" << std::endl;
@@ -368,7 +370,7 @@ int rmax_score = 0, roptimal_i = 0;
 for (std::vector<double>::const_iterator i = vec_of_i_vals.begin(); i != vec_of_i_vals.end(); i++) {
   e = pow((b-v),2) + (eps * a * *i);
 
-  std::vector<int> rHistogram(31);  
+  std::vector<int> rHistogram(31);
   std::vector<Point> rcurve_points_top, rcurve_points_bot;
 
   for (float x = 320.; x < 640. ; x++ ) {
@@ -418,7 +420,7 @@ for (std::vector<double>::const_iterator i = vec_of_i_vals.begin(); i != vec_of_
       //std::cout << "alpha: " << phase_angle_alpha << "\t" << "beta: " << phase_angle_beta << std::endl;
       Dj = floor(rphase_angle_alpha-rphase_angle_beta);
       //std::cout << Dj << ' ';
-      
+
       if (Dj >= -15 && Dj <= 0) {
         rHistogram[Dj+15]++;
       }
@@ -433,13 +435,14 @@ for (std::vector<double>::const_iterator i = vec_of_i_vals.begin(); i != vec_of_
   if (rscore > rmax_score) {
     rmax_score = rscore;
     roptimal_i = vec_of_i_vals[*i];
-  } 
+  }
   //std::cout << max_score << "\t" << *i << std::endl;
   // for (std::vector<int>::const_iterator i = Histogram.begin(); i != Histogram.end(); ++i){
   //   std::cout << *i << ' '; //<< std::endl;
   //}
 }
-//optimal_i = 100;
+//DISPLAY RIGHT LANE CURVE WITH OPTIMAL CURVATURE VALUE
+roptimal_i = 30;
 e = pow((b-v),2) + (eps * a * roptimal_i);
 std::vector<Point> rcurve_points_top, rcurve_points_bot;
 
@@ -458,22 +461,17 @@ for (float x = 320.; x < 640. ; x++ ) {
   }
 }
 
-//if(rcurve_points_bot.size() > 1) {
+if(rcurve_points_bot.size() > 1) {
   for (int i = 0; i < rcurve_points_bot.size() - 1; i++){
     //line(image, curve_points_bot[i], curve_points_bot[i + 1], Scalar(255,0,255), 3, CV_AA);
     line(image, rcurve_points_top[i], rcurve_points_top[i + 1], Scalar(255,0,255), 3, CV_AA);
   }
-//}
+}
 
 ///////// END LCF LANE DETECTION
 
   //namedWindow("Lane Detection", WINDOW_AUTOSIZE);
   //imshow("Lane Detection", contours);
-
-  //draw roi boundary last so it is on top!
-  //rectangle(image,ROI,Scalar(0,255,0),2);
-  //line(image, nfa_p1, nfa_p2, Scalar(255,255,0), 1, CV_AA);
-  //line(image, ffa_p1, ffa_p2, Scalar(255,255,0), 1, CV_AA);
   namedWindow("Camera View", WINDOW_AUTOSIZE);
   imshow("Camera View", image);
   waitKey(1);

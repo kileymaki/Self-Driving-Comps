@@ -104,7 +104,7 @@ namespace gazebo {
         Direction currentDir;
         relativeDirection destDir;
         relativeDirection destDirSide;
-        PerpendicularParkingState currentParkingState;
+        PerpendicularParkingState currentPerpendicularState;
         ParallelParkingState currentParallelState;
 
         double gas; //variable that accelerates the car

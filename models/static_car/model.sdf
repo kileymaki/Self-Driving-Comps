@@ -17,7 +17,7 @@
                 </geometry> -->
                 <geometry>
                     <box>
-                        <size>1 2 1</size>
+                        <size>2 1 1</size>
                         <!-- <pose>0 0 0.3 0 0 0</pose> -->
                     </box>
                 </geometry>

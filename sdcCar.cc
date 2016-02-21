@@ -914,6 +914,7 @@ void sdcCar::DetectIntersection(){
 //////////////////////
 // DIJKSTRA METHODS //
 //////////////////////
+
 //Generates a series of waypoints to get to the desired destination
 void sdcCar::GenerateWaypoints(){
     GetNSEW();
@@ -1189,6 +1190,7 @@ void sdcCar::initializeGraph() {
     intersections[i].place = i;
     }
 }
+
 int sdcCar::getFirstIntersection(){
     std::pair<double,double> firstIntr;
     int firstIntersection;
@@ -1359,9 +1361,12 @@ void sdcCar::removeStartingEdge(int start){
 // HELPER METHODS //
 ////////////////////
 
+/*
+ * Updates the list of objects in front of the car with the given list of new objects
+ */
 void sdcCar::UpdateFrontObjects(std::vector<sdcVisibleObject> newObjects){
     if(this->frontObjects.size() == 0){
-        // if(newObjects.size() > 0) std::cout << "Added " << newObjects.size() << " new object(s)" << std::endl;
+        // The car wasn't tracking any objects, so just set the list equal to the new list
         this->frontObjects = newObjects;
         return;
     }
@@ -1372,11 +1377,15 @@ void sdcCar::UpdateFrontObjects(std::vector<sdcVisibleObject> newObjects){
         isBrandNewObject.push_back(true);
     }
 
+    // Compare each old object to the new objects, and determine
+    // which of them are getting updated, which are missing, as well
+    // as if any of the passed in objects are brand new
     for (int i = 0; i < this->frontObjects.size(); i++) {
         sdcVisibleObject oldObj = this->frontObjects[i];
         isOldObjectMissing.push_back(true);
 
         for (int j = 0; j < newObjects.size(); j++) {
+            // Only match each new object to one old object
             if(!isBrandNewObject[j]) continue;
             sdcVisibleObject newObj = newObjects[j];
 
@@ -1390,16 +1399,16 @@ void sdcCar::UpdateFrontObjects(std::vector<sdcVisibleObject> newObjects){
         }
     }
 
+    // Delete objects that are missing
     for(int i = isOldObjectMissing.size() - 1; i >= 0; i--){
         if(isOldObjectMissing[i]){
-            // std::cout << "Erased missing object" << std::endl;
             this->frontObjects.erase(this->frontObjects.begin() + i);
         }
     }
 
+    // Add brand new objects
     for(int i = 0; i < newObjects.size(); i++){
         if(isBrandNewObject[i]){
-            // std::cout << "Added new object" << std::endl;
             this->frontObjects.push_back(newObjects[i]);
         }
     }
@@ -1509,6 +1518,9 @@ bool sdcCar::IsObjectOnCollisionCourse(sdcVisibleObject obj){
     return isTooFast || isTooFurious;
 }
 
+/*
+ * Returns true if the given object is projected to run into the car within a short time period from now
+ */
 bool sdcCar::IsObjectTooFast(sdcVisibleObject obj){
     math::Vector2d centerpoint = obj.GetCenterPoint();
     bool inLineToCollide = (fabs(obj.lineIntercept) < 1.5 || (fabs(centerpoint.x) < 1.5 && fabs(obj.GetEstimatedXSpeed()) < fabs(0.1 * obj.GetEstimatedYSpeed())));
@@ -1516,6 +1528,9 @@ bool sdcCar::IsObjectTooFast(sdcVisibleObject obj){
     return inLineToCollide && willHitSoon;
 }
 
+/*
+ * Returns true if the given object is very close to the car
+ */
 bool sdcCar::IsObjectTooFurious(sdcVisibleObject obj){
     math::Vector2d centerpoint = obj.GetCenterPoint();
     return (fabs(centerpoint.x) < FRONT_OBJECT_COLLISION_WIDTH / 2. && fabs(centerpoint.y) < 1.5);
@@ -1656,6 +1671,8 @@ void sdcCar::Init()
     // Compute the angle ratio between the steering wheel and the tires
     this->steeringRatio = STEERING_RANGE / this->tireAngleRange;
 
+    // During init, sensors aren't available so pull position and rotation information
+    // straight from the car
     math::Pose pose = this->chassis->GetWorldPose();
     this->yaw = sdcAngle(pose.rot.GetYaw());
     this->x = pose.pos.x;
@@ -1677,6 +1694,8 @@ void sdcCar::OnUpdate()
     // Get the cars current rotation
     this->yaw = sdcSensorData::GetYaw();
 
+    // Check if the front lidars have been updated, and if they have update
+    // the car's list
     if(this->frontLidarLastUpdate != sdcSensorData::GetLidarLastUpdate(FRONT)){
         std::vector<sdcVisibleObject> v = sdcSensorData::GetObjectsInFront();
         this->UpdateFrontObjects(v);
@@ -1687,14 +1706,15 @@ void sdcCar::OnUpdate()
     this->Drive();
 
 
-
+    ////////////////////////////
+    // GAZEBO PHYSICS METHODS //
+    ////////////////////////////
 
     // Compute the angle of the front wheels.
     double wheelAngle = this->steeringAmount / this->steeringRatio;
 
     // Compute the rotational velocity of the wheels
-    double jointVel = (this->gas-this->brake * this->maxSpeed) /
-                    this->wheelRadius;
+    double jointVel = (this->gas-this->brake * this->maxSpeed) / this->wheelRadius;
 
     // Set velocity and max force for each wheel
     this->joints[0]->SetVelocityLimit(1, -jointVel);
@@ -1763,6 +1783,7 @@ void sdcCar::OnUpdate()
 sdcCar::sdcCar(){
     this->joints.resize(4);
 
+    // Physics variables
     this->aeroLoad = 0.1;
     this->swayForce = 10;
 
@@ -1773,14 +1794,17 @@ sdcCar::sdcCar(){
     this->steeringRatio = 1.0;
     this->tireAngleRange = 1.0;
 
+    // Movement parameters
     this->gas = 0.0;
     this->brake = 0.0;
     this->accelRate = 1.0;
     this->brakeRate = 1.0;
 
+    // Limits on the car's speed
     this->maxCarSpeed = 2;
     this->maxCarReverseSpeed = -10;
 
+    // Initialize state enums
     this->DEFAULT_STATE = waypoint;
     this->currentState = DEFAULT_STATE;
 
@@ -1788,30 +1812,35 @@ sdcCar::sdcCar(){
     this->currentParallelState = rightBack;
     this->currentAvoidanceState = notAvoiding;
 
+    // Set starting speed parameters
+    this->targetSpeed = 2;
+
+    // Set starting turning parameters
     this->steeringAmount = 0.0;
     this->targetSteeringAmount = 0.0;
     this->targetDirection = sdcAngle(3 * PI / 2);
     this->turningLimit = 10.0;
 
+    // Booleans for the car's actions
     this->turning = false;
     this->reversing = false;
     this->stopping = false;
 
+    // Variables for parking
     this->targetParkingAngle = sdcAngle(0.0);
     this->parkingAngleSet = false;
     this->isFixingParking = false;
     this->parkingSpotSet = false;
 
-    this->targetSpeed = 2;
-
-    // Used to track waypoint driving
+    // Variables for waypoint driving
     this->waypointProgress = 0;
 
     this->atIntersection = 0;
 
-    // Used to estimate speed of followed object
+    // Variables for following
     this->isTrackingObject = false;
     this->stationaryCount = 0;
 
+    // Variables for avoidance
     this->trackingNavWaypoint = false;
 }

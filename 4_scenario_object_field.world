@@ -1,0 +1,468 @@
+<?xml version="1.0" ?>
+<sdf version="1.4">
+    <world name="default">
+        <!-- Ground Plane -->
+        <include>
+            <uri>model://ground_plane</uri>
+        </include>
+
+        <include>
+            <uri>model://sun</uri>
+        </include>
+
+        <include>
+            <uri>/models/sdcCar</uri>
+        </include>
+
+        <gui>
+            <camera name="default_camera">
+                <pose>10 -40 10 0 0.2 1.5</pose>
+            </camera>
+        </gui>
+
+
+
+
+
+    <model name='box_0_0'>
+        <pose>7 6 0.5 0 0 0</pose>
+        <link name="link">
+            <collision name="collision">
+                <geometry>
+                    <box>
+                        <size>1 1 1</size>
+                    </box>
+                </geometry>
+            </collision>
+
+            <visual name="visual">
+                <geometry>
+                    <box>
+                        <size>1 1 1</size>
+                    </box>
+                </geometry>
+            </visual>
+        </link>
+    </model>
+
+
+    <model name='box_1_0'>
+        <pose>21 10 0.5 0 0 0</pose>
+        <link name="link">
+            <collision name="collision">
+                <geometry>
+                    <box>
+                        <size>1 1 1</size>
+                    </box>
+                </geometry>
+            </collision>
+
+            <visual name="visual">
+                <geometry>
+                    <box>
+                        <size>1 1 1</size>
+                    </box>
+                </geometry>
+            </visual>
+        </link>
+    </model>
+
+
+    <model name='box_2_0'>
+        <pose>25 7 0.5 0 0 0</pose>
+        <link name="link">
+            <collision name="collision">
+                <geometry>
+                    <box>
+                        <size>1 1 1</size>
+                    </box>
+                </geometry>
+            </collision>
+
+            <visual name="visual">
+                <geometry>
+                    <box>
+                        <size>1 1 1</size>
+                    </box>
+                </geometry>
+            </visual>
+        </link>
+    </model>
+
+
+    <model name='box_3_0'>
+        <pose>37 6 0.5 0 0 0</pose>
+        <link name="link">
+            <collision name="collision">
+                <geometry>
+                    <box>
+                        <size>1 1 1</size>
+                    </box>
+                </geometry>
+            </collision>
+
+            <visual name="visual">
+                <geometry>
+                    <box>
+                        <size>1 1 1</size>
+                    </box>
+                </geometry>
+            </visual>
+        </link>
+    </model>
+
+
+    <model name='box_4_0'>
+        <pose>42 9 0.5 0 0 0</pose>
+        <link name="link">
+            <collision name="collision">
+                <geometry>
+                    <box>
+                        <size>1 1 1</size>
+                    </box>
+                </geometry>
+            </collision>
+
+            <visual name="visual">
+                <geometry>
+                    <box>
+                        <size>1 1 1</size>
+                    </box>
+                </geometry>
+            </visual>
+        </link>
+    </model>
+
+
+    <model name='box_5_0'>
+        <pose>49 6 0.5 0 0 0</pose>
+        <link name="link">
+            <collision name="collision">
+                <geometry>
+                    <box>
+                        <size>1 1 1</size>
+                    </box>
+                </geometry>
+            </collision>
+
+            <visual name="visual">
+                <geometry>
+                    <box>
+                        <size>1 1 1</size>
+                    </box>
+                </geometry>
+            </visual>
+        </link>
+    </model>
+
+
+    <model name='box_6_0'>
+        <pose>58 8 0.5 0 0 0</pose>
+        <link name="link">
+            <collision name="collision">
+                <geometry>
+                    <box>
+                        <size>1 1 1</size>
+                    </box>
+                </geometry>
+            </collision>
+
+            <visual name="visual">
+                <geometry>
+                    <box>
+                        <size>1 1 1</size>
+                    </box>
+                </geometry>
+            </visual>
+        </link>
+    </model>
+
+
+    <model name='box_7_0'>
+        <pose>66 13 0.5 0 0 0</pose>
+        <link name="link">
+            <collision name="collision">
+                <geometry>
+                    <box>
+                        <size>1 1 1</size>
+                    </box>
+                </geometry>
+            </collision>
+
+            <visual name="visual">
+                <geometry>
+                    <box>
+                        <size>1 1 1</size>
+                    </box>
+                </geometry>
+            </visual>
+        </link>
+    </model>
+
+
+    <model name='box_8_0'>
+        <pose>72 6 0.5 0 0 0</pose>
+        <link name="link">
+            <collision name="collision">
+                <geometry>
+                    <box>
+                        <size>1 1 1</size>
+                    </box>
+                </geometry>
+            </collision>
+
+            <visual name="visual">
+                <geometry>
+                    <box>
+                        <size>1 1 1</size>
+                    </box>
+                </geometry>
+            </visual>
+        </link>
+    </model>
+
+
+    <model name='box_9_0'>
+        <pose>81 11 0.5 0 0 0</pose>
+        <link name="link">
+            <collision name="collision">
+                <geometry>
+                    <box>
+                        <size>1 1 1</size>
+                    </box>
+                </geometry>
+            </collision>
+
+            <visual name="visual">
+                <geometry>
+                    <box>
+                        <size>1 1 1</size>
+                    </box>
+                </geometry>
+            </visual>
+        </link>
+    </model>
+
+
+    <model name='box_0_1'>
+        <pose>7 19 0.5 0 0 0</pose>
+        <link name="link">
+            <collision name="collision">
+                <geometry>
+                    <box>
+                        <size>1 1 1</size>
+                    </box>
+                </geometry>
+            </collision>
+
+            <visual name="visual">
+                <geometry>
+                    <box>
+                        <size>1 1 1</size>
+                    </box>
+                </geometry>
+            </visual>
+        </link>
+    </model>
+
+
+    <model name='box_1_1'>
+        <pose>15 18 0.5 0 0 0</pose>
+        <link name="link">
+            <collision name="collision">
+                <geometry>
+                    <box>
+                        <size>1 1 1</size>
+                    </box>
+                </geometry>
+            </collision>
+
+            <visual name="visual">
+                <geometry>
+                    <box>
+                        <size>1 1 1</size>
+                    </box>
+                </geometry>
+            </visual>
+        </link>
+    </model>
+
+
+    <model name='box_2_1'>
+        <pose>22 16 0.5 0 0 0</pose>
+        <link name="link">
+            <collision name="collision">
+                <geometry>
+                    <box>
+                        <size>1 1 1</size>
+                    </box>
+                </geometry>
+            </collision>
+
+            <visual name="visual">
+                <geometry>
+                    <box>
+                        <size>1 1 1</size>
+                    </box>
+                </geometry>
+            </visual>
+        </link>
+    </model>
+
+
+    <model name='box_3_1'>
+        <pose>32 17 0.5 0 0 0</pose>
+        <link name="link">
+            <collision name="collision">
+                <geometry>
+                    <box>
+                        <size>1 1 1</size>
+                    </box>
+                </geometry>
+            </collision>
+
+            <visual name="visual">
+                <geometry>
+                    <box>
+                        <size>1 1 1</size>
+                    </box>
+                </geometry>
+            </visual>
+        </link>
+    </model>
+
+
+    <model name='box_4_1'>
+        <pose>43 14 0.5 0 0 0</pose>
+        <link name="link">
+            <collision name="collision">
+                <geometry>
+                    <box>
+                        <size>1 1 1</size>
+                    </box>
+                </geometry>
+            </collision>
+
+            <visual name="visual">
+                <geometry>
+                    <box>
+                        <size>1 1 1</size>
+                    </box>
+                </geometry>
+            </visual>
+        </link>
+    </model>
+
+
+    <model name='box_5_1'>
+        <pose>52 17 0.5 0 0 0</pose>
+        <link name="link">
+            <collision name="collision">
+                <geometry>
+                    <box>
+                        <size>1 1 1</size>
+                    </box>
+                </geometry>
+            </collision>
+
+            <visual name="visual">
+                <geometry>
+                    <box>
+                        <size>1 1 1</size>
+                    </box>
+                </geometry>
+            </visual>
+        </link>
+    </model>
+
+
+    <model name='box_6_1'>
+        <pose>61 16 0.5 0 0 0</pose>
+        <link name="link">
+            <collision name="collision">
+                <geometry>
+                    <box>
+                        <size>1 1 1</size>
+                    </box>
+                </geometry>
+            </collision>
+
+            <visual name="visual">
+                <geometry>
+                    <box>
+                        <size>1 1 1</size>
+                    </box>
+                </geometry>
+            </visual>
+        </link>
+    </model>
+
+
+    <model name='box_7_1'>
+        <pose>64 20 0.5 0 0 0</pose>
+        <link name="link">
+            <collision name="collision">
+                <geometry>
+                    <box>
+                        <size>1 1 1</size>
+                    </box>
+                </geometry>
+            </collision>
+
+            <visual name="visual">
+                <geometry>
+                    <box>
+                        <size>1 1 1</size>
+                    </box>
+                </geometry>
+            </visual>
+        </link>
+    </model>
+
+
+    <model name='box_8_1'>
+        <pose>71 19 0.5 0 0 0</pose>
+        <link name="link">
+            <collision name="collision">
+                <geometry>
+                    <box>
+                        <size>1 1 1</size>
+                    </box>
+                </geometry>
+            </collision>
+
+            <visual name="visual">
+                <geometry>
+                    <box>
+                        <size>1 1 1</size>
+                    </box>
+                </geometry>
+            </visual>
+        </link>
+    </model>
+
+
+    <model name='box_9_1'>
+        <pose>85 20 0.5 0 0 0</pose>
+        <link name="link">
+            <collision name="collision">
+                <geometry>
+                    <box>
+                        <size>1 1 1</size>
+                    </box>
+                </geometry>
+            </collision>
+
+            <visual name="visual">
+                <geometry>
+                    <box>
+                        <size>1 1 1</size>
+                    </box>
+                </geometry>
+            </visual>
+        </link>
+    </model>
+
+
+    </world>
+</sdf>

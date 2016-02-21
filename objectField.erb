@@ -1,0 +1,74 @@
+<?xml version="1.0" ?>
+<sdf version="1.4">
+    <world name="default">
+        <!-- Ground Plane -->
+        <include>
+            <uri>model://ground_plane</uri>
+        </include>
+
+        <include>
+            <uri>model://sun</uri>
+        </include>
+
+        <include>
+            <uri>/models/sdcCar</uri>
+        </include>
+
+        <gui>
+            <camera name="default_camera">
+                <pose>10 -40 10 0 0.2 1.5</pose>
+            </camera>
+        </gui>
+
+<%
+    gridX = 10
+    gridY = 2
+    n = 0
+    block = 10
+    box_positions = []
+    while n < gridX
+        box_positions << block
+        block = block + 8
+        n = n + 1
+    end
+%>
+
+<%
+   x = -1
+   y = 0
+   while y < gridY
+       x = x + 1
+       if x == gridX
+           if y == gridY - 1
+               break
+           end
+           x = 0
+           y = y + 1
+       end
+       name = 'box_' + x.to_s + '_' + y.to_s
+%>
+
+    <%="<model name='#{name}'>" %>
+        <pose><%= box_positions[x] + Random.rand(8)-4%> <%= box_positions[y] + Random.rand(8)-4%> 0.5 0 0 0</pose>
+        <link name="link">
+            <collision name="collision">
+                <geometry>
+                    <box>
+                        <size>1 1 1</size>
+                    </box>
+                </geometry>
+            </collision>
+
+            <visual name="visual">
+                <geometry>
+                    <box>
+                        <size>1 1 1</size>
+                    </box>
+                </geometry>
+            </visual>
+        </link>
+    </model>
+<%  end %>
+
+    </world>
+</sdf>

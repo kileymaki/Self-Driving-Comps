@@ -122,8 +122,8 @@ namespace gazebo {
         sdcAngle yaw;
 
         int waypointProgress;
-
         int atIntersection;
+
         int maxCarSpeed;
         double maxCarReverseSpeed;
         double turningLimit;
@@ -142,6 +142,7 @@ namespace gazebo {
 
         // for Follow
         bool isTrackingObject;
+        int stationaryCount;
 
         std::vector<sdcVisibleObject> frontObjects;
         int frontLidarLastUpdate;

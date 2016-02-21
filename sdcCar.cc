@@ -72,10 +72,12 @@ std::vector<double> turningVector;
 void sdcCar::Drive()
 {
     // Do collision detection
-    if (this->ObjectDirectlyAhead()){
-        this->currentState = follow;
-    }else if(!this->isTrackingObject){
-        this->currentState = waypoint;
+    if(this->currentState != avoidance){
+        if (this->ObjectDirectlyAhead()){
+            this->currentState = follow;
+        }else if(!this->isTrackingObject){
+            this->currentState = DEFAULT_STATE;;
+        }
     }
     if (this->ObjectOnCollisionCourse()){
         this->currentState = avoidance;
@@ -244,7 +246,7 @@ void sdcCar::LanedDriving() {
 void sdcCar::Follow() {
     if(this->frontObjects.size() == 0){
         this->isTrackingObject = false;
-        this->currentState = waypoint;
+        this->currentState = DEFAULT_STATE;
         return;
     }
 
@@ -283,7 +285,19 @@ void sdcCar::Follow() {
 
     // std::cout << objSpeed << "\t" << this->GetSpeed() << "\t" << objSpeed + this->GetSpeed() << std::endl;
     double scaledSpeed = pow(objCenter.y - 10, 3) / 2000.;
-    this->SetTargetSpeed(objSpeed + this->GetSpeed() + scaledSpeed);
+    double newTargetSpeed = objSpeed + this->GetSpeed() + scaledSpeed;
+    this->SetTargetSpeed(newTargetSpeed);
+
+    if(newTargetSpeed < 0.01){
+        this->stationaryCount++;
+    }else{
+        this->stationaryCount = 0;
+    }
+
+    if(this->stationaryCount > 2000){
+        this->currentState = avoidance;
+        this->currentAvoidanceState = navigation;
+    }
 
     if(objCenter.x != 0){
         this->SetTargetDirection(this->GetOrientation() - sdcAngle(PI / 2.) + sdcAngle(atan2(objCenter.y, objCenter.x)));
@@ -308,7 +322,7 @@ void sdcCar::Follow() {
 
 void sdcCar::Avoidance(){
     if(this->frontObjects.size() == 0){
-        this->currentState = waypoint;
+        this->currentState = DEFAULT_STATE;
         this->currentAvoidanceState = notAvoiding;
         return;
     }
@@ -339,9 +353,9 @@ void sdcCar::Avoidance(){
         }
     }else if(furiousObjects.size() > 0){
         this->currentAvoidanceState = navigation;
-    }else{
+    }else if(this->currentAvoidanceState != navigation){
         this->currentAvoidanceState = notAvoiding;
-        this->currentState = waypoint;
+        this->currentState = DEFAULT_STATE;
         return;
     }
 
@@ -358,12 +372,34 @@ void sdcCar::Avoidance(){
         break;
 
         case navigation:
-        this->SetTargetSpeed(2);
-        this->SetTargetDirection(this->GetOrientation() - PI/8);
-        break;
+        {
+            double maxWidth = -1;
+            sdcAngle targetAngle = this->GetOrientation();
+
+            math::Vector2d prevPoint = math::Vector2d(this->frontObjects[0].GetCenterPoint().x, 0);
+            sdcAngle prevAngle = sdcAngle(0);
+            for(int i = 0; i < this->frontObjects.size(); i++){
+                math::Vector2d curPoint = this->frontObjects[i].GetCenterPoint();
+                sdcAngle curAngle = this->frontObjects[i].right.angle;
+                if(curPoint.Distance(prevPoint) > fmax(maxWidth, FRONT_OBJECT_COLLISION_WIDTH)){
+                    maxWidth = curPoint.Distance(prevPoint);
+                    targetAngle = curAngle.GetMidAngle(prevAngle);
+                }
+                prevPoint = curPoint;
+                prevAngle = this->frontObjects[i].left.angle;
+            }
+            if(prevPoint.y > fmax(maxWidth, FRONT_OBJECT_COLLISION_WIDTH)){
+                targetAngle = prevAngle.GetMidAngle(sdcAngle(PI));
+            }
+
+            this->SetTargetSpeed(1);
+            this->SetTargetDirection(targetAngle);
+            break;
+        }
 
         case notAvoiding:
         default:
+        this->currentState = DEFAULT_STATE;
         break;
     }
 
@@ -1279,7 +1315,9 @@ bool sdcCar::IsObjectOnCollisionCourse(sdcVisibleObject obj){
 
 bool sdcCar::IsObjectTooFast(sdcVisibleObject obj){
     math::Vector2d centerpoint = obj.GetCenterPoint();
-    return (fabs(obj.lineIntercept) < 1.5 || (fabs(centerpoint.x) < 1.5 && fabs(obj.GetEstimatedXSpeed()) < fabs(0.1 * obj.GetEstimatedYSpeed()))) && sqrt(centerpoint.Distance(math::Vector2d(0,0))) / obj.GetEstimatedSpeed() < 20;
+    bool inLineToCollide = (fabs(obj.lineIntercept) < 1.5 || (fabs(centerpoint.x) < 1.5 && fabs(obj.GetEstimatedXSpeed()) < fabs(0.1 * obj.GetEstimatedYSpeed())));
+    bool willHitSoon = obj.dist / obj.GetEstimatedSpeed() < 20;
+    return inLineToCollide && willHitSoon;
 }
 
 bool sdcCar::IsObjectTooFurious(sdcVisibleObject obj){
@@ -1577,4 +1615,5 @@ sdcCar::sdcCar(){
 
     // Used to estimate speed of followed object
     this->isTrackingObject = false;
+    this->stationaryCount = 0;
 }

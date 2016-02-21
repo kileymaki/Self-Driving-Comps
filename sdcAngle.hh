@@ -13,6 +13,7 @@ public:
     bool IsBackFacing();
     bool WithinMargin(double x);
     sdcAngle FindMargin(sdcAngle a);
+    sdcAngle GetMidAngle(sdcAngle a);
     friend sdcAngle operator+(const sdcAngle& a, const sdcAngle& b);
     friend sdcAngle operator+(const sdcAngle& a, const double& b);
     friend sdcAngle operator+(const double& a, const sdcAngle& b);

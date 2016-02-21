@@ -1,3 +1,5 @@
+//Class that handles registering and updating the side lidar sensors
+
 #include <boost/bind.hpp>
 #include <gazebo/gazebo.hh>
 #include <gazebo/physics/physics.hh>

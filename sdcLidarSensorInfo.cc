@@ -1,3 +1,5 @@
+//This class provides a central point for access to lidar sensor info.
+
 #include <stdio.h>
 #include "sdcLidarSensorInfo.hh"
 

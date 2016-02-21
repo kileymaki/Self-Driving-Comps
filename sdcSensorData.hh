@@ -1,11 +1,3 @@
-//
-//  sdcSensorData.hh
-//
-//
-//  Created by selfcar on 10/25/15.
-//
-//
-
 #ifndef _sdcSensorData_hh
 #define _sdcSensorData_hh
 
@@ -51,23 +43,6 @@ namespace gazebo
         static sdcAngle backMinAngle;
         static double backAngleResolution;
 
-    private:
-        static std::vector<double>* frontLidarRays;
-        static std::vector<double>* backLidarRays;
-
-        static std::vector<double>* topLeftLidarRays;
-        static std::vector<double>* topRightLidarRays;
-        static std::vector<double>* topForwardLidarRays;
-        static std::vector<double>* topBackwardLidarRays;
-
-        static std::vector<double>* sideLeftFrontLidarRays;
-        static std::vector<double>* sideLeftBackLidarRays;
-        static std::vector<double>* sideRightFrontLidarRays;
-        static std::vector<double>* sideRightBackLidarRays;
-
-        static std::map<LidarPos, sdcLidarSensorInfo> lidarInfoMap;
-
-    public:
         static int frontLidarLastUpdate;
 
         static bool stopSignInLeftCamera;
@@ -83,6 +58,22 @@ namespace gazebo
         static sdcAngle GetYaw();
         static void UpdateGPS(double x, double y, double yaw);
     };
+
+    private:
+        static std::vector<double>* frontLidarRays;
+        static std::vector<double>* backLidarRays;
+
+        static std::vector<double>* topLeftLidarRays;
+        static std::vector<double>* topRightLidarRays;
+        static std::vector<double>* topForwardLidarRays;
+        static std::vector<double>* topBackwardLidarRays;
+
+        static std::vector<double>* sideLeftFrontLidarRays;
+        static std::vector<double>* sideLeftBackLidarRays;
+        static std::vector<double>* sideRightFrontLidarRays;
+        static std::vector<double>* sideRightBackLidarRays;
+
+        static std::map<LidarPos, sdcLidarSensorInfo> lidarInfoMap;
 }
 
 #endif

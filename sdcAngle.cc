@@ -1,3 +1,11 @@
+/*
+ * sdcAngle is a custom class used to wrap doubles as angle objects that are 
+ * easier to mathematically manipulate. The class sets a range for values from 0 to 2PI,
+ * ensuring we have a concrete range of values to expect. The class also features quality
+ * of life methods, both adding new methods as well as overloading basic functions.
+ */
+
+
 #include <stdio.h>
 #include "sdcAngle.hh"
 

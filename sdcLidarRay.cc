@@ -1,3 +1,6 @@
+//This class wraps the lidar sensor data into a single class.
+//Also provides methods to calculate the x and y distance relative to the car.
+
 #include <stdio.h>
 #include "sdcLidarRay.hh"
 

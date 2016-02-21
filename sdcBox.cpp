@@ -8,6 +8,7 @@ namespace gazebo
 {
     class ModelPull : public ModelPlugin
     {
+
     public: void Load(physics::ModelPtr _parent, sdf::ElementPtr /*_sdf*/)
         {
             // Store the pointer to the model
@@ -28,7 +29,13 @@ namespace gazebo
             // } else if (this->model->GetWorld()->GetIterations() > 15000) {
             //     this->model->SetLinearVel(math::Vector3(0, 0, 0));
             // } else {
-                this->model->SetLinearVel(math::Vector3(3, 0, 0));
+            if(this->model->GetName() == "box1"){
+                this->model->SetLinearVel(math::Vector3(3, 3, 0));
+            }else if(this->model->GetName() == "box2"){
+                this->model->SetLinearVel(math::Vector3(11, 0, 0));
+            }else if(this->model->GetName() == "box3"){
+                this->model->SetLinearVel(math::Vector3(0, 11, 0));
+            }
             // }
         }
 

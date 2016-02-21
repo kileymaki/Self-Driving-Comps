@@ -56,6 +56,10 @@ double sdcVisibleObject::GetEstimatedYSpeed(){
     return this->estimatedYSpeed;
 }
 
+double sdcVisibleObject::GetEstimatedXSpeed(){
+    return this->estimatedXSpeed;
+}
+
 /*
  * Calculates an estimated new position this object would be at with it's given estimated
  * speed and direction

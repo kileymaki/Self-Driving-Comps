@@ -12,6 +12,8 @@ namespace gazebo
         sdcLidarRay left;
         sdcLidarRay right;
         double dist;
+        double lineSlope;
+        double lineIntercept;
 
         sdcVisibleObject();
         sdcVisibleObject(sdcLidarRay right, sdcLidarRay left, double dist);
@@ -27,6 +29,7 @@ namespace gazebo
         math::Vector2d GetCenterPoint();
         double GetEstimatedSpeed();
         double GetEstimatedYSpeed();
+        double GetEstimatedXSpeed();
 
         math::Vector2d FitLineToPoints(std::vector<math::Vector2d> points, math::Vector2d newPoint);
 
@@ -34,8 +37,6 @@ namespace gazebo
         static const double UNCERTAINTY_RATIO;
 
         math::Vector2d centerpoint;
-        double lineSlope;
-        double lineIntercept;
 
         std::vector<math::Vector2d> prevPoints;
 

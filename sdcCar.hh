@@ -95,17 +95,21 @@ namespace gazebo {
 
         enum relativeDirection { forward, aligned, backward, right, left };
 
+        enum AvoidanceState {emergencyStop, emergencySwerve, navigation, notAvoiding};
+
         ///////////////////////////
         // SDC-defined variables //
         ///////////////////////////
 
         // The current state of the car
+        CarState DEFAULT_STATE;
         CarState currentState;
         Direction currentDir;
         relativeDirection destDir;
         relativeDirection destDirSide;
         PerpendicularParkingState currentPerpendicularState;
         ParallelParkingState currentParallelState;
+        AvoidanceState currentAvoidanceState;
 
         double gas; //variable that accelerates the car
         double brake; //variable that brakes the car
@@ -122,6 +126,7 @@ namespace gazebo {
         int atIntersection;
         int maxCarSpeed;
         double maxCarReverseSpeed;
+        double turningLimit;
 
         bool turning;
         bool reversing;
@@ -134,13 +139,9 @@ namespace gazebo {
         bool parkingAngleSet;
         bool isFixingParking;
         bool parkingSpotSet;
-        double turningLimit;
 
         // for Follow
         bool isTrackingObject;
-        double estimatedSpeed;
-        double lastPosition;
-        double currentPosition;
 
         std::vector<sdcVisibleObject> frontObjects;
         int frontLidarLastUpdate;
@@ -165,6 +166,7 @@ namespace gazebo {
         void TurnAround();
         void WaypointDriving(std::vector<sdcWaypoint> waypoints);
         void Follow();
+        void Avoidance();
         void PerpendicularPark();
         void ParallelPark();
 
@@ -176,6 +178,10 @@ namespace gazebo {
         sdcAngle AngleToTarget(math::Vector2d target);
         bool ObjectDirectlyAhead();
         bool IsObjectDirectlyAhead(sdcVisibleObject obj);
+        bool ObjectOnCollisionCourse();
+        bool IsObjectOnCollisionCourse(sdcVisibleObject obj);
+        bool IsObjectTooFast(sdcVisibleObject obj);
+        bool IsObjectTooFurious(sdcVisibleObject obj);
 
         bool IsMovingForwards();
         double GetSpeed();

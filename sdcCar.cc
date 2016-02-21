@@ -73,7 +73,12 @@ void sdcCar::Drive()
 {
     // Do collision detection
     if (this->ObjectDirectlyAhead()){
-        // this->currentState = avoidance;
+        this->currentState = follow;
+    }else if(!this->isTrackingObject){
+        this->currentState = waypoint;
+    }
+    if (this->ObjectOnCollisionCourse()){
+        this->currentState = avoidance;
     }
 
     // std::cout << this->currentState << std::endl;
@@ -89,9 +94,9 @@ void sdcCar::Drive()
         case waypoint:
         // Handle lane driving
         // this->LanedDriving();
-        // this->Accelerate();
+        this->Accelerate();
         // this->Stop();
-        this->WaypointDriving(WAYPOINT_VEC);
+        // this->WaypointDriving(WAYPOINT_VEC);
         break;
 
         // At a stop sign, performing a turn
@@ -107,7 +112,7 @@ void sdcCar::Drive()
         // Smarter way to avoid objects; stopping, swerving, etc.
         case avoidance:
         // Cases: stop, swerve, go around
-        this->Stop();
+        this->Avoidance();
         break;
 
         // Parks the car
@@ -190,7 +195,6 @@ void sdcCar::MatchTargetSpeed(){
  * Drive from point to point in the given list
  */
 void sdcCar::WaypointDriving(std::vector<sdcWaypoint> waypoints) {
-    std::cout << "in waypoint" << std::endl;
     int progress = this->waypointProgress;
     //std::vector<math::Vector2d> waypoints = waypoints;
     // std::cout << progress << " / " << waypoints.size() << " " << (progress < waypoints.size()) << std::endl;
@@ -240,6 +244,7 @@ void sdcCar::LanedDriving() {
 void sdcCar::Follow() {
     if(this->frontObjects.size() == 0){
         this->isTrackingObject = false;
+        this->currentState = waypoint;
         return;
     }
 
@@ -280,9 +285,7 @@ void sdcCar::Follow() {
     double scaledSpeed = pow(objCenter.y - 10, 3) / 2000.;
     this->SetTargetSpeed(objSpeed + this->GetSpeed() + scaledSpeed);
 
-    if(objCenter.x > 0){
-        this->SetTargetDirection(this->GetOrientation() - sdcAngle(PI / 2.) + sdcAngle(atan2(objCenter.y, objCenter.x)));
-    }else if(objCenter.x < 0){
+    if(objCenter.x != 0){
         this->SetTargetDirection(this->GetOrientation() - sdcAngle(PI / 2.) + sdcAngle(atan2(objCenter.y, objCenter.x)));
     }else{
         this->SetTargetDirection(this->GetOrientation());
@@ -301,6 +304,69 @@ void sdcCar::Follow() {
     // }
     // this->SetTargetSpeed(estimatedSpeed);
     // this->SetTargetDirection(this->GetDirection() - sdcAngle(this->flWeight*PI/320));
+}
+
+void sdcCar::Avoidance(){
+    if(this->frontObjects.size() == 0){
+        this->currentState = waypoint;
+        this->currentAvoidanceState = notAvoiding;
+        return;
+    }
+
+    std::vector<sdcVisibleObject> fastObjects, furiousObjects;
+
+    for(int i = 0; i < this->frontObjects.size(); i++){
+        if(this->IsObjectTooFast(this->frontObjects[i])){
+            fastObjects.push_back(this->frontObjects[i]);
+        }
+        if(this->IsObjectTooFurious(this->frontObjects[i])){
+            furiousObjects.push_back(this->frontObjects[i]);
+        }
+    }
+
+    if(fastObjects.size() > 0){
+        bool setState = false;
+        for(int i = 0; i < fastObjects.size(); i++){
+            double objSpeed = sqrt(pow(fastObjects[i].GetEstimatedXSpeed(),2) + pow(fastObjects[i].GetEstimatedYSpeed() - this->GetSpeed(),2));
+            if(objSpeed > this->GetSpeed() || this->GetSpeed() > objSpeed + 4){
+                this->currentAvoidanceState = emergencySwerve;
+                setState = true;
+                break;
+            }
+        }
+        if(!setState){
+            this->currentAvoidanceState = emergencyStop;
+        }
+    }else if(furiousObjects.size() > 0){
+        this->currentAvoidanceState = navigation;
+    }else{
+        this->currentAvoidanceState = notAvoiding;
+        this->currentState = waypoint;
+        return;
+    }
+
+    switch(this->currentAvoidanceState){
+        case emergencyStop:
+        this->Stop();
+        this->SetBrakeRate(10);
+        break;
+
+        case emergencySwerve:
+        this->SetTargetDirection(this->GetOrientation() + PI/2);
+        this->SetTargetSpeed(6);
+        this->SetAccelRate(10);
+        break;
+
+        case navigation:
+        this->SetTargetSpeed(2);
+        this->SetTargetDirection(this->GetOrientation() - PI/8);
+        break;
+
+        case notAvoiding:
+        default:
+        break;
+    }
+
 }
 
 void sdcCar::GridTurning(){
@@ -1188,6 +1254,38 @@ bool sdcCar::IsObjectDirectlyAhead(sdcVisibleObject obj){
     return fmin(fabs(leftDist), fabs(rightDist)) < FRONT_OBJECT_COLLISION_WIDTH / 2.;
 }
 
+/*
+ * Returns true if there is an object on a potential collision course with our car
+ */
+bool sdcCar::ObjectOnCollisionCourse(){
+    if(this->frontObjects.size() == 0) return false;
+
+    for (int i = 0; i < this->frontObjects.size(); i++) {
+        if(this->IsObjectOnCollisionCourse(this->frontObjects[i])){
+            return true;
+        }
+    }
+    return false;
+}
+
+/*
+ * Returns true if the given object is on a potential collision course with our car
+ */
+bool sdcCar::IsObjectOnCollisionCourse(sdcVisibleObject obj){
+    bool isTooFast = this->IsObjectTooFast(obj);
+    bool isTooFurious = this->IsObjectTooFurious(obj);
+    return isTooFast || isTooFurious;
+}
+
+bool sdcCar::IsObjectTooFast(sdcVisibleObject obj){
+    math::Vector2d centerpoint = obj.GetCenterPoint();
+    return (fabs(obj.lineIntercept) < 1.5 || (fabs(centerpoint.x) < 1.5 && fabs(obj.GetEstimatedXSpeed()) < fabs(0.1 * obj.GetEstimatedYSpeed()))) && sqrt(centerpoint.Distance(math::Vector2d(0,0))) / obj.GetEstimatedSpeed() < 20;
+}
+
+bool sdcCar::IsObjectTooFurious(sdcVisibleObject obj){
+    math::Vector2d centerpoint = obj.GetCenterPoint();
+    return (fabs(centerpoint.x) < FRONT_OBJECT_COLLISION_WIDTH / 2. && fabs(centerpoint.y) < 1.5);
+}
 
 ///////////////////////////
 // BEGIN CONTROL METHODS //
@@ -1449,14 +1547,16 @@ sdcCar::sdcCar(){
     this->maxCarSpeed = 6;
     this->maxCarReverseSpeed = -10;
 
-    this->currentState = follow;
+    this->DEFAULT_STATE = waypoint;
+    this->currentState = DEFAULT_STATE;
 
     this->currentPerpendicularState = backPark;
     this->currentParallelState = rightBack;
+    this->currentAvoidanceState = notAvoiding;
 
     this->steeringAmount = 0.0;
     this->targetSteeringAmount = 0.0;
-    this->targetDirection = sdcAngle(0.0);
+    this->targetDirection = sdcAngle(3 * PI / 2);
     this->turningLimit = 10.0;
 
     this->turning = false;
@@ -1477,7 +1577,4 @@ sdcCar::sdcCar(){
 
     // Used to estimate speed of followed object
     this->isTrackingObject = false;
-    this->estimatedSpeed = 0.0;
-    this->lastPosition = 0.0;
-    this->currentPosition = 0.0;
 }

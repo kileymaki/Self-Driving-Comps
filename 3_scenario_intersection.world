@@ -16,7 +16,7 @@
     </include>
     <include>
         <uri>/models/sdcCar</uri>
-        <pose>10 48.82 0 0 0 0</pose>
+        <!-- <pose>10 48.82 0 0 0 0</pose> -->
     </include>
 
     <scene>

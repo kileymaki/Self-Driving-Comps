@@ -21,3 +21,7 @@ double sdcLidarRay::GetLateralDist(){
 double sdcLidarRay::GetLongitudinalDist(){
     return cos(this->angle.angle) * dist;
 }
+
+gazebo::math::Vector2d sdcLidarRay::GetAsPoint(){
+    return gazebo::math::Vector2d(this->GetLateralDist(), this->GetLongitudinalDist());
+}

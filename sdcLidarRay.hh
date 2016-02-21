@@ -1,6 +1,7 @@
 #ifndef _sdcLidarRay_hh_
 #define _sdcLidarRay_hh_
 
+#include <gazebo/common/common.hh>
 #include "sdcAngle.hh"
 
 class sdcLidarRay {
@@ -10,6 +11,7 @@ public:
 
     double GetLateralDist();
     double GetLongitudinalDist();
+    gazebo::math::Vector2d GetAsPoint();
 
     sdcAngle angle;
     double dist;

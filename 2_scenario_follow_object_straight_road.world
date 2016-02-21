@@ -22,7 +22,7 @@
 
     <include>
         <uri>/models/sdcCar</uri>
-        <pose>2 9 0 0 0 0</pose>
+        <!-- <pose>2 9 0.5 0 0 0</pose> -->
     </include>
 
     <model name='ground_plane'>

@@ -16,7 +16,7 @@
 */
 
 
-/* 
+/*
  * Based on UtilityCart.cc written by Nate Koenig, sdcCar provides both
  * interaction with Gazebo's simulation environment as well as logic to
  * make it behave intelligently in a variety of situations. This is the main
@@ -108,7 +108,7 @@ void sdcCar::Drive()
         // Default state; drive straight to target location
         case waypoint:
         // Handle lane driving
-        this->LanedDriving();
+        // this->LanedDriving();
         this->Accelerate();
         // this->Stop();
         //this->WaypointDriving(WAYPOINT_VEC);
@@ -164,7 +164,7 @@ void sdcCar::MatchTargetDirection(){
 
         // The steering amount scales based on how far we have to turn, with upper and lower limits
         double proposedSteeringAmount = fmax(fmin(-this->turningLimit*tan(directionAngleChange.angle/-2), this->turningLimit), -this->turningLimit);
-        
+
         // When reversing, steering directions are inverted
         if(!this->reversing){
             this->SetTargetSteeringAmount(proposedSteeringAmount);
@@ -310,7 +310,7 @@ void sdcCar::Follow() {
     double objSpeed = tracked.GetEstimatedYSpeed();
 
     // Scale our speed based on how far away the tracked object is
-    // The equation is 'scaledSpeed = (objY - 10)^3 / 2000.' which 
+    // The equation is 'scaledSpeed = (objY - 10)^3 / 2000.' which
     // gives a scaled speed of 0 at y=10 and +-0.5 at y=20, y=0 respectively
     double scaledSpeed = pow(objCenter.y - 10, 3) / 2000.;
 
@@ -435,12 +435,11 @@ void sdcCar::Avoidance(){
                 this->SetTargetDirection(targetAngle);
 
                 if(sqrt(pow(this->navWaypoint.x - this->x,2) + pow(this->navWaypoint.y - this->y,2)) < 1) {
-                    std::cout << "We found our waypoint" << std::endl;
                     this->trackingNavWaypoint = false;
                     this->turningLimit = 10;
                 }
             } else {
-                // At this point, need to find a gap in the objects presented ahead of the car and 
+                // At this point, need to find a gap in the objects presented ahead of the car and
                 // begin driving towards it
                 double maxWidth = -1;
                 double dist = 0;
@@ -452,19 +451,16 @@ void sdcCar::Avoidance(){
                     targetAngle = this->GetOrientation() + this->frontObjects[0].right.angle.GetMidAngle(sdcAngle(3*PI/2));
                     this->navWaypoint = math::Vector2d(this->x + cos(targetAngle.angle) * this->frontObjects[0].dist, this->y + sin(targetAngle.angle) * this->frontObjects[0].dist);
                     this->trackingNavWaypoint = true;
-                    std::cout << "edge case 1: " << targetAngle << std::endl;
-                    std::cout << "navWaypoint Set " << this->navWaypoint.x << " " << this->navWaypoint.y << std::endl;
-                    //this->SetTargetDirection(this->GetOrientation() + this->frontObjects[0].right.angle.GetMidAngle(sdcAngle(3*PI/2)));
                     break;
                 }
 
                 // Loop through all objects in front of the car, find the space with the largest width
                 // and store the point between them
-                math::Vector2d prevPoint = math::Vector2d(this->frontObjects[0].GetCenterPoint().x, 0);
+                math::Vector2d prevPoint = math::Vector2d(this->frontObjects[0].right.GetLateralDist(), 0);
                 sdcAngle prevAngle = sdcAngle(3*PI/2);
-                prevDist = this->frontObjects[0].dist;
+                prevDist = prevPoint.x;
                 for(int i = 0; i < this->frontObjects.size(); i++){
-                    math::Vector2d curPoint = this->frontObjects[i].GetCenterPoint();
+                    math::Vector2d curPoint = this->frontObjects[i].right.GetAsPoint();
                     sdcAngle curAngle = this->frontObjects[i].right.angle;
                     double curDist = this->frontObjects[i].dist;
                     if(curPoint.Distance(prevPoint) > fmax(maxWidth, FRONT_OBJECT_COLLISION_WIDTH)){
@@ -472,7 +468,7 @@ void sdcCar::Avoidance(){
                         maxWidth = curPoint.Distance(prevPoint);
                         targetAngle = this->GetOrientation() + curAngle.GetMidAngle(prevAngle);
                     }
-                    prevPoint = curPoint;
+                    prevPoint = this->frontObjects[i].left.GetAsPoint();
                     prevAngle = this->frontObjects[i].left.angle;
                     prevDist = curDist;
                 }
@@ -481,15 +477,11 @@ void sdcCar::Avoidance(){
                 if(prevAngle > PI || prevPoint.y > fmax(maxWidth, FRONT_OBJECT_COLLISION_WIDTH)){
                     targetAngle = this->GetOrientation() + prevAngle.GetMidAngle(sdcAngle(PI/2));
                     dist = prevDist;
-                    std::cout << "edge case 2: " << targetAngle << std::endl;
                 }
 
                 // Set the waypoint to aim for and the flag to follow it
                 this->navWaypoint = math::Vector2d(this->x + cos(targetAngle.angle) * dist, this->y + sin(targetAngle.angle) * dist);
                 this->trackingNavWaypoint = true;
-                std::cout << "navWaypoint Set " << this->navWaypoint.x << " " << this->navWaypoint.y << std::endl;
-                //std::cout << targetAngle << "\t" << this->GetOrientation() + targetAngle << std::endl;
-                //this->SetTargetDirection(this->GetOrientation() + targetAngle);
                 break;
             }
         }
@@ -557,7 +549,7 @@ void sdcCar::PerpendicularPark(){
         }
     }
 
-    // Store vector of rays from the back left side lidar that detects objects on the back left side, specifically 
+    // Store vector of rays from the back left side lidar that detects objects on the back left side, specifically
     // the middle rays and far right and left rays
     int numBackLeftRays = sdcSensorData::GetLidarNumRays(SIDE_LEFT_BACK);
     int leftSideBoundRange = numBackLeftRays / 16;
@@ -574,7 +566,7 @@ void sdcCar::PerpendicularPark(){
         }
     }
 
-    // Store vector of rays from the back right side lidar that detects objects on the back right side, specifically 
+    // Store vector of rays from the back right side lidar that detects objects on the back right side, specifically
     // the middle rays and far right and left rays
     int numBackRays = sdcSensorData::GetLidarNumRays(BACK);
     int backBoundRange = numBackRays / 20;

@@ -15,7 +15,7 @@
     </light>
 
     <include>
-        <pose>-7.24 34.2 0 0 0 -1.5707</pose>
+        <!-- <pose>-7.24 34.2 0 0 0 -1.5707</pose> -->
         <uri>/models/sdcCar</uri>
     </include>
 

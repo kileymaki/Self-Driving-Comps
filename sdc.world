@@ -10,10 +10,6 @@
             <uri>model://sun</uri>
         </include>
 
-        <!-- <include>
-            <uri>model://Final_Paris_Segment</uri>
-        </include> -->
-
         <include>
             <uri>/models/sdcCar</uri>
         </include>
@@ -24,7 +20,7 @@
             </camera>
         </gui>
 
-        <model name="box1">
+        <!-- <model name="box1">
             <pose>22 0.5 0.5 0.0 0.0 1.57</pose>
             <link name="link">
                 <collision name="collision">
@@ -90,6 +86,6 @@
                 </visual>
             </link>
             <plugin name="model_pull" filename="build/libsdcBox.so"/>
-        </model>
+        </model> -->
     </world>
 </sdf>

@@ -178,14 +178,7 @@ math::Vector2d sdcVisibleObject::GetCenterPoint(){
  * Gets the centerpoint of the two given rays in (x,y) coordinates
  */
 math::Vector2d sdcVisibleObject::GetCenterPoint(sdcLidarRay left, sdcLidarRay right, double dist){
-    sdcAngle sum = left.angle + right.angle;
-    double avg;
-    if(sum.angle > PI){
-        avg = (sum.angle - 2 * PI) / 2.;
-    }else{
-        avg = sum.angle / 2.;
-    }
-    sdcLidarRay midRay = sdcLidarRay(sdcAngle(avg), dist);
+    sdcLidarRay midRay = sdcLidarRay(left.angle.GetMidAngle(right.angle), dist);
     double x = midRay.GetLateralDist();
     double y = midRay.GetLongitudinalDist();
 

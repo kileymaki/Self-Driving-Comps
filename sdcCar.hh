@@ -23,6 +23,7 @@
 
 #include <string>
 #include <vector>
+#include <exception>
 
 #include "gazebo/common/Plugin.hh"
 #include "gazebo/physics/physics.hh"
@@ -31,6 +32,7 @@
 #include "sdcSensorData.hh"
 #include "sdcAngle.hh"
 #include "sdcWaypoint.hh"
+#include "sdcIntersection.hh"
 
 
 namespace gazebo {
@@ -122,8 +124,8 @@ namespace gazebo {
         sdcAngle yaw;
 
         int waypointProgress;
-
         int atIntersection;
+
         int maxCarSpeed;
         double maxCarReverseSpeed;
         double turningLimit;
@@ -142,6 +144,10 @@ namespace gazebo {
 
         // for Follow
         bool isTrackingObject;
+        int stationaryCount;
+
+        math::Vector2d navWaypoint;
+        bool trackingNavWaypoint;
 
         std::vector<sdcVisibleObject> frontObjects;
         int frontLidarLastUpdate;
@@ -157,13 +163,19 @@ namespace gazebo {
         void Drive();
         void MatchTargetDirection();
         void MatchTargetSpeed();
-
         void DetectIntersection();
+
+        //Dijkstra Methods
+        void GenerateWaypoints();
+        void initializeGraph();
+        int getFirstIntersection();
+        void removeStartingEdge(int start);
+        std::vector<int> dijkstras(int start, int dest);
+        void insertWaypointTypes(std::vector<int> path, Direction startDir);
 
         // Driving algorithms
         void LanedDriving();
-        void GridTurning();
-        void TurnAround();
+        void GridTurning(int turn);
         void WaypointDriving(std::vector<sdcWaypoint> waypoints);
         void Follow();
         void Avoidance();
@@ -172,7 +184,6 @@ namespace gazebo {
 
         // Helper methods
         void FrontLidarUpdate();
-        std::vector<sdcWaypoint> GenerateWaypoints(sdcWaypoint dest);
         void UpdateFrontObjects(std::vector<sdcVisibleObject> newObjects);
 
         sdcAngle AngleToTarget(math::Vector2d target);
@@ -187,6 +198,7 @@ namespace gazebo {
         double GetSpeed();
         sdcAngle GetDirection();
         sdcAngle GetOrientation();
+        void GetNSEW();
 
         // Control methods
         void Accelerate(double amt = 1, double rate = 1.0);

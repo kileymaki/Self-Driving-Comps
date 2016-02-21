@@ -28,6 +28,17 @@ sdcAngle sdcAngle::FindMargin(sdcAngle a){
     return sdcAngle(fabs(this->angle - a.angle));
 }
 
+sdcAngle sdcAngle::GetMidAngle(sdcAngle a){
+    sdcAngle sum = *this + a;
+    double avg;
+    if(sum.angle > PI){
+        avg = (sum.angle - 2 * PI) / 2.;
+    }else{
+        avg = sum.angle / 2.;
+    }
+    return sdcAngle(avg);
+}
+
 bool sdcAngle::IsBackFacing(){
   return this->angle < 3*PI/2 && this->angle > PI/2;
 }

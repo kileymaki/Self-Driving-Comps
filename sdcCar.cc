@@ -15,6 +15,16 @@
  *
 */
 
+
+/* 
+ * Based on UtilityCart.cc written by Nate Koenig, sdcCar provides both
+ * interaction with Gazebo's simulation environment as well as logic to
+ * make it behave intelligently in a variety of situations. This is the main
+ * class used in the Self-Driving Comps project.
+ *
+ * Physics parameters and Gazebo interfacing are based on UtilityCart.
+ */
+
 #include "gazebo/physics/physics.hh"
 #include "gazebo/transport/transport.hh"
 #include "sdcCar.hh"

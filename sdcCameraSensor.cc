@@ -265,18 +265,18 @@ void sdcCameraSensor::OnUpdate() {
 			}
 		}
 
-		if(left_curve_points_top.size() > 1) {
-			for (int j = 0; j < left_curve_points_top.size() - 1; j++) {
-				line(image, left_curve_points_top[j], left_curve_points_top[j + 1], Scalar(0,0,255), 1, CV_AA);
-			}
-		}
+		// if(left_curve_points_top.size() > 1) {
+		// 	for (int j = 0; j < left_curve_points_top.size() - 1; j++) {
+		// 		line(image, left_curve_points_top[j], left_curve_points_top[j + 1], Scalar(0,0,255), 1, CV_AA);
+		// 	}
+		// }
 
 		if(left_curve_points_bot.size() > 1) {
 			for (int j = 0; j < left_curve_points_bot.size() - 1; j++) {
 				//This is where we would do LROI calculations
 				//LROI is a triangle, the top point is height of vanishing point.
 				//LROI is only calculated for the top half of the LCF
-				//line(image, left_curve_points_top[j], left_curve_points_top[j + 1], Scalar(0,0,255), 1, CV_AA);
+				line(image, left_curve_points_bot[j], left_curve_points_bot[j + 1], Scalar(0,0,255), 1, CV_AA);
 
 				F<double> x,y,g;
 				double ypf_pos, ypf_neg;
@@ -345,11 +345,11 @@ void sdcCameraSensor::OnUpdate() {
 		}
 	}
 
-	if(left_curve_points_top.size() > 1) {
-		for (int i = 0; i < left_curve_points_top.size() - 1; i++){
-			line(image, left_curve_points_top[i], left_curve_points_top[i + 1], Scalar(0,255,0), 3, CV_AA);
-		}
-	}
+	// if(left_curve_points_top.size() > 1) {
+	// 	for (int i = 0; i < left_curve_points_top.size() - 1; i++){
+	// 		line(image, left_curve_points_top[i], left_curve_points_top[i + 1], Scalar(0,255,0), 3, CV_AA);
+	// 	}
+	// }
 
 	if(left_curve_points_bot.size() > 1) {
 		for (int i = 0; i < left_curve_points_bot.size() - 1; i++){
@@ -413,18 +413,18 @@ void sdcCameraSensor::OnUpdate() {
 			}
 		}
 
-		if(right_curve_points_top.size() > 1) {
-			for (int j = 0; j < right_curve_points_top.size() - 1; j++){
-				//line(image, right_curve_points_bot[j], right_curve_points_bot[j + 1], Scalar(0,0,255), 1, CV_AA);
-			}
-		}
+		// if(right_curve_points_top.size() > 1) {
+		// 	for (int j = 0; j < right_curve_points_top.size() - 1; j++){
+		// 		line(image, right_curve_points_top[j], right_curve_points_top[j + 1], Scalar(0,0,255), 1, CV_AA);
+		// 	}
+		// }
 
 		if(right_curve_points_bot.size() > 1) {
 			for (int j = 0; j < right_curve_points_bot.size() - 1; j++) {
 				//This is where we would do LROI calculations
 				//LROI is a triangle, the top point is height of vanishing point.
 				//LROI is only calculated for the top half of the LCF
-				//line(image, right_curve_points_top[j], right_curve_points_top[j + 1], Scalar(0,0,255), 1, CV_AA);
+				line(image, right_curve_points_bot[j], right_curve_points_bot[j + 1], Scalar(0,0,255), 1, CV_AA);
 
 				F<double> x,y,g;
 				double ypf_pos, ypf_neg;
@@ -494,11 +494,11 @@ void sdcCameraSensor::OnUpdate() {
 		}
 	}
 
-	if(right_curve_points_top.size() > 1) {
-		for (int i = 0; i < right_curve_points_top.size() - 1; i++){
-			line(image, right_curve_points_top[i], right_curve_points_top[i + 1], Scalar(0,255,0), 3, CV_AA);
-		}
-	}
+	// if(right_curve_points_top.size() > 1) {
+	// 	for (int i = 0; i < right_curve_points_top.size() - 1; i++){
+	// 		line(image, right_curve_points_top[i], right_curve_points_top[i + 1], Scalar(0,255,0), 3, CV_AA);
+	// 	}
+	// }
 
 	if(right_curve_points_bot.size() > 1) {
 		for (int i = 0; i < right_curve_points_bot.size() - 1; i++){

@@ -88,10 +88,10 @@ void sdcCar::Drive()
         // Default state; drive straight to target location
         case waypoint:
         // Handle lane driving
-        // this->LanedDriving();
+        this->LanedDriving();
         this->Accelerate();
         // this->Stop();
-        this->WaypointDriving(WAYPOINT_VEC);
+        //this->WaypointDriving(WAYPOINT_VEC);
         break;
 
         // At a stop sign, performing a turn
@@ -265,10 +265,12 @@ void sdcCar::Follow() {
 
     if(!this->isTrackingObject) return;
 
+    math::Vector2d objCenter = tracked.GetCenterPoint();
     double objSpeed = tracked.GetEstimatedYSpeed();
+
+    std::cout << objSpeed << "\t" << this->GetSpeed() << "\t" << objSpeed + this->GetSpeed() << std::endl;
     this->SetTargetSpeed(objSpeed + this->GetSpeed());
 
-    math::Vector2d objCenter = tracked.GetCenterPoint();
 
     if(objCenter.x > 0){
         this->SetTargetDirection(this->GetOrientation() + (sdcAngle(PI / 2.) - sdcAngle(atan2(objCenter.y, objCenter.x))));
@@ -1423,7 +1425,7 @@ sdcCar::sdcCar(){
     this->maxCarSpeed = 2;
     this->maxCarReverseSpeed = -10;
 
-    this->currentState = parking;
+    this->currentState = follow;
 
     this->currentPerpendicularState = backPark;
     this->currentParallelState = rightBack;
@@ -1439,7 +1441,7 @@ sdcCar::sdcCar(){
     this->targetParkingAngle = sdcAngle(0.0);
     this->parkingAngleSet = false;
 
-    this->targetSpeed = 2;
+    this->targetSpeed = 6;
 
     // Used to track waypoint driving
     this->waypointProgress = 0;

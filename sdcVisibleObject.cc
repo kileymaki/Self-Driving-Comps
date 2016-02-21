@@ -26,6 +26,7 @@ sdcVisibleObject::sdcVisibleObject(sdcLidarRay right, sdcLidarRay left, double d
     this->confidence = 0.01;
 
     this->tracking = false;
+    this->brandSpankinNew = true;
 
     // std::cout << left.GetLateralDist() << "\t" << left.GetLongitudinalDist() << "\t" << right.GetLateralDist() << "\t" << right.GetLongitudinalDist() << std::endl;
 }
@@ -86,19 +87,21 @@ void sdcVisibleObject::Update(sdcLidarRay newLeft, sdcLidarRay newRight, double 
     double newEstimatedXSpeed = newCenterpoint.x - this->centerpoint.x;
     double newEstimatedYSpeed = newCenterpoint.y - this->centerpoint.y;
 
-    double alpha = fmax((newDist * .005), (.1 - newDist * .005));
-    newEstimatedXSpeed = (alpha * newEstimatedXSpeed) + ((1 - alpha) * this->estimatedXSpeed);
-    newEstimatedYSpeed = (alpha * newEstimatedYSpeed) + ((1 - alpha) * this->estimatedYSpeed);
+    if(!this->brandSpankinNew){
+        double alpha = fmax((newDist * .005), (.1 - newDist * .005));
+        newEstimatedXSpeed = (alpha * newEstimatedXSpeed) + ((1 - alpha) * this->estimatedXSpeed);
+        newEstimatedYSpeed = (alpha * newEstimatedYSpeed) + ((1 - alpha) * this->estimatedYSpeed);
+    }
 
     this->estimatedXSpeed = newEstimatedXSpeed;
     this->estimatedYSpeed = newEstimatedYSpeed;
     // this->estimatedDirection = sdcAngle(atan2(newCenterpoint.x - this->centerpoint.x, newCenterpoint.y - this->centerpoint.y));
 
-
-    alpha = .036197; // Determined through repeated experimentation (a.k.a. Divine Inspiration (a.a.k.a. Jon made it up))
-    math::Vector2d newLineCoefficients = this->FitLineToPoints(this->prevPoints, newCenterpoint);
-    this->lineSlope = newLineCoefficients.x;
-    this->lineIntercept = newLineCoefficients.y;
+    if(this->prevPoints.size() > 0){
+        math::Vector2d newLineCoefficients = this->FitLineToPoints(this->prevPoints, newCenterpoint);
+        this->lineSlope = newLineCoefficients.x;
+        this->lineIntercept = newLineCoefficients.y;
+    }
 
     if(this->prevPoints.size() > 15){
         this->prevPoints.erase(this->prevPoints.begin());
@@ -110,6 +113,8 @@ void sdcVisibleObject::Update(sdcLidarRay newLeft, sdcLidarRay newRight, double 
     this->left = newLeft;
     this->right = newRight;
     this->dist = newDist;
+
+    this->brandSpankinNew = false;
 }
 
 math::Vector2d sdcVisibleObject::FitLineToPoints(std::vector<math::Vector2d> points, math::Vector2d newPoint){

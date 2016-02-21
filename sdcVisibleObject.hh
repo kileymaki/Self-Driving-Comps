@@ -45,6 +45,7 @@ namespace gazebo
         double confidence;
 
         bool tracking;
+        bool brandSpankinNew;
 
         math::Vector2d GetCenterPoint(sdcLidarRay left, sdcLidarRay right, double dist);
     };

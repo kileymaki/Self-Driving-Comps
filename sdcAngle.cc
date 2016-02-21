@@ -29,7 +29,7 @@ sdcAngle sdcAngle::FindMargin(sdcAngle a){
 }
 
 sdcAngle sdcAngle::GetMidAngle(sdcAngle a){
-    sdcAngle sum = this->angle + a.angle;
+    sdcAngle sum = *this + a;
     double avg;
     if(sum.angle > PI){
         avg = (sum.angle - 2 * PI) / 2.;

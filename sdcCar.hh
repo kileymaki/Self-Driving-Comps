@@ -144,6 +144,9 @@ namespace gazebo {
         bool isTrackingObject;
         int stationaryCount;
 
+        math::Vector2d navWaypoint;
+        bool trackingNavWaypoint;
+
         std::vector<sdcVisibleObject> frontObjects;
         int frontLidarLastUpdate;
 

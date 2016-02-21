@@ -9,6 +9,7 @@ public:
   int waypointType;
   std::pair<double,double> pos;
 
+  sdcWaypoint();
   sdcWaypoint(int waypointType, std::pair<double,double> pos);
 };
 

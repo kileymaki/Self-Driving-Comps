@@ -83,6 +83,9 @@ void sdcCar::Drive()
         this->currentState = avoidance;
     }
 
+    this->currentState = avoidance;
+    this->currentAvoidanceState = navigation;
+
     // std::cout << this->currentState << std::endl;
     // Possible states: stop, waypoint, intersection, follow, avoidance
     switch(this->currentState)
@@ -250,7 +253,7 @@ void sdcCar::Follow() {
         return;
     }
 
-    sdcVisibleObject tracked = sdcVisibleObject(sdcLidarRay(this->GetOrientation(), 20), sdcLidarRay(this->GetOrientation(), 20), 20);
+    sdcVisibleObject tracked = sdcVisibleObject(sdcLidarRay(0, sdcSensorData::GetLidarMaxRange(FRONT)), sdcLidarRay(0, sdcSensorData::GetLidarMaxRange(FRONT)), sdcSensorData::GetLidarMaxRange(FRONT));
     if(this->isTrackingObject){
         bool foundTrackedObject = false;
         for(int i = 0; i < this->frontObjects.size(); i++){
@@ -288,7 +291,7 @@ void sdcCar::Follow() {
     double newTargetSpeed = objSpeed + this->GetSpeed() + scaledSpeed;
     this->SetTargetSpeed(newTargetSpeed);
 
-    if(newTargetSpeed < 0.01){
+    if(newTargetSpeed < 0.3){
         this->stationaryCount++;
     }else{
         this->stationaryCount = 0;
@@ -304,24 +307,10 @@ void sdcCar::Follow() {
     }else{
         this->SetTargetDirection(this->GetOrientation());
     }
-    // if(this->flNumRays == 0) return;
-    // double distance = fl[320];
-    // if(std::isinf(distance)){
-    //     lastPosition = 20.0;
-    //     estimatedSpeed = fmin(6, estimatedSpeed + .01);
-    // } else {
-    //     double deltaDistance = distance - lastPosition;
-    //     lastPosition = distance;
-    //     double estimatedSpeedData = deltaDistance * 1000 + this->GetSpeed();
-    //     double alpha = fmax((.1 + distance * .005), (.2 - distance * .005));
-    //     estimatedSpeed = fmin(6, (alpha * estimatedSpeedData) + ((1 - alpha) * estimatedSpeed));
-    // }
-    // this->SetTargetSpeed(estimatedSpeed);
-    // this->SetTargetDirection(this->GetDirection() - sdcAngle(this->flWeight*PI/320));
 }
 
 void sdcCar::Avoidance(){
-    if(this->frontObjects.size() == 0){
+    if(this->frontObjects.size() == 0 && !this->trackingNavWaypoint){
         this->currentState = DEFAULT_STATE;
         this->currentAvoidanceState = notAvoiding;
         return;
@@ -329,12 +318,14 @@ void sdcCar::Avoidance(){
 
     std::vector<sdcVisibleObject> fastObjects, furiousObjects;
 
-    for(int i = 0; i < this->frontObjects.size(); i++){
-        if(this->IsObjectTooFast(this->frontObjects[i])){
-            fastObjects.push_back(this->frontObjects[i]);
-        }
-        if(this->IsObjectTooFurious(this->frontObjects[i])){
-            furiousObjects.push_back(this->frontObjects[i]);
+    if (this->frontObjects.size() > 0) {
+        for(int i = 0; i < this->frontObjects.size(); i++){
+            if(this->IsObjectTooFast(this->frontObjects[i])){
+                fastObjects.push_back(this->frontObjects[i]);
+            }
+            if(this->IsObjectTooFurious(this->frontObjects[i])){
+                furiousObjects.push_back(this->frontObjects[i]);
+            }
         }
     }
 
@@ -361,11 +352,13 @@ void sdcCar::Avoidance(){
 
     switch(this->currentAvoidanceState){
         case emergencyStop:
+        //std::cout << "stop" << std::endl;
         this->Stop();
         this->SetBrakeRate(10);
         break;
 
         case emergencySwerve:
+        //std::cout << "swerve" << std::endl;
         this->SetTargetDirection(this->GetOrientation() + PI/2);
         this->SetTargetSpeed(6);
         this->SetAccelRate(10);
@@ -373,28 +366,69 @@ void sdcCar::Avoidance(){
 
         case navigation:
         {
-            double maxWidth = -1;
-            sdcAngle targetAngle = this->GetOrientation();
-
-            math::Vector2d prevPoint = math::Vector2d(this->frontObjects[0].GetCenterPoint().x, 0);
-            sdcAngle prevAngle = sdcAngle(0);
-            for(int i = 0; i < this->frontObjects.size(); i++){
-                math::Vector2d curPoint = this->frontObjects[i].GetCenterPoint();
-                sdcAngle curAngle = this->frontObjects[i].right.angle;
-                if(curPoint.Distance(prevPoint) > fmax(maxWidth, FRONT_OBJECT_COLLISION_WIDTH)){
-                    maxWidth = curPoint.Distance(prevPoint);
-                    targetAngle = curAngle.GetMidAngle(prevAngle);
-                }
-                prevPoint = curPoint;
-                prevAngle = this->frontObjects[i].left.angle;
-            }
-            if(prevPoint.y > fmax(maxWidth, FRONT_OBJECT_COLLISION_WIDTH)){
-                targetAngle = prevAngle.GetMidAngle(sdcAngle(PI));
-            }
-
             this->SetTargetSpeed(1);
-            this->SetTargetDirection(targetAngle);
-            break;
+            if(this->GetSpeed() < 2) {
+                this->turningLimit = 30;
+            }
+
+            if (this->trackingNavWaypoint) {
+                sdcAngle targetAngle = AngleToTarget(this->navWaypoint);
+                this->SetTargetDirection(targetAngle);
+
+                if(sqrt(pow(this->navWaypoint.x - this->x,2) + pow(this->navWaypoint.y - this->y,2)) < 1) {
+                    std::cout << "We found our waypoint" << std::endl;
+                    this->trackingNavWaypoint = false;
+                    this->turningLimit = 10;
+                }
+            } else {
+                //std::cout << "nav" << std::endl;
+                double maxWidth = -1;
+                double dist = 0;
+                double prevDist = 0;
+                sdcAngle targetAngle = this->GetOrientation();
+
+                // Check if the right-most object is on our left
+                if (this->frontObjects[0].right.angle < PI) {
+                    targetAngle = this->GetOrientation() + this->frontObjects[0].right.angle.GetMidAngle(sdcAngle(3*PI/2));
+                    this->navWaypoint = math::Vector2d(this->x + cos(targetAngle.angle) * this->frontObjects[0].dist, this->y + sin(targetAngle.angle) * this->frontObjects[0].dist);
+                    this->trackingNavWaypoint = true;
+                    std::cout << "edge case 1: " << targetAngle << std::endl;
+                    std::cout << "navWaypoint Set " << this->navWaypoint.x << " " << this->navWaypoint.y << std::endl;
+                    //this->SetTargetDirection(this->GetOrientation() + this->frontObjects[0].right.angle.GetMidAngle(sdcAngle(3*PI/2)));
+                    break;
+                }
+
+                math::Vector2d prevPoint = math::Vector2d(this->frontObjects[0].GetCenterPoint().x, 0);
+                sdcAngle prevAngle = sdcAngle(3*PI/2);
+                prevDist = this->frontObjects[0].dist;
+                for(int i = 0; i < this->frontObjects.size(); i++){
+                    math::Vector2d curPoint = this->frontObjects[i].GetCenterPoint();
+                    sdcAngle curAngle = this->frontObjects[i].right.angle;
+                    double curDist = this->frontObjects[i].dist;
+                    if(curPoint.Distance(prevPoint) > fmax(maxWidth, FRONT_OBJECT_COLLISION_WIDTH)){
+                        dist = fmin(prevDist, curDist);
+                        maxWidth = curPoint.Distance(prevPoint);
+                        targetAngle = this->GetOrientation() + curAngle.GetMidAngle(prevAngle);
+                    }
+                    prevPoint = curPoint;
+                    prevAngle = this->frontObjects[i].left.angle;
+                    prevDist = curDist;
+                }
+
+                // Check if left-most object is on our right
+                if(prevAngle > PI || prevPoint.y > fmax(maxWidth, FRONT_OBJECT_COLLISION_WIDTH)){
+                    targetAngle = this->GetOrientation() + prevAngle.GetMidAngle(sdcAngle(PI/2));
+                    dist = prevDist;
+                    std::cout << "edge case 2: " << targetAngle << std::endl;
+                }
+
+                this->navWaypoint = math::Vector2d(this->x + cos(targetAngle.angle) * dist, this->y + sin(targetAngle.angle) * dist);
+                this->trackingNavWaypoint = true;
+                std::cout << "navWaypoint Set " << this->navWaypoint.x << " " << this->navWaypoint.y << std::endl;
+                //std::cout << targetAngle << "\t" << this->GetOrientation() + targetAngle << std::endl;
+                //this->SetTargetDirection(this->GetOrientation() + targetAngle);
+                break;
+            }
         }
 
         case notAvoiding:
@@ -1616,4 +1650,6 @@ sdcCar::sdcCar(){
     // Used to estimate speed of followed object
     this->isTrackingObject = false;
     this->stationaryCount = 0;
+
+    this->trackingNavWaypoint = false;
 }

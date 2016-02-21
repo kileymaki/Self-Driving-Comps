@@ -9,7 +9,10 @@ enum WaypointType {
   WaypointType_Stop
 };
 
-
+sdcWaypoint::sdcWaypoint() {
+    this->waypointType = 0;
+    this->pos = std::make_pair(0,0);
+}
 
 sdcWaypoint::sdcWaypoint(int waypointType, std::pair<double,double> pos) {
     this->waypointType = waypointType;

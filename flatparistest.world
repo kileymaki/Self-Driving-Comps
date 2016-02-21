@@ -12,7 +12,7 @@
 
       <include>
           <uri>/models/sdcCar</uri>
-          <pose>0 0 0 0 0 1.5707</pose>
+          <pose>1.64 -52.44 0 0 0 1.5707</pose>
       </include>
 
     <physics name='default_physics' default='0' type='ode'>

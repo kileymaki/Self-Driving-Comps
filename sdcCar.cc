@@ -46,8 +46,6 @@ const sdcAngle NORTH = sdcAngle(PI/2);
 const sdcAngle SOUTH = sdcAngle(3*PI/2);
 const sdcAngle EAST = sdcAngle(0);
 const sdcAngle WEST = sdcAngle(PI);
-const std::vector<std::pair<double,double>> GRID_INTERSECTIONS = {{0,0},{0,50},{0,100},{0,150},{0,200},{0,250},{50,0},{50,50},{50,100},{50,150},{50,200},{50,250},{100,0},{100,50},{100,100},{100,150},{100,200},{100,250},{150,0},{150,50},{150,100},{150,150},{150,200},{150,250},{200,0},{200,50},{200,100},{200,150},{200,200},{200,250},{250,0},{250,50},{250,100},{250,150},{250,200},{250,250}};
-const int farthestIntr = 250;
 
 //dijkstra's stuff
 std::vector<int> unvisited;
@@ -100,10 +98,10 @@ void sdcCar::Drive()
         // Default state; drive straight to target location
         case waypoint:
         // Handle lane driving
-        // this->LanedDriving();
+        this->LanedDriving();
         this->Accelerate();
         // this->Stop();
-        this->WaypointDriving(WAYPOINT_VEC);
+        //this->WaypointDriving(WAYPOINT_VEC);
         break;
 
         // At a stop sign, performing a turn
@@ -1796,7 +1794,7 @@ sdcCar::sdcCar(){
     this->accelRate = 1.0;
     this->brakeRate = 1.0;
 
-    this->maxCarSpeed = 6;
+    this->maxCarSpeed = 2;
     this->maxCarReverseSpeed = -10;
 
     this->DEFAULT_STATE = waypoint;
@@ -1820,7 +1818,7 @@ sdcCar::sdcCar(){
     this->isFixingParking = false;
     this->parkingSpotSet = false;
 
-    this->targetSpeed = 6;
+    this->targetSpeed = 2;
 
     // Used to track waypoint driving
     this->waypointProgress = 0;

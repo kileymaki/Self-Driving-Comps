@@ -1,3 +1,11 @@
+/*
+ * This class provides a central location for all data that sdcCar uses during simulation. It
+ * collects data from our sensors and stores it, and provides getter and setter methods to
+ * the car and sensors respectively. This class also handles converting sensor data into 
+ * more intuitive information, such as taking blocked sensor rays and determining what are 
+ * objects.
+ */
+
 #include <boost/bind.hpp>
 #include <gazebo/gazebo.hh>
 #include <gazebo/physics/physics.hh>

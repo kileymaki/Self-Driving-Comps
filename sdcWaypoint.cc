@@ -1,3 +1,5 @@
+//This class provides a structure for waypoint objects used in waypointdriving found in sdcCar
+
 #include <stdio.h>
 #include "sdcWaypoint.hh"
 

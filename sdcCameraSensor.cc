@@ -1,3 +1,11 @@
+/*
+ * This class registers and updates the front camera sensor.
+ *
+ * This class also handles video processing and lane finding based 
+ * upon video inputs to handle lane finding and tracking using 
+ * methods found in the paper "A lane-curve detection based on LCF"
+ */
+
 #include <boost/bind.hpp>
 #include <gazebo/gazebo.hh>
 #include <gazebo/physics/physics.hh>
@@ -75,7 +83,7 @@ void sdcCameraSensor::OnUpdate() {
 	float PI = 3.14159;
 	std::vector<Vec2f> lines;
 	HoughLines(contours,lines,1,PI/180, 100);
-	//HoughLinesP(contoursInv,lines,1,PI/180,80, 30, 10 );
+	//HoughLinesP(contours,lines,1,PI/180,80, 30, 10 );
 
 	//print out line angles
 	// for (std::vector<Vec2f>::const_iterator i = lines.begin(); i != lines.end(); ++i)
@@ -96,12 +104,13 @@ void sdcCameraSensor::OnUpdate() {
 	while (it!=lines.end()) {
 			float rho= (*it)[0];   // first element is distance rho
 			float theta= (*it)[1]; // second element is angle theta
-
-				if ( 0.1 < theta < PI/2 && theta < left_lane_marker[1]) {
+				//std::cout << "rho: " << rho << "| theta: " << theta << std::endl;
+				if ( 0 < theta < (PI/2 - 0.1) && theta < left_lane_marker[1]) {
 					left_lane_marker = Vec2f(rho,theta);
+					//std::cout << "Left lane data updated! rho: " << rho << "| theta: " << theta << std::endl;
 				}
 
-				if ((PI/2 + 0.1) < theta < PI && theta > right_lane_marker[1]) {
+				if ((PI/2 + 0.1) < theta < (PI - 0.1) && theta > right_lane_marker[1]) {
 					right_lane_marker = Vec2f(rho,theta);
 				}
 
@@ -114,7 +123,7 @@ void sdcCameraSensor::OnUpdate() {
 	// ATTN: need to have ROI.rows in numerator because of trig stuff. It isnt an oversight!
 	// Changed things so the lines are drawn on the image, not the region of interest. hopefully
 	// this will make some of the issues easier to debug
-
+	//std::cout << "left theta angle: " << left_lane_marker[1] << "| right theta angle: " << right_lane_marker[1] << std::endl;
 	//draw left lane marker
 	Point leftp1 = Point(left_lane_marker[0]/cos(left_lane_marker[1]),0.5*image.rows);
 	Point leftp2 = Point((left_lane_marker[0] - (imageROI.rows) * sin(left_lane_marker[1])) / cos(left_lane_marker[1]), (image.rows));
@@ -156,10 +165,11 @@ void sdcCameraSensor::OnUpdate() {
 	// A = 25 * i / 471.2247
 
 	//TBH THIS STUFF SHOULD NOT BE SET EVERY UPDATE NEEDS TO BE MOVED ~~~~~~~
-	std::vector<double> vec_of_i_vals(79);
-	std::iota(std::begin(vec_of_i_vals), std::end(vec_of_i_vals), -39.);
+	std::vector<double> vec_of_i_vals(101);
+	std::iota(std::begin(vec_of_i_vals), std::end(vec_of_i_vals), -50.);
 	//vec_of_i_vals.push_back(48.);
 	//vec_of_i_vals.push_back(-48.);
+	//vec_of_i_vals.push_back(-100.);
 	// for (std::vector<double>::const_iterator i = vec_of_i_vals.begin(); i != vec_of_i_vals.end(); ++i)
 	// std::cout << *i << ' ' << std::endl;
 	// std::cout << "=====================================\n";
@@ -271,52 +281,34 @@ void sdcCameraSensor::OnUpdate() {
 		// 	}
 		// }
 
+		double left_curve_magnitude = 0;
 		if(left_curve_points_bot.size() > 1) {
 			for (int j = 0; j < left_curve_points_bot.size() - 1; j++) {
 				//This is where we would do LROI calculations
 				//LROI is a triangle, the top point is height of vanishing point.
-				//LROI is only calculated for the top half of the LCF
-				line(image, left_curve_points_bot[j], left_curve_points_bot[j + 1], Scalar(0,0,255), 1, CV_AA);
+				//LROI is only calculated for the bottom half of the LCF
+				//line(image, left_curve_points_bot[j], left_curve_points_bot[j + 1], Scalar(0,0,255), 1, CV_AA);
+				double xf,yf;
+				double ypf_pos, ypf_neg,g;
 
-				F<double> x,y,g;
-				double ypf_pos, ypf_neg;
-				int Dj;
-				x = left_curve_points_bot[j].x;
-				y = left_curve_points_bot[j].y;
-				x.diff(0,2);
-				y.diff(1,2);
-				g = delG(x,y);
-				//std::cout << *q << " | " << j << " | " << g.x() << std::endl;
-				if (g.x() >= 375){
-					double Gx = g.d(0); //partial derivative of g wrt x
-					double Gy = g.d(1); //partial derivative of g wrt y
-					//std::cout << Gx << "\t" << Gy << std::endl;
-					double left_phase_angle_alpha = atan2(Gy,Gx);
-					//std::cout << "delG(x_f,y_f)= " << gval << std::endl;
-					//std::cout << "phase angle alpha: " << phase_angle_alpha << std::endl;
-					ypf_pos = (a + ((2*c*j)+d))/(2*sqrt( c*pow(j,2) + (d * j) + e));
-					ypf_neg = (a - ((2*c*j)+d))/(2*sqrt( c*pow(j,2) + (d * j) + e));
-					double left_phase_angle_beta = atan2(ypf_pos,ypf_neg);
-					//std::cout << "alpha: " << phase_angle_alpha << "\t" << "beta: " << phase_angle_beta << std::endl;
-					Dj = floor(left_phase_angle_alpha-left_phase_angle_beta);
-					//std::cout << "alpha: " << left_phase_angle_alpha << "\t" << " beta: " << left_phase_angle_beta << " Dj: " << Dj << std::endl;
-					//std::cout << Dj << ' ';
-					if (Dj >= -15 && Dj <= 15) {
-					left_Histogram[Dj+15]++;
-					}
-				}
+				xf = left_curve_points_bot[j].x;
+				yf = left_curve_points_bot[j].y;
+				g = contours.at<uchar>(yf,xf);
+				//std::cout << g << std::endl;
+				left_curve_magnitude += g;
+
 			}
 		}
 
-		int left_score = std::accumulate(left_Histogram.begin(), left_Histogram.end(), 0);
-
-		if (left_score >= left_max_score) {
+		//double left_curve_magnitude_total = ((1.*left_curve_points_bot.size()) - left_curve_magnitude)/(1.*left_curve_points_bot.size());
+		double left_curve_magnitude_total = ((1.*left_curve_points_bot.size()) - left_curve_magnitude);
+		if (left_curve_magnitude_total >= left_max_score) {
 			//std::cout << left_score << " should be greater than " << left_max_score;
-			left_max_score = left_score;
+			left_max_score = left_curve_magnitude_total;
 			//std::cout << ". our new high score is : " << left_score;
 			left_optimal_i = *q;
 			//std::cout << ", which is given by curve number: " << left_optimal_i << std::endl;
-			//std::cout << left_optimal_i << std::endl;	
+			//std::cout << left_optimal_i << std::endl;
 		}
 
 		// std::cout << *q << " | ";
@@ -387,7 +379,7 @@ void sdcCameraSensor::OnUpdate() {
 
 	//std::cout << "ASYMPTOTES: " << nfa_p1 << "\t" << nfa_p2 << "\t" << ffa_p1 << "\t" << ffa_p2 << "\t" << std::endl;
 	// std::cout << "VARIABLES: " << a << "\t" << b << "\t" << c << "\t" << d << "\t" << std::endl;
-	int right_max_score = 0, right_optimal_i = 0;
+	double right_max_score = 0, right_optimal_i = 0;
 
 	//generate curvature list
 	for (std::vector<double>::const_iterator q = vec_of_i_vals.begin(); q != vec_of_i_vals.end(); q++) {
@@ -418,59 +410,36 @@ void sdcCameraSensor::OnUpdate() {
 		// 		line(image, right_curve_points_top[j], right_curve_points_top[j + 1], Scalar(0,0,255), 1, CV_AA);
 		// 	}
 		// }
-
+		double curve_magnitude = 0;
 		if(right_curve_points_bot.size() > 1) {
 			for (int j = 0; j < right_curve_points_bot.size() - 1; j++) {
 				//This is where we would do LROI calculations
 				//LROI is a triangle, the top point is height of vanishing point.
-				//LROI is only calculated for the top half of the LCF
-				line(image, right_curve_points_bot[j], right_curve_points_bot[j + 1], Scalar(0,0,255), 1, CV_AA);
+				//LROI is only calculated for the bottom half of the LCF
+				//line(image, right_curve_points_bot[j], right_curve_points_bot[j + 1], Scalar(0,0,255), 1, CV_AA);
+				double xf,yf;
+				double ypf_pos, ypf_neg,g;
+				xf = right_curve_points_bot[j].x;
+				yf = right_curve_points_bot[j].y;
+				g = contours.at<uchar>(yf,xf);
+				//std::cout << g << std::endl;
+				curve_magnitude += g;
 
-				F<double> x,y,g;
-				double ypf_pos, ypf_neg;
-				int Dj;
-				x = right_curve_points_bot[j].x;
-				y = right_curve_points_bot[j].y;
-				x.diff(0,2);
-				y.diff(1,2);
-				g = delG(x,y);
-				if (g.x() >= 375){
-					double Gx = g.d(0); //partial derivative of g wrt x
-					double Gy = g.d(1); //partial derivative of g wrt y
-					//std::cout << Gx << "\t" << Gy << std::endl;
-					double right_phase_angle_alpha = atan2(Gy,Gx);
-					//std::cout << "delG(x_f,y_f)= " << gval << std::endl;
-					//std::cout << "phase angle alpha: " << phase_angle_alpha << std::endl;
-					ypf_pos = (a + ((2*c*j)+d))/(2*sqrt( c*pow(j,2) + (d * j) + e));
-					ypf_neg = (a - ((2*c*j)+d))/(2*sqrt( c*pow(j,2) + (d * j) + e));
-					double right_phase_angle_beta = atan2(ypf_pos,ypf_neg);
-					Dj = floor(right_phase_angle_alpha-right_phase_angle_beta);
-					//std::cout << "alpha: " << right_phase_angle_alpha << "\t" << " beta: " << right_phase_angle_beta << " Dj: " << Dj << std::endl;
-					//std::cout << Dj << ' ';
-					if (Dj >= -15 && Dj <= 15) {
-						right_Histogram[Dj+15]++;
-					} 
-				}
 			}
 		}
 
-		int right_score = std::accumulate(right_Histogram.begin(), right_Histogram.end(), 0);
-
-		if (right_score >= right_max_score) {
-			//std::cout << right_score << " should be greater than " << right_max_score;
-			right_max_score = right_score;
-			//std::cout << ". our new high score is : " << right_score;
+		//double curve_magnitude_total = ((1.*right_curve_points_bot.size()) - curve_magnitude)/(1.*right_curve_points_bot.size());
+		double curve_magnitude_total = ((1.*right_curve_points_bot.size()) - curve_magnitude);
+		// std::cout << "Curve " << *q << " score is: " << curve_magnitude_total << std::endl;
+		//int right_score = std::accumulate(right_Histogram.begin(), right_Histogram.end(), 0);
+		if (curve_magnitude_total > right_max_score) {
+			right_max_score = curve_magnitude_total;
+			// std::cout << curve_magnitude_total << " should be greater than " << right_max_score;
+			// std::cout << ". our new high score is : " << curve_magnitude_total;
 			right_optimal_i = *q;
 			//std::cout << ", which is given by curve number: " << right_optimal_i << std::endl;
 			//std::cout << right_optimal_i << std::endl;
 		}
-
-		// std::cout << *q << " | ";
-		// for (std::vector<int>::const_iterator i = right_Histogram.begin(); i != right_Histogram.end(); ++i){
-		// 	std::cout << *i << ' '; //<< std::endl;
-		// }
-		// std::cout << " | " << right_score << " | " << right_optimal_i << " | \n";
-
 	}
 
 	//std::cout << right_optimal_i << std::endl;
@@ -479,7 +448,7 @@ void sdcCameraSensor::OnUpdate() {
 	e = pow((b-v),2) + (eps * a * right_optimal_i);
 	std::vector<Point> right_curve_points_top, right_curve_points_bot;
 
-	for (float x = 0.; x < 640. ; x++ ) {
+	for (float x = u+1.; x < 640. ; x++ ) {
 		float right_y_top = (a * x) + b - sqrt( c*pow(x,2) + (d * x) + e);
 		float right_y_bot = (a * x) + b + sqrt( c*pow(x,2) + (d * x) + e);
 
@@ -508,8 +477,8 @@ void sdcCameraSensor::OnUpdate() {
 
 ///////// END LCF LANE DETECTION
 
-	//namedWindow("Lane Detection", WINDOW_AUTOSIZE);
-	//imshow("Lane Detection", contours);
+	namedWindow("Lane Detection", WINDOW_AUTOSIZE);
+	imshow("Lane Detection", contours);
 	namedWindow("Camera View", WINDOW_AUTOSIZE);
 	imshow("Camera View", image);
 	waitKey(4);

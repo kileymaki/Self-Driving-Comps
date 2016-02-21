@@ -1,11 +1,3 @@
-//
-//  sdcGpsSensor.hh
-//
-//
-//  Created by selfcar on 10/25/15.
-//
-//
-
 #ifndef _sdcGpsSensor_hh
 #define _sdcGpsSensor_hh
 

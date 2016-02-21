@@ -12,6 +12,9 @@ using namespace gazebo;
 const double sdcVisibleObject::UNCERTAINTY_RATIO = 0.3;
 const double PI = 3.14159265359;
 
+/*
+ * Default constructor that leaves all parameters at default values
+ */
 sdcVisibleObject::sdcVisibleObject(){}
 
 /*
@@ -33,8 +36,6 @@ sdcVisibleObject::sdcVisibleObject(sdcLidarRay right, sdcLidarRay left, double d
 
     this->tracking = false;
     this->brandSpankinNew = true;
-
-    // std::cout << left.GetLateralDist() << "\t" << left.GetLongitudinalDist() << "\t" << right.GetLateralDist() << "\t" << right.GetLongitudinalDist() << std::endl;
 }
 
 /*
@@ -44,24 +45,32 @@ bool sdcVisibleObject::IsSameObject(sdcVisibleObject other){
     math::Vector2d estPos = this->EstimateUpdate();
     double uncertainty = sqrt(pow(estPos.x - other.centerpoint.x, 2) + pow(estPos.y - other.centerpoint.y, 2));
 
-    // std::cout << "CUR \t" << this->centerpoint.x << "\t" << this->centerpoint.y << std::endl;
-    // std::cout << "EST \t" << estPos.x << "\t" << estPos.y << std::endl;
-    // std::cout << "OTH \t" << other.centerpoint.x << "\t" << other.centerpoint.y << std::endl;
-    // std::cout << "UNC \t" << uncertainty << "\t" << confidence << std::endl;
-    // std::cout << "LINE \t" << this->lineSlope << "\t" << this->lineIntercept << std::endl;
-    // std::cout << (uncertainty * confidence < UNCERTAINTY_RATIO) << std::endl << std::endl;
-
     return uncertainty * confidence < UNCERTAINTY_RATIO;
 }
 
+/*
+ * Returns the estimated total speed of this object relative to the car's speed
+ */
 double sdcVisibleObject::GetEstimatedSpeed(){
     return sqrt(pow(this->estimatedXSpeed, 2) + pow(this->estimatedYSpeed, 2));
 }
 
+/*
+ * Returns the current estimated speed parallel to the car's orientation (towards or away
+ * from the car if the object is ahead of the car), and relative to the car's speed
+ *
+ * Negative speeds are moving towards the car, positive away
+ */
 double sdcVisibleObject::GetEstimatedYSpeed(){
     return this->estimatedYSpeed;
 }
 
+/*
+ * Returns the current estimated speed perpendicular to the car's orientation (across the
+ * car's field of view), and realtive to the car's speed
+ *
+ * Negative speeds are moving left, positive right
+ */
 double sdcVisibleObject::GetEstimatedXSpeed(){
     return this->estimatedXSpeed;
 }
@@ -71,9 +80,6 @@ double sdcVisibleObject::GetEstimatedXSpeed(){
  * speed and direction
  */
 math::Vector2d sdcVisibleObject::EstimateUpdate(){
-    // double newX = this->centerpoint.x + sin(this->estimatedDirection.angle) * this->estimatedSpeed;
-    // double newY = this->centerpoint.y + cos(this->estimatedDirection.angle) * this->estimatedSpeed;
-    // return math::Vector2d(newX, newY);
     double newX = this->centerpoint.x + this->estimatedXSpeed;
     double newY = this->centerpoint.y + this->estimatedYSpeed;
     return math::Vector2d(newX, newY);
@@ -97,39 +103,46 @@ math::Vector2d sdcVisibleObject::GetProjectedPosition(int numSteps){
 void sdcVisibleObject::Update(sdcLidarRay newLeft, sdcLidarRay newRight, double newDist){
     this->confidence = fmin(1.0, this->confidence + 0.01);
 
+    // Get the centerpoint of the new information
     math::Vector2d newCenterpoint = this->GetCenterPoint(newLeft, newRight, newDist);
 
+    // Calculate the speed moving from the current point to the new point
     double newEstimatedXSpeed = (newCenterpoint.x - this->centerpoint.x);
     double newEstimatedYSpeed = (newCenterpoint.y - this->centerpoint.y);
 
+    // If this object has already been updated at least once, try to learn the speed
+    // over time
     if(!this->brandSpankinNew){
         double alpha = fmax((newDist * .005), (.1 - newDist * .005));
         newEstimatedXSpeed = (alpha * newEstimatedXSpeed) + ((1 - alpha) * this->estimatedXSpeed);
         newEstimatedYSpeed = (alpha * newEstimatedYSpeed) + ((1 - alpha) * this->estimatedYSpeed);
     }
 
-    // std::cout << "Updated estimated Y speed\t" << this->estimatedYSpeed << "\t" << newEstimatedYSpeed << std::endl;
+    // Update the estimates for this object's speed
     this->estimatedXSpeed = newEstimatedXSpeed;
     this->estimatedYSpeed = newEstimatedYSpeed;
-    // this->estimatedDirection = sdcAngle(atan2(newCenterpoint.x - this->centerpoint.x, newCenterpoint.y - this->centerpoint.y));
 
+    // Fit a line to the points this object has been at, and store that line's information
     if(this->prevPoints.size() > 0){
         math::Vector2d newLineCoefficients = this->FitLineToPoints(this->prevPoints, newCenterpoint);
         this->lineSlope = newLineCoefficients.x;
         this->lineIntercept = newLineCoefficients.y;
     }
 
+    // Maintain prevPoints to never be larger than 16 to help ensure accurate information
     if(this->prevPoints.size() > 15){
         this->prevPoints.erase(this->prevPoints.begin());
     }
     this->prevPoints.push_back(newCenterpoint);
 
+    // Update the object's information
     this->centerpoint = newCenterpoint;
 
     this->left = newLeft;
     this->right = newRight;
     this->dist = newDist;
 
+    // This object has now been updated, so set this flag accordingly
     this->brandSpankinNew = false;
 }
 
@@ -142,12 +155,13 @@ void sdcVisibleObject::Update(sdcLidarRay newLeft, sdcLidarRay newRight, double 
 math::Vector2d sdcVisibleObject::FitLineToPoints(std::vector<math::Vector2d> points, math::Vector2d newPoint){
     int numPoints = points.size();
 
+    // Calculate several necessary sums over all points
     double sumX=0, sumY=0, sumXY=0, sumX2=0;
     for(int i=0; i<numPoints; i++) {
-      sumX += points[i].x;
-      sumY += points[i].y;
-      sumXY += points[i].x * points[i].y;
-      sumX2 += points[i].x * points[i].x;
+        sumX += points[i].x;
+        sumY += points[i].y;
+        sumXY += points[i].x * points[i].y;
+        sumX2 += points[i].x * points[i].x;
     }
 
     sumX += newPoint.x;
@@ -155,17 +169,23 @@ math::Vector2d sdcVisibleObject::FitLineToPoints(std::vector<math::Vector2d> poi
     sumXY += newPoint.x * newPoint.y;
     sumX2 += newPoint.x * newPoint.x;
 
+    // Get the averages for x and y
     double xMean = sumX / (numPoints + 1);
     double yMean = sumY / (numPoints + 1);
 
+    // Calculate the denominator for the slope calculation
     double denom = sumX2 - sumX * xMean;
 
+    // Calculate the slope and intercept of the line
     double slope = (sumXY - sumX * yMean) / denom;
     double yInt = yMean - slope * xMean;
 
     return math::Vector2d(slope, yInt);
 }
 
+/*
+ * Update this object with the given object's parameters
+ */
 void sdcVisibleObject::Update(sdcVisibleObject newObject){
     this->Update(newObject.left, newObject.right, newObject.dist);
 }

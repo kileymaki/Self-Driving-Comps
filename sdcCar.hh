@@ -14,9 +14,6 @@
  * limitations under the License.
  *
 */
-/* Desc: A 4-wheeled vehicle
- * Author: Nate Koenig
- */
 
 #ifndef _sdcCar_hh_
 #define _sdcCar_hh_
@@ -95,8 +92,9 @@ namespace gazebo {
 
         enum Direction { north, south, east, west };
 
-        enum relativeDirection { forward, aligned, backward, right, left };
+        enum RelativeDirection { forward, aligned, backward, right, left };
 
+        // The different states available when attempting to avoid objects
         enum AvoidanceState {emergencyStop, emergencySwerve, navigation, notAvoiding};
 
         ///////////////////////////
@@ -107,8 +105,8 @@ namespace gazebo {
         CarState DEFAULT_STATE;
         CarState currentState;
         Direction currentDir;
-        relativeDirection destDir;
-        relativeDirection destDirSide;
+        RelativeDirection destDir;
+        RelativeDirection destDirSide;
         PerpendicularParkingState currentPerpendicularState;
         ParallelParkingState currentParallelState;
         AvoidanceState currentAvoidanceState;
@@ -123,35 +121,47 @@ namespace gazebo {
         // Position/rotation variables
         sdcAngle yaw;
 
+        // Waypoint variables
         int waypointProgress;
+
+        // Intersection variables
         int atIntersection;
 
+        // Car limit variables
         int maxCarSpeed;
         double maxCarReverseSpeed;
         double turningLimit;
 
+        // Flags for the car's actions
         bool turning;
         bool reversing;
         bool stopping;
+
+        // Movement parameters
         sdcAngle targetDirection;
         double targetSteeringAmount;
         double steeringAmount;
         double targetSpeed;
+
+        // Parking variables
         sdcAngle targetParkingAngle;
         bool parkingAngleSet;
         bool isFixingParking;
         bool parkingSpotSet;
 
-        // for Follow
+        // Follow variables
         bool isTrackingObject;
         int stationaryCount;
 
+        // Avodiance variables
         math::Vector2d navWaypoint;
         bool trackingNavWaypoint;
 
+        // Variables relating to tracking objects in front of the car
         std::vector<sdcVisibleObject> frontObjects;
         int frontLidarLastUpdate;
 
+        // The x and y position of the car
         double x;
         double y;
 

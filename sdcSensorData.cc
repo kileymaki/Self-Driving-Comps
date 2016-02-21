@@ -121,22 +121,37 @@ int sdcSensorData::LanePosition() {
     return lanePosition;
 }
 
+/*
+ * Get the last update tick for the given lidar
+ */
 int sdcSensorData::GetLidarLastUpdate(LidarPos lidar){
     return lidarInfoMap[lidar].lastUpdate;
 }
 
+/*
+ * Get the number of rays for the given lidar
+ */
 int sdcSensorData::GetLidarNumRays(LidarPos lidar){
     return lidarInfoMap[lidar].numRays;
 }
 
+/*
+ * Get the minimum angle for the given lidar
+ */
 sdcAngle sdcSensorData::GetLidarMinAngle(LidarPos lidar){
     return lidarInfoMap[lidar].minAngle;
 }
 
+/*
+ * Get the angle between individual rays for the given lidar
+ */
 double sdcSensorData::GetLidarAngleResolution(LidarPos lidar){
     return lidarInfoMap[lidar].resolution;
 }
 
+/*
+ * Get the range for the given lidar
+ */
 double sdcSensorData::GetLidarMaxRange(LidarPos lidar){
     return lidarInfoMap[lidar].maxRange;
 }
@@ -238,29 +253,29 @@ std::vector<sdcLidarRay> sdcSensorData::GetBlockedBackRays(){
 }
 
 /*
- * Returns a vector of pairs that each contain a pair with the minimum and maximum angle
- * corresponding to an object in the front lidar, and the minimum distance the object is
- * away
+ * Returns a vector of objects in the front lidar constructed with their
+ * left and right bounding lidar ray, as well as the minimum distance to the
+ * object
  */
 std::vector<sdcVisibleObject> sdcSensorData::GetObjectsInFront(){
     std::vector<sdcVisibleObject> objectList;
 
+    // With no blocked rays, there are no objects to record
     std::vector<sdcLidarRay> blockedRays = GetBlockedFrontRays();
     if(blockedRays.size() == 0) return objectList;
 
     double distMargin = 1;
     double angleMargin = 0.01;
 
-    bool ignorePrev = true;
-
     sdcAngle objMinAngle;
     double objFirstDist;
-
     double objMinDist;
 
     sdcAngle prevAngle;
     double prevDist;
+    bool ignorePrev = true;
 
+    // Parse the blocked rays into separate objects
     for (int i = 0; i < blockedRays.size(); i++) {
         sdcAngle curAngle = blockedRays[i].angle;
         double curDist = blockedRays[i].dist;
@@ -268,8 +283,9 @@ std::vector<sdcVisibleObject> sdcSensorData::GetObjectsInFront(){
         if(!ignorePrev){
             objMinDist = curDist < objMinDist ? curDist : objMinDist;
 
+            // If either the checked angles or distance fall outside the margins, the rays are looking at a new object
             if(!((curAngle - prevAngle).WithinMargin(angleMargin) && fabs(curDist - prevDist) < distMargin)){
-                // std::cout << "AddedOjbect1\t" << objMinAngle << "\t" << prevAngle << std::endl;
+                // Record the object just found
                 objectList.push_back(sdcVisibleObject(sdcLidarRay(objMinAngle, objFirstDist), sdcLidarRay(prevAngle, prevDist), objMinDist));
                 ignorePrev = true;
             }
@@ -284,26 +300,35 @@ std::vector<sdcVisibleObject> sdcSensorData::GetObjectsInFront(){
         prevDist = curDist;
     }
 
-    // std::cout << "AddedOjbect2\t" << objMinAngle << "\t" << prevAngle << std::endl;
+    // Since objects are recorded on the trailing end of the loop, this will make sure the last object is properly added
     objectList.push_back(sdcVisibleObject(sdcLidarRay(objMinAngle, objFirstDist), sdcLidarRay(prevAngle, prevDist), objMinDist));
     return objectList;
 }
 
-// New gps system using 2d vector
+// GPS variables
 double sdcSensorData::gpsX = 0;
 double sdcSensorData::gpsY = 0;
 sdcAngle sdcSensorData::gpsYaw = sdcAngle(0);
 
+/*
+ * Update the gps information
+ */
 void sdcSensorData::UpdateGPS(double x, double y, double yaw){
     gpsX = x;
     gpsY = y;
     gpsYaw = sdcAngle(yaw);
 }
 
+/*
+ * Get the current sensor readings for position
+ */
 math::Vector2d sdcSensorData::GetPosition(){
     return math::Vector2d(gpsX, gpsY);
 }
 
+/*
+ * Get the current sensor readings for orientation
+ */
 sdcAngle sdcSensorData::GetYaw(){
     return gpsYaw;
 }

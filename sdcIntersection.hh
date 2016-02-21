@@ -20,7 +20,7 @@ enum WaypointType {
 };
 
 class sdcIntersection {
- public:
+  public:
   // neighbor = pair.first
   // dist = pair.second
   std::vector<std::pair<int, double>> neighbors_pairs;

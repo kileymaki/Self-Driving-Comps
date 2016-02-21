@@ -57,7 +57,6 @@ namespace gazebo
         static math::Vector2d GetPosition();
         static sdcAngle GetYaw();
         static void UpdateGPS(double x, double y, double yaw);
-    };
 
     private:
         static std::vector<double>* frontLidarRays;
@@ -74,6 +73,7 @@ namespace gazebo
         static std::vector<double>* sideRightBackLidarRays;
 
         static std::map<LidarPos, sdcLidarSensorInfo> lidarInfoMap;
+    };
 }
 
 #endif

@@ -148,7 +148,7 @@ void sdcCameraSensor::OnUpdate() {
 	// This algorithm was decribed in the paper "A lane-curve detection based on an LCF"
 	// Each step that corresponds to an equation will be labelled accordingly.
 	double leftNearLaneSlope, rightNearLaneSlope, leftLaneIntercept, rightLaneIntercept;
-	double a, b, c, d, e, u, v, n, k, lane_midpoint, eps = 500.0;
+	double a, b, c, d, e, u, v, n, k, lane_midpoint, eps = 100.0;
 	float FOCAL_LENGTH = 554.382; //lambda in Park et. al.
 	float Tz = 0.85; // in meters
 	// float xf = leftp1.x;
@@ -265,14 +265,14 @@ void sdcCameraSensor::OnUpdate() {
 			}
 		}
 
-		// if(left_curve_points_bot.size() > 1) {
-		// 	for (int j = 0; j < left_curve_points_bot.size() - 1; j++) {
-		// 		line(image, left_curve_points_bot[j], left_curve_points_bot[j + 1], Scalar(0,0,255), 1, CV_AA);
-		// 	}
-		// }
-
 		if(left_curve_points_top.size() > 1) {
 			for (int j = 0; j < left_curve_points_top.size() - 1; j++) {
+				line(image, left_curve_points_top[j], left_curve_points_top[j + 1], Scalar(0,0,255), 1, CV_AA);
+			}
+		}
+
+		if(left_curve_points_bot.size() > 1) {
+			for (int j = 0; j < left_curve_points_bot.size() - 1; j++) {
 				//This is where we would do LROI calculations
 				//LROI is a triangle, the top point is height of vanishing point.
 				//LROI is only calculated for the top half of the LCF
@@ -281,8 +281,8 @@ void sdcCameraSensor::OnUpdate() {
 				F<double> x,y,g;
 				double ypf_pos, ypf_neg;
 				int Dj;
-				x = left_curve_points_top[j].x;
-				y = left_curve_points_top[j].y;
+				x = left_curve_points_bot[j].x;
+				y = left_curve_points_bot[j].y;
 				x.diff(0,2);
 				y.diff(1,2);
 				g = delG(x,y);
@@ -330,7 +330,7 @@ void sdcCameraSensor::OnUpdate() {
 	e = pow((b-v),2) + (eps * a * left_optimal_i);
 	std::vector<Point> left_curve_points_top, left_curve_points_bot;
 
-	for (float x = 0.; x < u; x++ ) {
+	for (float x = 0.; x < 640; x++ ) {
 		float left_y_top = (a * x) + b - sqrt( c*pow(x,2) + (d * x) + e);
 		float left_y_bot = (a * x) + b + sqrt( c*pow(x,2) + (d * x) + e);
 
@@ -345,11 +345,11 @@ void sdcCameraSensor::OnUpdate() {
 		}
 	}
 
-	// if(left_curve_points_top.size() > 1) {
-	// 	for (int i = 0; i < left_curve_points_top.size() - 1; i++){
-	// 		line(image, left_curve_points_top[i], left_curve_points_top[i + 1], Scalar(0,255,0), 3, CV_AA);
-	// 	}
-	// }
+	if(left_curve_points_top.size() > 1) {
+		for (int i = 0; i < left_curve_points_top.size() - 1; i++){
+			line(image, left_curve_points_top[i], left_curve_points_top[i + 1], Scalar(0,255,0), 3, CV_AA);
+		}
+	}
 
 	if(left_curve_points_bot.size() > 1) {
 		for (int i = 0; i < left_curve_points_bot.size() - 1; i++){
@@ -413,14 +413,14 @@ void sdcCameraSensor::OnUpdate() {
 			}
 		}
 
-		if(right_curve_points_bot.size() > 1) {
-			for (int j = 0; j < right_curve_points_bot.size() - 1; j++){
+		if(right_curve_points_top.size() > 1) {
+			for (int j = 0; j < right_curve_points_top.size() - 1; j++){
 				//line(image, right_curve_points_bot[j], right_curve_points_bot[j + 1], Scalar(0,0,255), 1, CV_AA);
 			}
 		}
 
-		if(right_curve_points_top.size() > 1) {
-			for (int j = 0; j < right_curve_points_top.size() - 1; j++) {
+		if(right_curve_points_bot.size() > 1) {
+			for (int j = 0; j < right_curve_points_bot.size() - 1; j++) {
 				//This is where we would do LROI calculations
 				//LROI is a triangle, the top point is height of vanishing point.
 				//LROI is only calculated for the top half of the LCF
@@ -429,8 +429,8 @@ void sdcCameraSensor::OnUpdate() {
 				F<double> x,y,g;
 				double ypf_pos, ypf_neg;
 				int Dj;
-				x = right_curve_points_top[j].x;
-				y = right_curve_points_top[j].y;
+				x = right_curve_points_bot[j].x;
+				y = right_curve_points_bot[j].y;
 				x.diff(0,2);
 				y.diff(1,2);
 				g = delG(x,y);
@@ -479,7 +479,7 @@ void sdcCameraSensor::OnUpdate() {
 	e = pow((b-v),2) + (eps * a * right_optimal_i);
 	std::vector<Point> right_curve_points_top, right_curve_points_bot;
 
-	for (float x = u+1.; x < 640. ; x++ ) {
+	for (float x = 0.; x < 640. ; x++ ) {
 		float right_y_top = (a * x) + b - sqrt( c*pow(x,2) + (d * x) + e);
 		float right_y_bot = (a * x) + b + sqrt( c*pow(x,2) + (d * x) + e);
 
@@ -494,11 +494,11 @@ void sdcCameraSensor::OnUpdate() {
 		}
 	}
 
-	// if(right_curve_points_top.size() > 1) {
-	// 	for (int i = 0; i < right_curve_points_top.size() - 1; i++){
-	// 		line(image, right_curve_points_top[i], right_curve_points_top[i + 1], Scalar(0,255,0), 3, CV_AA);
-	// 	}
-	// }
+	if(right_curve_points_top.size() > 1) {
+		for (int i = 0; i < right_curve_points_top.size() - 1; i++){
+			line(image, right_curve_points_top[i], right_curve_points_top[i + 1], Scalar(0,255,0), 3, CV_AA);
+		}
+	}
 
 	if(right_curve_points_bot.size() > 1) {
 		for (int i = 0; i < right_curve_points_bot.size() - 1; i++){

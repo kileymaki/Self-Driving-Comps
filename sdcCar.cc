@@ -144,7 +144,7 @@ void sdcCar::MatchTargetDirection(){
         // 1.67 is the distance between wheels in the sdf
         // double proposedSteeringAmount = asin(1.67/steeringRadius);
 
-        double limit = 30;
+        double limit = 10;
         double proposedSteeringAmount = fmax(fmin(-limit*tan(directionAngleChange.angle/-2), limit), -limit);
         // When reversing, steering directions are inverted
         if(!this->reversing){
@@ -268,14 +268,13 @@ void sdcCar::Follow() {
     math::Vector2d objCenter = tracked.GetCenterPoint();
     double objSpeed = tracked.GetEstimatedYSpeed();
 
-    std::cout << objSpeed << "\t" << this->GetSpeed() << "\t" << objSpeed + this->GetSpeed() << std::endl;
-    this->SetTargetSpeed(objSpeed + this->GetSpeed());
-
+    // std::cout << objSpeed << "\t" << this->GetSpeed() << "\t" << objSpeed + this->GetSpeed() << std::endl;
+    this->SetTargetSpeed(objSpeed + this->GetSpeed() + (objCenter.y/20. - 0.5));
 
     if(objCenter.x > 0){
-        this->SetTargetDirection(this->GetOrientation() + (sdcAngle(PI / 2.) - sdcAngle(atan2(objCenter.y, objCenter.x))));
+        this->SetTargetDirection(this->GetOrientation() - sdcAngle(PI / 2.) + sdcAngle(atan2(objCenter.y, objCenter.x)));
     }else if(objCenter.x < 0){
-        this->SetTargetDirection(this->GetOrientation() - (sdcAngle(PI / 2.) - sdcAngle(atan2(objCenter.y, objCenter.x))));
+        this->SetTargetDirection(this->GetOrientation() - sdcAngle(PI / 2.) + sdcAngle(atan2(objCenter.y, objCenter.x)));
     }else{
         this->SetTargetDirection(this->GetOrientation());
     }
@@ -1319,8 +1318,6 @@ void sdcCar::OnUpdate()
     // Get the cars current rotation
     this->yaw = sdcSensorData::GetYaw();
 
-    // this->FrontLidarUpdate();
-
     if(this->frontLidarLastUpdate != sdcSensorData::GetLidarLastUpdate(FRONT)){
         std::vector<sdcVisibleObject> v = sdcSensorData::GetObjectsInFront();
         this->UpdateFrontObjects(v);
@@ -1422,7 +1419,7 @@ sdcCar::sdcCar(){
     this->accelRate = 1.0;
     this->brakeRate = 1.0;
 
-    this->maxCarSpeed = 2;
+    this->maxCarSpeed = 6;
     this->maxCarReverseSpeed = -10;
 
     this->currentState = follow;

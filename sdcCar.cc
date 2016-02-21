@@ -29,6 +29,7 @@ const double DIRECTION_MARGIN_OF_ERROR = 0.00855;
 const double STEERING_MARGIN_OF_ERROR = 0.05;
 const int LIDAR_DETECTION_MARGIN_OF_ERROR = 2;
 
+// How fast the car turns each update
 const double STEERING_ADJUSTMENT_RATE = 0.02;
 
 // How much we can turn the "steering wheel"
@@ -37,7 +38,7 @@ const double STEERING_RANGE = 5 * PI;
 const double CAR_WIDTH = 0.8;
 const double CAR_LENGTH = 2.0;
 
-// The width of the channel in front of the car for which we coutn objects as
+// The width of the channel in front of the car for which we count objects as
 // being directly in front of the car
 const double FRONT_OBJECT_COLLISION_WIDTH = CAR_WIDTH + 0.5;
 
@@ -59,9 +60,6 @@ const sdcWaypoint WAYPOINT = sdcWaypoint(1,{150,0});
 std::vector<sdcWaypoint> WAYPOINT_VEC;
 
 
-std::vector<double> turningVector;
-
-
 ////////////////////////////////
 ////////////////////////////////
 // BEGIN THE BRAIN OF THE CAR //
@@ -74,22 +72,21 @@ std::vector<double> turningVector;
  */
 void sdcCar::Drive()
 {
-    // Do collision detection
+    // If not in avoidance, check if we should start following the thing
+    // in front of us. If following is done, kick out to default state
     if(this->currentState != avoidance){
         if (this->ObjectDirectlyAhead()){
             this->currentState = follow;
-        }else if(!this->isTrackingObject){
+        }else if(this->currentState == follow && !this->isTrackingObject){
             this->currentState = DEFAULT_STATE;;
         }
     }
+
+    // Look for objects in danger of colliding with us, react appropriately
     if (this->ObjectOnCollisionCourse()){
         this->currentState = avoidance;
     }
 
-    this->currentState = waypoint;
-    this->currentAvoidanceState = navigation;
-
-    // std::cout << this->currentState << std::endl;
     // Possible states: stop, waypoint, intersection, follow, avoidance
     switch(this->currentState)
     {
@@ -141,9 +138,6 @@ void sdcCar::Drive()
     //} else {
     //  this->SetTargetSpeed(4);
     //}
-
-    //this->WalledDriving();
-    //this->DetectIntersection();
 }
 
 /*
@@ -158,8 +152,9 @@ void sdcCar::MatchTargetDirection(){
         // 1.67 is the distance between wheels in the sdf
         // double proposedSteeringAmount = asin(1.67/steeringRadius);
 
-        // double limit = 10;
+        // The steering amount scales based on how far we have to turn, with upper and lower limits
         double proposedSteeringAmount = fmax(fmin(-this->turningLimit*tan(directionAngleChange.angle/-2), this->turningLimit), -this->turningLimit);
+        
         // When reversing, steering directions are inverted
         if(!this->reversing){
             this->SetTargetSteeringAmount(proposedSteeringAmount);
@@ -185,15 +180,21 @@ void sdcCar::MatchTargetDirection(){
  * Attempts to match the current target speed
  */
 void sdcCar::MatchTargetSpeed(){
+    // Invert all the values if the car should be moving backwards
     int dirConst = this->reversing ? -1 : 1;
+
+    // If the car is moving the wrong direction or slower than the target speed, press on the gas
     if((this->reversing && this->IsMovingForwards()) || (!this->reversing && !this->IsMovingForwards()) || (this->GetSpeed() < this->targetSpeed)){
         this->gas = 1.0 * dirConst;
         this->brake = 0.0;
     } else if(this->GetSpeed() > this->targetSpeed){
+        // If the car is moving faster than the target speed, brake to slow down
         this->gas = 0.0;
         if(this->reversing != this->IsMovingForwards()){
             this->brake = -2.0 * dirConst;
         } else {
+            // If the car is drifting in the opposite direction it should be, don't brake
+            // as this has the side effect of accelerating the car in the opposite direction
             this->brake = 0.0;
         }
     }
@@ -207,6 +208,7 @@ void sdcCar::WaypointDriving(std::vector<sdcWaypoint> WAYPOINT_VEC) {
     //std::vector<math::Vector2d> WAYPOINT_VEC = WAYPOINT_VEC;
     // std::cout << progress << " / " << WAYPOINT_VEC.size() << " " << (progress < WAYPOINT_VEC.size()) << std::endl;
     if(progress < WAYPOINT_VEC.size()){
+        // Pull the next waypoint and set the car to drive towards it
         math::Vector2d nextTarget = {WAYPOINT_VEC[progress].pos.first,WAYPOINT_VEC[progress].pos.second};
         sdcAngle targetAngle = AngleToTarget(nextTarget);
         this->SetTargetDirection(targetAngle);
@@ -215,9 +217,9 @@ void sdcCar::WaypointDriving(std::vector<sdcWaypoint> WAYPOINT_VEC) {
 
         this->Accelerate();
 
-        double distance = sqrt(pow(WAYPOINT_VEC[progress].pos.first - this->x,2) + pow(WAYPOINT_VEC[progress].pos.second - this->y,2));
         //sdcSensorData::GetCurrentCoord().Distance(nextTarget);
-        // std::cout << distance << std::endl;
+        // Check if the car is close enough to the target to move on
+        double distance = sqrt(pow(WAYPOINT_VEC[progress].pos.first - this->x,2) + pow(WAYPOINT_VEC[progress].pos.second - this->y,2));
         if (distance < 5) {
             GridTurning(WAYPOINT_VEC[progress].waypointType);
             ++progress;
@@ -251,13 +253,17 @@ void sdcCar::LanedDriving() {
  * Car follows an object directly in front of it and slows down to stop when it starts to get close
  */
 void sdcCar::Follow() {
+    // There's nothing in front of the car, so break out of follow
     if(this->frontObjects.size() == 0){
         this->isTrackingObject = false;
         this->currentState = DEFAULT_STATE;
         return;
     }
 
+    // The default object to follow is directly in front of the car, the max range away
     sdcVisibleObject tracked = sdcVisibleObject(sdcLidarRay(0, sdcSensorData::GetLidarMaxRange(FRONT)), sdcLidarRay(0, sdcSensorData::GetLidarMaxRange(FRONT)), sdcSensorData::GetLidarMaxRange(FRONT));
+
+    // Already tracking an object, find it again
     if(this->isTrackingObject){
         bool foundTrackedObject = false;
         for(int i = 0; i < this->frontObjects.size(); i++){
@@ -273,6 +279,8 @@ void sdcCar::Follow() {
             return;
         }
     }else{
+        // Not tracking an object, find one that's in front of the car
+        // and start tracking it
         for(int i = 0; i < this->frontObjects.size(); i++){
             sdcVisibleObject obj = this->frontObjects[i];
             if(this->IsObjectDirectlyAhead(obj)){
@@ -285,27 +293,37 @@ void sdcCar::Follow() {
         }
     }
 
+    // After the above loops, if not following anything just return
     if(!this->isTrackingObject) return;
 
     math::Vector2d objCenter = tracked.GetCenterPoint();
     double objSpeed = tracked.GetEstimatedYSpeed();
 
-    // std::cout << objSpeed << "\t" << this->GetSpeed() << "\t" << objSpeed + this->GetSpeed() << std::endl;
+    // Scale our speed based on how far away the tracked object is
+    // The equation is 'scaledSpeed = (objY - 10)^3 / 2000.' which 
+    // gives a scaled speed of 0 at y=10 and +-0.5 at y=20, y=0 respectively
     double scaledSpeed = pow(objCenter.y - 10, 3) / 2000.;
+
+    // Adjust the target speed based on the speed of the object, our speed,
+    // and the above calculated scaled speed
     double newTargetSpeed = objSpeed + this->GetSpeed() + scaledSpeed;
     this->SetTargetSpeed(newTargetSpeed);
 
+    // If the new target speed is sufficiently low, count the car as stationary
     if(newTargetSpeed < 0.3){
         this->stationaryCount++;
     }else{
         this->stationaryCount = 0;
     }
 
+    // If the car has been stationary for sufficiently long, stop following and start
+    // trying to navigate around the object in front of it
     if(this->stationaryCount > 2000){
         this->currentState = avoidance;
         this->currentAvoidanceState = navigation;
     }
 
+    // Set the direction of the car to be angled at the tracked object
     if(objCenter.x != 0){
         this->SetTargetDirection(this->GetOrientation() - sdcAngle(PI / 2.) + sdcAngle(atan2(objCenter.y, objCenter.x)));
     }else{
@@ -313,15 +331,23 @@ void sdcCar::Follow() {
     }
 }
 
+/*
+ * In avoidance, the car's only concern is not hitting objects. Provides a couple emergency methods, one
+ * for stopping and one for swerving. Also provides a navigation case for maneuvering around objects in front
+ * of the car
+ */
 void sdcCar::Avoidance(){
+    // If there's nothing in front of the car and it's not in the middle
+    // of a navigation operation, exit the avoidance state
     if(this->frontObjects.size() == 0 && !this->trackingNavWaypoint){
         this->currentState = DEFAULT_STATE;
         this->currentAvoidanceState = notAvoiding;
         return;
     }
 
+    // Get lists of objects that are moving quickly towards us,
+    // and objects that are close to us
     std::vector<sdcVisibleObject> fastObjects, furiousObjects;
-
     if (this->frontObjects.size() > 0) {
         for(int i = 0; i < this->frontObjects.size(); i++){
             if(this->IsObjectTooFast(this->frontObjects[i])){
@@ -333,9 +359,13 @@ void sdcCar::Avoidance(){
         }
     }
 
+    // Objects moving relatively quickly towards the car are the highest priority. If any
+    // of these exist, react accordingly
     if(fastObjects.size() > 0){
         bool setState = false;
         for(int i = 0; i < fastObjects.size(); i++){
+            // If the object is moving faster than the car is, or the car is moving significantly faster than the object,
+            // try and swerve as there isn't enough time to stop
             double objSpeed = sqrt(pow(fastObjects[i].GetEstimatedXSpeed(),2) + pow(fastObjects[i].GetEstimatedYSpeed() - this->GetSpeed(),2));
             if(objSpeed > this->GetSpeed() || this->GetSpeed() > objSpeed + 4){
                 this->currentAvoidanceState = emergencySwerve;
@@ -343,24 +373,34 @@ void sdcCar::Avoidance(){
                 break;
             }
         }
+
+        // If the state hasn't been set to swerve, the car should be able to stop and thus
+        // avoid a collision
         if(!setState){
             this->currentAvoidanceState = emergencyStop;
         }
     }else if(furiousObjects.size() > 0){
+        // There are objects very close to the car, but not necessarily in danger of running into
+        // it. Try and navigate around them
         this->currentAvoidanceState = navigation;
     }else if(this->currentAvoidanceState != navigation){
+        // No dangerous objects were found, and the car is not in the middle of navigating around
+        // objects in front of it. Exit to default state
         this->currentAvoidanceState = notAvoiding;
         this->currentState = DEFAULT_STATE;
         return;
     }
 
     switch(this->currentAvoidanceState){
+        // Stop, hard.
         case emergencyStop:
         //std::cout << "stop" << std::endl;
         this->Stop();
         this->SetBrakeRate(10);
         break;
 
+        // Make an emergency turn and attempt to accelerate past
+        // the incoming danger
         case emergencySwerve:
         //std::cout << "swerve" << std::endl;
         this->SetTargetDirection(this->GetOrientation() + PI/2);
@@ -368,13 +408,18 @@ void sdcCar::Avoidance(){
         this->SetAccelRate(10);
         break;
 
+        // Carefully maneuver around perceived obstacles
         case navigation:
         {
+            // Set the target speed very low, and if the car is moving
+            // sufficiently slowly increase the rate we can turn
             this->SetTargetSpeed(1);
             if(this->GetSpeed() < 2) {
                 this->turningLimit = 30;
             }
 
+            // The car is currently driving to a custom waypoint that was already determined
+            // to be a safe target. Keep moving towards it
             if (this->trackingNavWaypoint) {
                 sdcAngle targetAngle = AngleToTarget(this->navWaypoint);
                 this->SetTargetDirection(targetAngle);
@@ -385,13 +430,14 @@ void sdcCar::Avoidance(){
                     this->turningLimit = 10;
                 }
             } else {
-                //std::cout << "nav" << std::endl;
+                // At this point, need to find a gap in the objects presented ahead of the car and 
+                // begin driving towards it
                 double maxWidth = -1;
                 double dist = 0;
                 double prevDist = 0;
                 sdcAngle targetAngle = this->GetOrientation();
 
-                // Check if the right-most object is on our left
+                // Check if the right-most object is on our left. If so, turn right
                 if (this->frontObjects[0].right.angle < PI) {
                     targetAngle = this->GetOrientation() + this->frontObjects[0].right.angle.GetMidAngle(sdcAngle(3*PI/2));
                     this->navWaypoint = math::Vector2d(this->x + cos(targetAngle.angle) * this->frontObjects[0].dist, this->y + sin(targetAngle.angle) * this->frontObjects[0].dist);
@@ -402,6 +448,8 @@ void sdcCar::Avoidance(){
                     break;
                 }
 
+                // Loop through all objects in front of the car, find the space with the largest width
+                // and store the point between them
                 math::Vector2d prevPoint = math::Vector2d(this->frontObjects[0].GetCenterPoint().x, 0);
                 sdcAngle prevAngle = sdcAngle(3*PI/2);
                 prevDist = this->frontObjects[0].dist;
@@ -419,13 +467,14 @@ void sdcCar::Avoidance(){
                     prevDist = curDist;
                 }
 
-                // Check if left-most object is on our right
+                // Check if left-most object is on our right. If so, turn left
                 if(prevAngle > PI || prevPoint.y > fmax(maxWidth, FRONT_OBJECT_COLLISION_WIDTH)){
                     targetAngle = this->GetOrientation() + prevAngle.GetMidAngle(sdcAngle(PI/2));
                     dist = prevDist;
                     std::cout << "edge case 2: " << targetAngle << std::endl;
                 }
 
+                // Set the waypoint to aim for and the flag to follow it
                 this->navWaypoint = math::Vector2d(this->x + cos(targetAngle.angle) * dist, this->y + sin(targetAngle.angle) * dist);
                 this->trackingNavWaypoint = true;
                 std::cout << "navWaypoint Set " << this->navWaypoint.x << " " << this->navWaypoint.y << std::endl;
@@ -443,6 +492,9 @@ void sdcCar::Avoidance(){
 
 }
 
+/*
+ * TODO
+ */
 void sdcCar::GridTurning(int turn){
     int progress = this->waypointProgress;
     if(turn != 1 && turn != 2){

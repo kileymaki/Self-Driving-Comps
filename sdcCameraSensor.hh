@@ -1,11 +1,3 @@
-//
-//  sdcLaserSensor.hh
-//
-//
-//  Created by selfcar on 10/25/15.
-//
-//
-
 #ifndef _sdcCameraSensor_hh
 #define _sdcCameraSensor_hh
 

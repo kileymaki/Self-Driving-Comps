@@ -1,11 +1,3 @@
-//
-//  sdcSideLaserSensor.hh
-//
-//
-//  Created by selfcar on 10/25/15.
-//
-//
-
 #ifndef _sdcSideLidarSensor_hh
 #define _sdcSideLidarSensor_hh
 

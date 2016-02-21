@@ -1,3 +1,11 @@
+/*
+ * This class registers and updates the front camera sensor.
+ *
+ * This class also handles video processing and lane finding based 
+ * upon video inputs to handle lane finding and tracking using 
+ * methods found in the paper "A lane-curve detection based on LCF"
+ */
+
 #include <boost/bind.hpp>
 #include <gazebo/gazebo.hh>
 #include <gazebo/physics/physics.hh>

@@ -90,12 +90,13 @@ void sdcCar::Drive()
         }else if(this->currentState == follow && !this->isTrackingObject){
             this->currentState = DEFAULT_STATE;;
         }
+
+        // Look for objects in danger of colliding with us, react appropriately
+        if (this->ObjectOnCollisionCourse()){
+            this->currentState = avoidance;
+        }
     }
 
-    // Look for objects in danger of colliding with us, react appropriately
-    if (this->ObjectOnCollisionCourse()){
-        this->currentState = avoidance;
-    }
 
     // Possible states: stop, waypoint, intersection, follow, avoidance
     switch(this->currentState)
@@ -306,6 +307,8 @@ void sdcCar::Follow() {
     // After the above loops, if not following anything just return
     if(!this->isTrackingObject) return;
 
+    std::cout << "Follow" << std::endl;
+
     math::Vector2d objCenter = tracked.GetCenterPoint();
     double objSpeed = tracked.GetEstimatedYSpeed();
 
@@ -404,7 +407,7 @@ void sdcCar::Avoidance(){
     switch(this->currentAvoidanceState){
         // Stop, hard.
         case emergencyStop:
-        //std::cout << "stop" << std::endl;
+        std::cout << "stop" << std::endl;
         this->Stop();
         this->SetBrakeRate(10);
         break;
@@ -412,7 +415,7 @@ void sdcCar::Avoidance(){
         // Make an emergency turn and attempt to accelerate past
         // the incoming danger
         case emergencySwerve:
-        //std::cout << "swerve" << std::endl;
+        std::cout << "swerve" << std::endl;
         this->SetTargetDirection(this->GetOrientation() + PI/2);
         this->SetTargetSpeed(6);
         this->SetAccelRate(10);
@@ -437,6 +440,7 @@ void sdcCar::Avoidance(){
                 if(sqrt(pow(this->navWaypoint.x - this->x,2) + pow(this->navWaypoint.y - this->y,2)) < 1) {
                     this->trackingNavWaypoint = false;
                     this->turningLimit = 10;
+                    std::cout << "Found waypoint" << std::endl;
                 }
             } else {
                 // At this point, need to find a gap in the objects presented ahead of the car and
@@ -451,6 +455,7 @@ void sdcCar::Avoidance(){
                     targetAngle = this->GetOrientation() + this->frontObjects[0].right.angle.GetMidAngle(sdcAngle(3*PI/2));
                     this->navWaypoint = math::Vector2d(this->x + cos(targetAngle.angle) * this->frontObjects[0].dist, this->y + sin(targetAngle.angle) * this->frontObjects[0].dist);
                     this->trackingNavWaypoint = true;
+                    std::cout << "edge case 1, set waypoint\t" << this->navWaypoint.x << "\t" << this->navWaypoint.y << std::endl;
                     break;
                 }
 
@@ -477,13 +482,15 @@ void sdcCar::Avoidance(){
                 if(prevAngle > PI || prevPoint.y > fmax(maxWidth, FRONT_OBJECT_COLLISION_WIDTH)){
                     targetAngle = this->GetOrientation() + prevAngle.GetMidAngle(sdcAngle(PI/2));
                     dist = prevDist;
+                    std::cout << "edge case 2, set waypoint\t";
                 }
 
                 // Set the waypoint to aim for and the flag to follow it
                 this->navWaypoint = math::Vector2d(this->x + cos(targetAngle.angle) * dist, this->y + sin(targetAngle.angle) * dist);
+                std::cout << this->navWaypoint.x << "\t" << this->navWaypoint.y << std::endl;
                 this->trackingNavWaypoint = true;
-                break;
             }
+            break;
         }
 
         case notAvoiding:
@@ -1820,7 +1827,7 @@ sdcCar::sdcCar(){
     // Set starting turning parameters
     this->steeringAmount = 0.0;
     this->targetSteeringAmount = 0.0;
-    this->targetDirection = sdcAngle(3 * PI / 2);
+    this->targetDirection = sdcAngle(0);
     this->turningLimit = 10.0;
 
     // Booleans for the car's actions

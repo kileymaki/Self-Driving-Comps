@@ -84,8 +84,8 @@ void sdcVisibleObject::Update(sdcLidarRay newLeft, sdcLidarRay newRight, double 
 
     math::Vector2d newCenterpoint = this->GetCenterPoint(newLeft, newRight, newDist);
 
-    double newEstimatedXSpeed = newCenterpoint.x - this->centerpoint.x;
-    double newEstimatedYSpeed = newCenterpoint.y - this->centerpoint.y;
+    double newEstimatedXSpeed = (newCenterpoint.x - this->centerpoint.x);
+    double newEstimatedYSpeed = (newCenterpoint.y - this->centerpoint.y);
 
     if(!this->brandSpankinNew){
         double alpha = fmax((newDist * .005), (.1 - newDist * .005));
@@ -93,6 +93,7 @@ void sdcVisibleObject::Update(sdcLidarRay newLeft, sdcLidarRay newRight, double 
         newEstimatedYSpeed = (alpha * newEstimatedYSpeed) + ((1 - alpha) * this->estimatedYSpeed);
     }
 
+    // std::cout << "Updated estimated Y speed\t" << this->estimatedYSpeed << "\t" << newEstimatedYSpeed << std::endl;
     this->estimatedXSpeed = newEstimatedXSpeed;
     this->estimatedYSpeed = newEstimatedYSpeed;
     // this->estimatedDirection = sdcAngle(atan2(newCenterpoint.x - this->centerpoint.x, newCenterpoint.y - this->centerpoint.y));

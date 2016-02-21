@@ -132,6 +132,9 @@ namespace gazebo {
         double targetSpeed;
         sdcAngle targetParkingAngle;
         bool parkingAngleSet;
+        bool isFixingParking;
+        bool parkingSpotSet;
+        double turningLimit;
 
         // for Follow
         bool isTrackingObject;

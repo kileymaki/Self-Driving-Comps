@@ -88,10 +88,10 @@ void sdcCar::Drive()
         // Default state; drive straight to target location
         case waypoint:
         // Handle lane driving
-        this->LanedDriving();
-        this->Accelerate();
+        // this->LanedDriving();
+        // this->Accelerate();
         // this->Stop();
-        //this->WaypointDriving(WAYPOINT_VEC);
+        this->WaypointDriving(WAYPOINT_VEC);
         break;
 
         // At a stop sign, performing a turn
@@ -112,6 +112,7 @@ void sdcCar::Drive()
 
         // Parks the car
         case parking:
+        this->turningLimit = 30.0;
         this->PerpendicularPark();
         // this->ParallelPark();
         break;
@@ -144,8 +145,8 @@ void sdcCar::MatchTargetDirection(){
         // 1.67 is the distance between wheels in the sdf
         // double proposedSteeringAmount = asin(1.67/steeringRadius);
 
-        double limit = 30;
-        double proposedSteeringAmount = fmax(fmin(-limit*tan(directionAngleChange.angle/-2), limit), -limit);
+        // double limit = 10;
+        double proposedSteeringAmount = fmax(fmin(-this->turningLimit*tan(directionAngleChange.angle/-2), this->turningLimit), -this->turningLimit);
         // When reversing, steering directions are inverted
         if(!this->reversing){
             this->SetTargetSteeringAmount(proposedSteeringAmount);
@@ -189,6 +190,7 @@ void sdcCar::MatchTargetSpeed(){
  * Drive from point to point in the given list
  */
 void sdcCar::WaypointDriving(std::vector<sdcWaypoint> waypoints) {
+    std::cout << "in waypoint" << std::endl;
     int progress = this->waypointProgress;
     //std::vector<math::Vector2d> waypoints = waypoints;
     // std::cout << progress << " / " << waypoints.size() << " " << (progress < waypoints.size()) << std::endl;
@@ -207,7 +209,13 @@ void sdcCar::WaypointDriving(std::vector<sdcWaypoint> waypoints) {
         if (distance < 0.5) {
             ++progress;
         }
+    } else if(this->isFixingParking){
+        std::cout << "exiting waypoint from parking" << std::endl;
+        this->isFixingParking = false;
+        this->currentState = parking;
+        this->currentPerpendicularState = straightPark;
     } else {
+        std::cout << "exiting waypoint then stop" << std::endl;
         this->currentState = stop;
     }
     this->waypointProgress = progress;
@@ -268,14 +276,14 @@ void sdcCar::Follow() {
     math::Vector2d objCenter = tracked.GetCenterPoint();
     double objSpeed = tracked.GetEstimatedYSpeed();
 
-    std::cout << objSpeed << "\t" << this->GetSpeed() << "\t" << objSpeed + this->GetSpeed() << std::endl;
-    this->SetTargetSpeed(objSpeed + this->GetSpeed());
-
+    // std::cout << objSpeed << "\t" << this->GetSpeed() << "\t" << objSpeed + this->GetSpeed() << std::endl;
+    double scaledSpeed = pow(objCenter.y - 10, 3) / 2000.;
+    this->SetTargetSpeed(objSpeed + this->GetSpeed() + scaledSpeed);
 
     if(objCenter.x > 0){
-        this->SetTargetDirection(this->GetOrientation() + (sdcAngle(PI / 2.) - sdcAngle(atan2(objCenter.y, objCenter.x))));
+        this->SetTargetDirection(this->GetOrientation() - sdcAngle(PI / 2.) + sdcAngle(atan2(objCenter.y, objCenter.x)));
     }else if(objCenter.x < 0){
-        this->SetTargetDirection(this->GetOrientation() - (sdcAngle(PI / 2.) - sdcAngle(atan2(objCenter.y, objCenter.x))));
+        this->SetTargetDirection(this->GetOrientation() - sdcAngle(PI / 2.) + sdcAngle(atan2(objCenter.y, objCenter.x)));
     }else{
         this->SetTargetDirection(this->GetOrientation());
     }
@@ -420,33 +428,49 @@ void sdcCar::PerpendicularPark(){
     switch(this->currentPerpendicularState)
     {
         case donePark:
-        {
-        std::cout << "in done park" << std::endl;
-
-        double sideMargins = leftBackSideLidar[numBackLeftRays/2] - rightBackSideLidar[numBackRightRays/2];
-        double parkingSpaceMidDist = (0.8 + leftBackSideLidar[numBackLeftRays/2] + rightBackSideLidar[numBackRightRays/2]) / 2;
-        double parkingSpaceOffset = parkingSpaceMidDist - pos.x;
-        sdcAngle posAngle = this->GetOrientation() + PI/2;
-        math::Vector2d targetParkingSpot = math::Vector2d(pos.x + sin(posAngle.angle) * parkingSpaceOffset, pos.y + cos(posAngle.angle) * parkingSpaceOffset);
-        posAngle = posAngle - PI/2;
-        targetParkingSpot = math::Vector2d(targetParkingSpot.x + sin(posAngle.angle) * 4, targetParkingSpot.y + cos(posAngle.angle) * 4);
-        if(sideMargins < 0){
-            if(sideMargins < -0.25){
-                fix.push_back(sdcWaypoint(0, std::pair<double,double>(targetParkingSpot.x, targetParkingSpot.y)));
-                this->StopReverse();
-                this->WaypointDriving(fix);
-                break;
-            }
-        }
-
+        // {
+        //     std::cout << "in done park" << std::endl;
+        //     // Fixes the car's position if it's too close on either side
+        //     if(!parkingSpotSet){
+        //         double sideMargins = leftBackSideLidar[numBackLeftRays/2] - rightBackSideLidar[numBackRightRays/2];
+        //         double parkingSpaceMidDist = (0.8 + leftBackSideLidar[numBackLeftRays/2] + rightBackSideLidar[numBackRightRays/2]) / 2;
+        //         double parkingSpaceOffset = parkingSpaceMidDist - pos.x;
+        //         sdcAngle posAngle = this->GetOrientation() - PI/2;
+        //         math::Vector2d targetParkingSpot = math::Vector2d(pos.x + sin(posAngle.angle) * parkingSpaceOffset, pos.y + cos(posAngle.angle) * parkingSpaceOffset);
+        //         posAngle = posAngle + PI/2;
+        //         targetParkingSpot = math::Vector2d(targetParkingSpot.x + sin(posAngle.angle) * 4, targetParkingSpot.y + cos(posAngle.angle) * 4);
+        //         std::cout << targetParkingSpot.x << "\t" << targetParkingSpot.y << std::endl;
+        //         std::cout << pos.x << "\t" << pos.y << std::endl;
+        //         std::cout << (sideMargins < 0) << "\t" << (sideMargins < -0.1) << std::endl;
+        //
+        //         if(sideMargins < 0){
+        //             if(sideMargins < -0.1){
+        //                 this->isFixingParking = true;
+        //                 this->parkingSpotSet = true;
+        //                 WAYPOINT_VEC.clear();
+        //
+        //                 WAYPOINT_VEC.push_back(sdcWaypoint(0, std::pair<double,double>(targetParkingSpot.x * -1, targetParkingSpot.y * -1)));
+        //                 std::cout << targetParkingSpot.x * -1 << "\t" << targetParkingSpot.y * -1 << std::endl;
+        //                 this->StopReverse();
+        //                 // this->WaypointDriving(WAYPOINT_VEC);
+        //                 this->currentState = waypoint;
+        //                 break;
+        //             }
+        //         }
+        //     }
+        //
+        //     // std::cout << "target spot: " << targetParkingSpot.x << "\t" << targetParkingSpot.y << std::endl;
+        //     // std::cout << "car's pos: " << pos.x << "\t" << pos.y << std::endl;
         this->StopReverse();
         this->Stop();
+        this->turningLimit = 10.0;
+        this->parkingSpotSet = false;
         this->currentState = stop;
-        break;
-    }
+            break;
+        // }
 
         case frontPark:
-        std::cout << "in front park" << std::endl;
+        // std::cout << "in front park" << std::endl;
         if(backLidar.size() != 0){
             for(int i = 0; i < backRightBound.size(); i++) {
                 if(backRightBound[i] < 1.5){
@@ -488,6 +512,7 @@ void sdcCar::PerpendicularPark(){
         case straightPark:
         // std::cout << "in straight park" << std::endl;
         this->Reverse();
+        this->SetTargetDirection(targetParkingAngle);
         this->SetTargetSpeed(0.5);
         if(backLidar[numBackRays / 2] < 0.5){
             this->currentPerpendicularState = donePark;
@@ -500,7 +525,7 @@ void sdcCar::PerpendicularPark(){
         break;
 
         case backPark:
-        std::cout << "in back park" << std::endl;
+        // std::cout << "in back park" << std::endl;
         // If the car is too close to anything on the back or sides, stop and fix it
         if(backLidar.size() != 0){
             for(int i = 0; i < backRightBound.size(); i++) {
@@ -729,6 +754,7 @@ void sdcCar::ParallelPark(){
         std::cout << "done Parallel" << std::endl;
         this->Stop();
         this->StopReverse();
+        this->turningLimit = 10.0;
         this->currentState = stop;
         break;
     }
@@ -1319,8 +1345,6 @@ void sdcCar::OnUpdate()
     // Get the cars current rotation
     this->yaw = sdcSensorData::GetYaw();
 
-    // this->FrontLidarUpdate();
-
     if(this->frontLidarLastUpdate != sdcSensorData::GetLidarLastUpdate(FRONT)){
         std::vector<sdcVisibleObject> v = sdcSensorData::GetObjectsInFront();
         this->UpdateFrontObjects(v);
@@ -1422,7 +1446,7 @@ sdcCar::sdcCar(){
     this->accelRate = 1.0;
     this->brakeRate = 1.0;
 
-    this->maxCarSpeed = 2;
+    this->maxCarSpeed = 6;
     this->maxCarReverseSpeed = -10;
 
     this->currentState = follow;
@@ -1433,6 +1457,7 @@ sdcCar::sdcCar(){
     this->steeringAmount = 0.0;
     this->targetSteeringAmount = 0.0;
     this->targetDirection = sdcAngle(0.0);
+    this->turningLimit = 10.0;
 
     this->turning = false;
     this->reversing = false;
@@ -1440,6 +1465,8 @@ sdcCar::sdcCar(){
 
     this->targetParkingAngle = sdcAngle(0.0);
     this->parkingAngleSet = false;
+    this->isFixingParking = false;
+    this->parkingSpotSet = false;
 
     this->targetSpeed = 6;
 

@@ -63,9 +63,6 @@ std::vector<sdcIntersection> intersections;
 const int size = 5;
 const std::pair<double,double> destination = {0,0};
 
-
-// const math::Vector2d WAYPOINT_POS = {10,10};
-// const std::vector<math::Vector2d> WAYPOINT_POS_VEC = {{150,100},{150,150}};
 const sdcWaypoint WAYPOINT = sdcWaypoint(1,{150,0});
 std::vector<sdcWaypoint> WAYPOINT_VEC;
 
@@ -161,12 +158,6 @@ void sdcCar::Drive()
     this->MatchTargetDirection();
     // Attempts to match the target speed
     this->MatchTargetSpeed();
-
-    //if (sdcSensorData::stopSignInLeftCamera && sdcSensorData::stopSignInRightCamera) {
-    //  this->Stop();
-    //} else {
-    //  this->SetTargetSpeed(4);
-    //}
 }
 
 /*
@@ -177,10 +168,6 @@ void sdcCar::MatchTargetDirection(){
     sdcAngle directionAngleChange = this->GetDirection() - this->targetDirection;
     // If the car needs to turn, set the target steering amount
     if (!directionAngleChange.WithinMargin(DIRECTION_MARGIN_OF_ERROR)) {
-        // Possible different approach to steering:
-        // 1.67 is the distance between wheels in the sdf
-        // double proposedSteeringAmount = asin(1.67/steeringRadius);
-
         // The steering amount scales based on how far we have to turn, with upper and lower limits
         double proposedSteeringAmount = fmax(fmin(-this->turningLimit*tan(directionAngleChange.angle/-2), this->turningLimit), -this->turningLimit);
 
@@ -234,7 +221,6 @@ void sdcCar::MatchTargetSpeed(){
  */
 void sdcCar::WaypointDriving(std::vector<sdcWaypoint> WAYPOINT_VEC) {
     int progress = this->waypointProgress;
-    //std::vector<math::Vector2d> WAYPOINT_VEC = WAYPOINT_VEC;
     if(progress < WAYPOINT_VEC.size()){
         // Pull the next waypoint and set the car to drive towards it
         math::Vector2d nextTarget = {WAYPOINT_VEC[progress].pos.first,WAYPOINT_VEC[progress].pos.second};
@@ -243,7 +229,6 @@ void sdcCar::WaypointDriving(std::vector<sdcWaypoint> WAYPOINT_VEC) {
 
         this->Accelerate();
 
-        //sdcSensorData::GetCurrentCoord().Distance(nextTarget);
         // Check if the car is close enough to the target to move on
         double distance = sqrt(pow(WAYPOINT_VEC[progress].pos.first - this->x,2) + pow(WAYPOINT_VEC[progress].pos.second - this->y,2));
         if (distance < 5) {
@@ -518,7 +503,7 @@ void sdcCar::Avoidance(){
 }
 
 /*
- * TODO
+ * Executes a turn at an intersection
  */
 void sdcCar::GridTurning(int turn){
     int progress = this->waypointProgress;
@@ -918,25 +903,6 @@ void sdcCar::ParallelPark(){
         break;
     }
 }
-
-/*
- * Uses the front LIDAR sensor to detect an intersection.
- * Based off of how many fields of view we have an what we can see we try to turn.
- * When we are almost at an intersection slow down.
- */
-void sdcCar::DetectIntersection(){
-    /*if(this->atIntersection == 0 && this->flViews.size() == 4 && this->flSideRight == 0 && this->flSideLeft == 0){
-        this->SetTargetSpeed(2);
-        this->atIntersection = 1;
-    }else*/ if (this->atIntersection == 0 /*&& this->flViews.size() > 1 && this->flViews.size() < 4 && (this->flSideLeft != 0 && this->flSideRight != 0)*/){
-        this->SetTargetSpeed(1);
-        this->atIntersection = 1;
-    } else if (this->atIntersection == 1 && (this->GetDirection() - this->targetDirection).WithinMargin(PI/16)){
-        this->SetTargetSpeed(5);
-        this->atIntersection = 0;
-    }
-}
-
 
 //////////////////////
 // DIJKSTRA METHODS //

@@ -82,7 +82,7 @@ void sdcCameraSensor::OnUpdate() {
 	// Hough Transform detects lines within the edge map, stores result in lines.
 	float PI = 3.14159;
 	std::vector<Vec2f> lines;
-	HoughLines(contours,lines,1,PI/180, 100);
+	HoughLines(contours,lines,1,PI/180, 75);
 	//HoughLinesP(contours,lines,1,PI/180,80, 30, 10 );
 
 	//print out line angles
@@ -124,6 +124,10 @@ void sdcCameraSensor::OnUpdate() {
 	// Changed things so the lines are drawn on the image, not the region of interest. hopefully
 	// this will make some of the issues easier to debug
 	//std::cout << "left theta angle: " << left_lane_marker[1] << "| right theta angle: " << right_lane_marker[1] << std::endl;
+	double angle_average = (left_lane_marker[1]+right_lane_marker[1])/2;
+	double newSteeringAmount = -20*PI*(fabs(angle_average - PI/2))+50;
+	sdcSensorData::UpdateSteeringMagnitude(newSteeringAmount);
+
 	//draw left lane marker
 	Point leftp1 = Point(left_lane_marker[0]/cos(left_lane_marker[1]),0.5*image.rows);
 	Point leftp2 = Point((left_lane_marker[0] - (imageROI.rows) * sin(left_lane_marker[1])) / cos(left_lane_marker[1]), (image.rows));
@@ -135,7 +139,7 @@ void sdcCameraSensor::OnUpdate() {
 	line(image, rightp1, rightp2, Scalar(255), 3);
 
 	// std::cout << leftp1 << "\t" << leftp2 << "\t" << rightp1 << "\t" << rightp2 << "\t" << std::endl;
-
+/*
 	//BEGIN HAAR CASCADE OBJECT DETECTION
 	if(!cpu_stop_sign.load(cascade_file_path)){ printf("--(!)Error loading cascade\n");};
 	std::vector<Rect> stopSigns;
@@ -159,7 +163,7 @@ void sdcCameraSensor::OnUpdate() {
 	}else{
 		sdcSensorData::sizeOfStopSign = 0;
 	}
-
+*/
 
 	// BEGIN LCF LANE DETECTION
 	// This algorithm was decribed in the paper "A lane-curve detection based on an LCF"
@@ -173,8 +177,8 @@ void sdcCameraSensor::OnUpdate() {
 	// A = 25 * i / 471.2247
 
 	//TBH THIS STUFF SHOULD NOT BE SET EVERY UPDATE NEEDS TO BE MOVED ~~~~~~~
-	std::vector<double> vec_of_i_vals(101);
-	std::iota(std::begin(vec_of_i_vals), std::end(vec_of_i_vals), -50.);
+	std::vector<double> vec_of_i_vals(10);
+	std::iota(std::begin(vec_of_i_vals), std::end(vec_of_i_vals), -5.);
 	//vec_of_i_vals.push_back(48.);
 	//vec_of_i_vals.push_back(-48.);
 	//vec_of_i_vals.push_back(-100.);
@@ -226,7 +230,7 @@ void sdcCameraSensor::OnUpdate() {
 
 	line(image, Point(lane_midpoint, 480), Point(lane_midpoint, 0), Scalar(0, 255, 0), 1);
 	Point nfa_p1, nfa_p2, ffa_p1, ffa_p2;
-
+	
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -283,11 +287,11 @@ void sdcCameraSensor::OnUpdate() {
 			}
 		}
 
-		// if(left_curve_points_top.size() > 1) {
-		// 	for (int j = 0; j < left_curve_points_top.size() - 1; j++) {
-		// 		line(image, left_curve_points_top[j], left_curve_points_top[j + 1], Scalar(0,0,255), 1, CV_AA);
-		// 	}
-		// }
+		if(left_curve_points_top.size() > 1) {
+			for (int j = 0; j < left_curve_points_top.size() - 1; j++) {
+				line(image, left_curve_points_top[j], left_curve_points_top[j + 1], Scalar(0,0,255), 1, CV_AA);
+			}
+		}
 
 		double left_curve_magnitude = 0;
 		if(left_curve_points_bot.size() > 1) {
@@ -295,12 +299,13 @@ void sdcCameraSensor::OnUpdate() {
 				//This is where we would do LROI calculations
 				//LROI is a triangle, the top point is height of vanishing point.
 				//LROI is only calculated for the bottom half of the LCF
-				//line(image, left_curve_points_bot[j], left_curve_points_bot[j + 1], Scalar(0,0,255), 1, CV_AA);
+				line(image, left_curve_points_bot[j], left_curve_points_bot[j + 1], Scalar(0,0,255), 1, CV_AA);
 				double xf,yf;
 				double ypf_pos, ypf_neg,g;
 
 				xf = left_curve_points_bot[j].x;
 				yf = left_curve_points_bot[j].y;
+				std::cout << xf << "\t" << yf << std::endl;
 				g = contours.at<uchar>(yf,xf);
 				//std::cout << g << std::endl;
 				left_curve_magnitude += g;
@@ -310,12 +315,12 @@ void sdcCameraSensor::OnUpdate() {
 
 		//double left_curve_magnitude_total = ((1.*left_curve_points_bot.size()) - left_curve_magnitude)/(1.*left_curve_points_bot.size());
 		double left_curve_magnitude_total = ((1.*left_curve_points_bot.size()) - left_curve_magnitude);
-		if (left_curve_magnitude_total >= left_max_score) {
-			//std::cout << left_score << " should be greater than " << left_max_score;
+		if (left_curve_magnitude_total > left_max_score) {
+			//std::cout << left_curve_magnitude_total << " should be greater than " << left_max_score;
 			left_max_score = left_curve_magnitude_total;
-			//std::cout << ". our new high score is : " << left_score;
+			std::cout << ". our new high score is : " << left_max_score;
 			left_optimal_i = *q;
-			//std::cout << ", which is given by curve number: " << left_optimal_i << std::endl;
+			std::cout << ", which is given by curve number: " << left_optimal_i << std::endl;
 			//std::cout << left_optimal_i << std::endl;
 		}
 
@@ -330,7 +335,7 @@ void sdcCameraSensor::OnUpdate() {
 	e = pow((b-v),2) + (eps * a * left_optimal_i);
 	std::vector<Point> left_curve_points_top, left_curve_points_bot;
 
-	for (float x = 0.; x < 640; x++ ) {
+	for (float x = 0.; x < u; x++ ) {
 		float left_y_top = (a * x) + b - sqrt( c*pow(x,2) + (d * x) + e);
 		float left_y_bot = (a * x) + b + sqrt( c*pow(x,2) + (d * x) + e);
 
@@ -413,18 +418,18 @@ void sdcCameraSensor::OnUpdate() {
 			}
 		}
 
-		// if(right_curve_points_top.size() > 1) {
-		// 	for (int j = 0; j < right_curve_points_top.size() - 1; j++){
-		// 		line(image, right_curve_points_top[j], right_curve_points_top[j + 1], Scalar(0,0,255), 1, CV_AA);
-		// 	}
-		// }
+		if(right_curve_points_top.size() > 1) {
+			for (int j = 0; j < right_curve_points_top.size() - 1; j++){
+				line(image, right_curve_points_top[j], right_curve_points_top[j + 1], Scalar(0,0,255), 1, CV_AA);
+			}
+		}
 		double curve_magnitude = 0;
 		if(right_curve_points_bot.size() > 1) {
 			for (int j = 0; j < right_curve_points_bot.size() - 1; j++) {
 				//This is where we would do LROI calculations
 				//LROI is a triangle, the top point is height of vanishing point.
 				//LROI is only calculated for the bottom half of the LCF
-				//line(image, right_curve_points_bot[j], right_curve_points_bot[j + 1], Scalar(0,0,255), 1, CV_AA);
+				line(image, right_curve_points_bot[j], right_curve_points_bot[j + 1], Scalar(0,0,255), 1, CV_AA);
 				double xf,yf;
 				double ypf_pos, ypf_neg,g;
 				xf = right_curve_points_bot[j].x;

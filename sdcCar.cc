@@ -82,6 +82,7 @@ std::vector<sdcWaypoint> WAYPOINT_VEC;
  */
 void sdcCar::Drive()
 {
+    /*
     // If not in avoidance, check if we should start following the thing
     // in front of us. If following is done, kick out to default state
     if(this->currentState != intersection && this->currentState != avoidance){
@@ -102,9 +103,9 @@ void sdcCar::Drive()
             this->currentState = avoidance;
         }
     }
-
+    
     this->ignoreStopSignsCounter = fmax(this->ignoreStopSignsCounter - 1, 0);
-
+    */
 
     // Possible states: stop, waypoint, intersection, follow, avoidance
     switch(this->currentState)
@@ -117,7 +118,7 @@ void sdcCar::Drive()
         // Default state; drive straight to target location
         case waypoint:
         // Handle lane driving
-        // this->LanedDriving();
+        this->LanedDriving();
         this->Accelerate();
         // this->Stop();
         //this->WaypointDriving(WAYPOINT_VEC);
@@ -271,6 +272,8 @@ void sdcCar::WaypointDriving(std::vector<sdcWaypoint> WAYPOINT_VEC) {
  */
 void sdcCar::LanedDriving() {
     int lanePos = sdcSensorData::LanePosition();
+    this->SetTurningLimit(sdcSensorData::GetNewSteeringMagnitude());
+    //std::cout << "New steering amount: " << sdcSensorData::GetNewSteeringMagnitude() << std::endl;
     if (!(lanePos > 320 || lanePos < -320)) {
         // It's beautiful don't question it
         sdcAngle laneWeight = sdcAngle(tan(lanePos/(PI*66.19))/10);
@@ -425,7 +428,7 @@ void sdcCar::Avoidance(){
     switch(this->currentAvoidanceState){
         // Stop, hard.
         case emergencyStop:
-        std::cout << "stop" << std::endl;
+        //std::cout << "stop" << std::endl;
         this->Stop();
         this->SetBrakeRate(10);
         break;
@@ -433,7 +436,7 @@ void sdcCar::Avoidance(){
         // Make an emergency turn and attempt to accelerate past
         // the incoming danger
         case emergencySwerve:
-        std::cout << "swerve" << std::endl;
+        //std::cout << "swerve" << std::endl;
         this->SetTargetDirection(this->GetOrientation() + PI/2);
         this->SetTargetSpeed(6);
         this->SetAccelRate(10);

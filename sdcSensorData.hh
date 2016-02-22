@@ -29,6 +29,9 @@ namespace gazebo
         static std::vector<double> GetLidarRays(LidarPos lidar);
         static void UpdateCameraData(int lanePos);
         static int LanePosition();
+        static void UpdateSteeringMagnitude(double steerMag);
+
+        static double GetNewSteeringMagnitude();
 
         static std::vector<sdcLidarRay> GetBlockedFrontRays();
         static std::vector<sdcLidarRay> GetBlockedBackRays();
@@ -50,6 +53,7 @@ namespace gazebo
         static bool stopSignInLeftCamera;
         static bool stopSignInRightCamera;
         static int lanePosition;
+        static double newSteerMagnitude;
 
         // GPS variables and methods
         static double gpsX;

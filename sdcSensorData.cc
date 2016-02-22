@@ -44,6 +44,7 @@ double sdcSensorData::sizeOfStopSign = 0;
 bool sdcSensorData::stopSignInLeftCamera = false;
 bool sdcSensorData::stopSignInRightCamera = false;
 int sdcSensorData::lanePosition = 0;
+double sdcSensorData::newSteerMagnitude = 10;
 
 /*
  * Initializes the lidar in the given position to store its minimum angle, as well as the resolution
@@ -121,6 +122,14 @@ void sdcSensorData::UpdateCameraData(int lanePos) {
 
 int sdcSensorData::LanePosition() {
     return lanePosition;
+}
+
+void sdcSensorData::UpdateSteeringMagnitude(double steerMag) {
+    newSteerMagnitude = steerMag;
+}
+
+double sdcSensorData::GetNewSteeringMagnitude() {
+    return newSteerMagnitude;
 }
 
 /*

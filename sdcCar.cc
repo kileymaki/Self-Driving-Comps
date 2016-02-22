@@ -63,7 +63,6 @@ std::vector<sdcIntersection> intersections;
 const int size = 5;
 const std::pair<double,double> destination = {0,0};
 
-const sdcWaypoint WAYPOINT = sdcWaypoint(1,{150,0});
 std::vector<sdcWaypoint> WAYPOINT_VEC;
 
 
@@ -100,7 +99,7 @@ void sdcCar::Drive()
             this->currentState = avoidance;
         }
     }
-    
+
     this->ignoreStopSignsCounter = fmax(this->ignoreStopSignsCounter - 1, 0);
     */
 
@@ -115,10 +114,10 @@ void sdcCar::Drive()
         // Default state; drive straight to target location
         case waypoint:
         // Handle lane driving
-        this->LanedDriving();
-        this->Accelerate();
+
+        // this->Accelerate();
         // this->Stop();
-        //this->WaypointDriving(WAYPOINT_VEC);
+        this->WaypointDriving(WAYPOINT_VEC);
         break;
 
         // At a stop sign, performing a turn
@@ -182,14 +181,12 @@ void sdcCar::MatchTargetDirection(){
 
     // Check if the car needs to steer, and apply a small turn in the corresponding direction
     if (!(std::abs(this->targetSteeringAmount - this->steeringAmount) < STEERING_MARGIN_OF_ERROR)) {
-        this->turning = true;
         if (this->steeringAmount < this->targetSteeringAmount) {
             this->steeringAmount = this->steeringAmount + STEERING_ADJUSTMENT_RATE;
         }else{
             this->steeringAmount = this->steeringAmount - STEERING_ADJUSTMENT_RATE;
         }
     } else {
-        this->turning = false;
     }
 }
 
@@ -224,17 +221,23 @@ void sdcCar::WaypointDriving(std::vector<sdcWaypoint> WAYPOINT_VEC) {
     int progress = this->waypointProgress;
     if(progress < WAYPOINT_VEC.size()){
         // Pull the next waypoint and set the car to drive towards it
-        math::Vector2d nextTarget = {WAYPOINT_VEC[progress].pos.first,WAYPOINT_VEC[progress].pos.second};
-        sdcAngle targetAngle = AngleToTarget(nextTarget);
-        this->SetTargetDirection(targetAngle);
+
 
         this->Accelerate();
 
         // Check if the car is close enough to the target to move on
         double distance = sqrt(pow(WAYPOINT_VEC[progress].pos.first - this->x,2) + pow(WAYPOINT_VEC[progress].pos.second - this->y,2));
-        if (distance < 5) {
+        if (distance < 7) {
+            this->turning = true;
+        }
+        if(this->turning == true){
+            this->SetTurningLimit(20);
             GridTurning(WAYPOINT_VEC[progress].waypointType);
-            ++progress;
+        } else {
+            math::Vector2d nextTarget = {WAYPOINT_VEC[progress].pos.first,WAYPOINT_VEC[progress].pos.second};
+            sdcAngle targetAngle = AngleToTarget(nextTarget);
+            this->SetTargetDirection(targetAngle);
+            // this->LanedDriving();
         }
     } else if(this->isFixingParking){
         this->isFixingParking = false;
@@ -243,7 +246,6 @@ void sdcCar::WaypointDriving(std::vector<sdcWaypoint> WAYPOINT_VEC) {
     } else {
         this->currentState = stop;
     }
-    this->waypointProgress = progress;
 }
 
 /*
@@ -253,7 +255,6 @@ void sdcCar::WaypointDriving(std::vector<sdcWaypoint> WAYPOINT_VEC) {
 void sdcCar::LanedDriving() {
     int lanePos = sdcSensorData::LanePosition();
     this->SetTurningLimit(sdcSensorData::GetNewSteeringMagnitude());
-    //std::cout << "New steering amount: " << sdcSensorData::GetNewSteeringMagnitude() << std::endl;
     if (!(lanePos > 320 || lanePos < -320)) {
         // It's beautiful don't question it
         sdcAngle laneWeight = sdcAngle(tan(lanePos/(PI*66.19))/10);
@@ -512,15 +513,22 @@ void sdcCar::Avoidance(){
  */
 void sdcCar::GridTurning(int turn){
     int progress = this->waypointProgress;
-    if(turn != 1 && turn != 2){
+    if(turn == 3){
+        this->waypointProgress++;
+        this->currentState = stop;
+        return;
+    } else if (turn == 0){
+        this->waypointProgress++;
+        this->turning = false;
         return;
     }
     math::Vector2d nextTarget = {WAYPOINT_VEC[progress+1].pos.first,WAYPOINT_VEC[progress+1].pos.second};
     sdcAngle targetAngle = AngleToTarget(nextTarget);
     this->SetTargetDirection(targetAngle);
-    sdcAngle margin;
-    while(margin > .1 || margin < -.1){
-        margin = this->GetOrientation().FindMargin(targetAngle);
+    sdcAngle margin = this->GetOrientation().FindMargin(targetAngle);
+    if(margin < .1 && margin > -.1){
+        this->turning = false;
+        this->waypointProgress++;
     }
 }
 
@@ -1821,7 +1829,7 @@ sdcCar::sdcCar(){
     this->steeringAmount = 0.0;
     this->targetSteeringAmount = 0.0;
     this->targetDirection = sdcAngle(0);
-    this->turningLimit = 10.0;
+    this->turningLimit = 20.0;
 
     // Booleans for the car's actions
     this->turning = false;

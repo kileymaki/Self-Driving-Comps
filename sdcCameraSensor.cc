@@ -54,7 +54,7 @@ void sdcCameraSensor::Load(sensors::SensorPtr _sensor, sdf::ElementPtr /*_sdf*/)
 		}
 
 		// Connect to the sensor update event.
-		this->updateConnection = this->parentSensor->ConnectUpdated(boost::bind(&sdcCameraSensor::OnUpdate, this));
+		// this->updateConnection = this->parentSensor->ConnectUpdated(boost::bind(&sdcCameraSensor::OnUpdate, this));
 
 		// Make sure the parent sensor is active.
 		this->parentSensor->SetActive(true);
@@ -228,7 +228,7 @@ void sdcCameraSensor::OnUpdate() {
 
 	line(image, Point(lane_midpoint, 480), Point(lane_midpoint, 0), Scalar(0, 255, 0), 1);
 	Point nfa_p1, nfa_p2, ffa_p1, ffa_p2;
-	
+
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -258,7 +258,7 @@ void sdcCameraSensor::OnUpdate() {
 	line(image, ffa_p1, ffa_p2, Scalar(255,255,0), 1, CV_AA);
 	//std::cout << "ASYMPTOTES: " << nfa_p1 << "\t" << nfa_p2 << "\t" << ffa_p1 << "\t" << ffa_p2 << "\t" << std::endl;
 	// std::cout << "VARIABLES: " << a << "\t" << b << "\t" << c << "\t" << d << "\t" << std::endl;
-	int left_max_score = 0, left_optimal_i = 0;
+	int left_max_score = 0, left_optimal_i = 1000;
 
 	//generate curvature list
 	for (std::vector<double>::const_iterator q = vec_of_i_vals.begin(); q != vec_of_i_vals.end(); q++) {
@@ -328,10 +328,11 @@ void sdcCameraSensor::OnUpdate() {
 		// }
 		// std::cout << " | " << left_score << " | " << left_optimal_i << " | \n";
 	}
-
+	std::vector<Point> left_curve_points_top, left_curve_points_bot;
+	if(left_optimal_i != 1000) {
 	//DISPLAY LEFT LANE CURVE WITH OPTIMAL CURVATURE VALUE
 	e = pow((b-v),2) + (eps * a * left_optimal_i);
-	std::vector<Point> left_curve_points_top, left_curve_points_bot;
+
 
 	for (float x = 0.; x < 640.; x++ ) {
 		float left_y_top = (a * x) + b - sqrt( c*pow(x,2) + (d * x) + e);
@@ -347,7 +348,7 @@ void sdcCameraSensor::OnUpdate() {
 				left_curve_points_bot.push_back(left_curve_point_bot);
 		}
 	}
-
+	}
 	// if(left_curve_points_top.size() > 1) {
 	// 	for (int i = 0; i < left_curve_points_top.size() - 1; i++){
 	// 		line(image, left_curve_points_top[i], left_curve_points_top[i + 1], Scalar(0,255,0), 3, CV_AA);
@@ -390,7 +391,7 @@ void sdcCameraSensor::OnUpdate() {
 
 	//std::cout << "ASYMPTOTES: " << nfa_p1 << "\t" << nfa_p2 << "\t" << ffa_p1 << "\t" << ffa_p2 << "\t" << std::endl;
 	// std::cout << "VARIABLES: " << a << "\t" << b << "\t" << c << "\t" << d << "\t" << std::endl;
-	double right_max_score = 0, right_optimal_i = 0;
+	double right_max_score = 0, right_optimal_i = 1000;
 
 	//generate curvature list
 	for (std::vector<double>::const_iterator q = vec_of_i_vals.begin(); q != vec_of_i_vals.end(); q++) {
@@ -456,8 +457,10 @@ void sdcCameraSensor::OnUpdate() {
 	//std::cout << right_optimal_i << std::endl;
 
 	//DISPLAY RIGHT LANE CURVE WITH OPTIMAL CURVATURE VALUE
-	e = pow((b-v),2) + (eps * a * right_optimal_i);
 	std::vector<Point> right_curve_points_top, right_curve_points_bot;
+	if(right_optimal_i != 1000) {
+	e = pow((b-v),2) + (eps * a * right_optimal_i);
+
 
 	for (float x = 0.; x < 640. ; x++ ) {
 		float right_y_top = (a * x) + b - sqrt( c*pow(x,2) + (d * x) + e);
@@ -473,7 +476,7 @@ void sdcCameraSensor::OnUpdate() {
 				right_curve_points_bot.push_back(right_curve_point_bot);
 		}
 	}
-
+	}
 	// if(right_curve_points_top.size() > 1) {
 	// 	for (int i = 0; i < right_curve_points_top.size() - 1; i++){
 	// 		line(image, right_curve_points_top[i], right_curve_points_top[i + 1], Scalar(0,255,0), 3, CV_AA);

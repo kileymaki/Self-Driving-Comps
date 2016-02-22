@@ -84,23 +84,26 @@ void sdcCar::Drive()
 {
     // If not in avoidance, check if we should start following the thing
     // in front of us. If following is done, kick out to default state
-    if(this->currentState != avoidance){
+    if(this->currentState != intersection && this->currentState != avoidance){
+        // If there's a stop sign, assume we're at an intersection
+        if(this->ignoreStopSignsCounter == 0 && sdcSensorData::stopSignFrameCount > 5){
+            this->currentState = intersection;
+        }
+
+        // If something is ahead of us, default to trying to follow it
         if (this->ObjectDirectlyAhead()){
-            // this->currentState = follow;
+            this->currentState = follow;
         }else if(this->currentState == follow && !this->isTrackingObject){
-            // this->currentState = DEFAULT_STATE;;
+            this->currentState = DEFAULT_STATE;;
         }
 
         // Look for objects in danger of colliding with us, react appropriately
         if (this->ObjectOnCollisionCourse()){
-            // this->currentState = avoidance;
+            this->currentState = avoidance;
         }
     }
 
-    if(this->ignoreStopSignsCounter == 0 && sdcSensorData::stopSignFrameCount > 5){
-        this->currentState = intersection;
-    }
-    this->ignoreStopSignsCounter = this->ignoreStopSignsCounter > 0 ? this->ignoreStopSignsCounter - 1 : 0;
+    this->ignoreStopSignsCounter = fmax(this->ignoreStopSignsCounter - 1, 0);
 
 
     // Possible states: stop, waypoint, intersection, follow, avoidance
@@ -149,7 +152,6 @@ void sdcCar::Drive()
 
         // Parks the car
         case parking:
-        this->turningLimit = 30.0;
         this->PerpendicularPark();
         // this->ParallelPark();
         break;
@@ -444,7 +446,7 @@ void sdcCar::Avoidance(){
             // sufficiently slowly increase the rate we can turn
             this->SetTargetSpeed(1);
             if(this->GetSpeed() < 2) {
-                this->turningLimit = 30;
+                this->SetTurningLimit(30.0);
             }
 
             // The car is currently driving to a custom waypoint that was already determined
@@ -455,7 +457,7 @@ void sdcCar::Avoidance(){
 
                 if(sqrt(pow(this->navWaypoint.x - this->x,2) + pow(this->navWaypoint.y - this->y,2)) < 1) {
                     this->trackingNavWaypoint = false;
-                    this->turningLimit = 10;
+                    this->SetTurningLimit(10.0);
                     std::cout << "Found waypoint" << std::endl;
                 }
             } else {
@@ -554,6 +556,7 @@ void sdcCar::PerpendicularPark(){
     bool isSafe = true;
     std::vector<sdcWaypoint> fix;
     math::Vector2d pos = sdcSensorData::GetPosition();
+    this->SetTurningLimit(30.0);
 
     // Store vector of rays from the back lidar that detect objects behind the car, specifically the middle
     // and far right and left rays
@@ -613,7 +616,7 @@ void sdcCar::PerpendicularPark(){
         case donePark:
         this->StopReverse();
         this->Stop();
-        this->turningLimit = 10.0;
+        this->SetTurningLimit(10.0);
         this->parkingSpotSet = false;
         this->currentState = stop;
         break;
@@ -750,6 +753,7 @@ void sdcCar::ParallelPark(){
     std::vector<double> frontRightBound;
     std::vector<double> frontMidBound;
     std::vector<double> frontLeftBound;
+    this->SetTurningLimit(30.0);
 
     // Store vector of rays from the back lidar that detect objects behind the car, specifically the middle
     // and far right and left rays
@@ -911,7 +915,7 @@ void sdcCar::ParallelPark(){
         case doneParallel:
         this->Stop();
         this->StopReverse();
-        this->turningLimit = 10.0;
+        this->SetTurningLimit(10.0);
         this->currentState = stop;
         break;
     }
@@ -1654,6 +1658,14 @@ void sdcCar::SetTargetSpeed(double s){
     this->stopping = (this->targetSpeed == 0);
     this->SetAccelRate();
     this->SetBrakeRate();
+}
+
+/*
+ * Sets the amount by which the car turns. A larger number makes the car turn
+ * harder.
+ */
+void sdcCar::SetTurningLimit(double limit){
+    this->turningLimit = limit;
 }
 
 //////////////////////////////////////////////////////////////

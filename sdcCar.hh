@@ -222,6 +222,7 @@ namespace gazebo {
         void SetTargetDirection(sdcAngle direction);
         void SetTargetSteeringAmount(double a);
         void SetTargetSpeed(double s);
+        void SetTurningLimit(double limit);
 
         void SetAccelRate(double rate = 1.0);
         void SetBrakeRate(double rate = 1.0);

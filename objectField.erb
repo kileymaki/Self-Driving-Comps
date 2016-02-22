@@ -21,14 +21,14 @@
         </gui>
 
 <%
-    gridX = 10
+    gridX = 7
     gridY = 2
     n = 0
-    block = 10
+    block = 0
     box_positions = []
     while n < gridX
         box_positions << block
-        block = block + 8
+        block = block + 20
         n = n + 1
     end
 %>
@@ -49,12 +49,12 @@
 %>
 
     <%="<model name='#{name}'>" %>
-        <pose><%= box_positions[x] + Random.rand(8)-4%> <%= box_positions[y] + Random.rand(8)-4%> 0.5 0 0 0</pose>
+        <pose><%= box_positions[x] + 20%> <%= box_positions[y]%> 0.5 0 0 0</pose>
         <link name="link">
             <collision name="collision">
                 <geometry>
                     <box>
-                        <size>1 1 1</size>
+                        <size>1 20 1</size>
                     </box>
                 </geometry>
             </collision>
@@ -62,7 +62,7 @@
             <visual name="visual">
                 <geometry>
                     <box>
-                        <size>1 1 1</size>
+                        <size>1 20 1</size>
                     </box>
                 </geometry>
             </visual>

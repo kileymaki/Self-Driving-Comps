@@ -45,6 +45,8 @@ namespace gazebo
 
         static int frontLidarLastUpdate;
 
+        static int stopSignFrameCount;
+        static double sizeOfStopSign;
         static bool stopSignInLeftCamera;
         static bool stopSignInRightCamera;
         static int lanePosition;

@@ -1,8 +1,8 @@
 /*
  * This class registers and updates the front camera sensor.
  *
- * This class also handles video processing and lane finding based 
- * upon video inputs to handle lane finding and tracking using 
+ * This class also handles video processing and lane finding based
+ * upon video inputs to handle lane finding and tracking using
  * methods found in the paper "A lane-curve detection based on LCF"
  */
 
@@ -137,20 +137,28 @@ void sdcCameraSensor::OnUpdate() {
 	// std::cout << leftp1 << "\t" << leftp2 << "\t" << rightp1 << "\t" << rightp2 << "\t" << std::endl;
 
 	//BEGIN HAAR CASCADE OBJECT DETECTION
-	//We should have some sort of object permanence for this, and only trigger
-	//a postive detection if there have been x amount of consecutive frames with
-	// //a stop sign
-	// if(!cpu_stop_sign.load(cascade_file_path)){ printf("--(!)Error loading cascade\n");};
-	// std::vector<Rect> stopSigns;
-	// cpu_stop_sign.detectMultiScale( image, stopSigns, 1.1, 2, 0|CASCADE_SCALE_IMAGE, Size(30, 30) );
+	if(!cpu_stop_sign.load(cascade_file_path)){ printf("--(!)Error loading cascade\n");};
+	std::vector<Rect> stopSigns;
+	cpu_stop_sign.detectMultiScale( image, stopSigns, 1.1, 2, 0|CASCADE_SCALE_IMAGE, Size(30, 30) );
+	if(stopSigns.size() > 0){
+		sdcSensorData::stopSignFrameCount++;
+	}else{
+		sdcSensorData::stopSignFrameCount = 0;
+	}
 
-	// sdcSensorData::stopSignInRightCamera = false;
-	// for( int i = 0; i < stopSigns.size(); i++ )
-	// {
-	//    cv::rectangle(image, stopSigns[i], Scalar(0,0,255),3,LINE_8,0);
-	//    std::cout << "stop sign found!" <<std::endl;
-	//    //sdcSensorData::stopSignInRightCamera = true;
-	// }
+	double avgSize = 0;
+	for( int i = 0; i < stopSigns.size(); i++ ){
+	   cv::rectangle(image, stopSigns[i], Scalar(0,0,255),3,LINE_8,0);
+
+	   avgSize += stopSigns[i].width * stopSigns[i].height;
+	}
+	avgSize = avgSize / stopSigns.size();
+
+	if(stopSigns.size() > 0){
+		sdcSensorData::sizeOfStopSign = avgSize;
+	}else{
+		sdcSensorData::sizeOfStopSign = 0;
+	}
 
 
 	// BEGIN LCF LANE DETECTION

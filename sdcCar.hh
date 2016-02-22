@@ -125,6 +125,8 @@ namespace gazebo {
         int waypointProgress;
 
         // Intersection variables
+        bool stoppedAtSign;
+        int ignoreStopSignsCounter;
         int atIntersection;
 
         // Car limit variables

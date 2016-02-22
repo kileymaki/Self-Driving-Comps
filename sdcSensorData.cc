@@ -1,8 +1,8 @@
 /*
  * This class provides a central location for all data that sdcCar uses during simulation. It
  * collects data from our sensors and stores it, and provides getter and setter methods to
- * the car and sensors respectively. This class also handles converting sensor data into 
- * more intuitive information, such as taking blocked sensor rays and determining what are 
+ * the car and sensors respectively. This class also handles converting sensor data into
+ * more intuitive information, such as taking blocked sensor rays and determining what are
  * objects.
  */
 
@@ -39,6 +39,8 @@ std::vector<double>* sdcSensorData::sideRightFrontLidarRays = new std::vector<do
 std::vector<double>* sdcSensorData::sideRightBackLidarRays = new std::vector<double>();
 
 // Camera variables
+int sdcSensorData::stopSignFrameCount = 0;
+double sdcSensorData::sizeOfStopSign = 0;
 bool sdcSensorData::stopSignInLeftCamera = false;
 bool sdcSensorData::stopSignInRightCamera = false;
 int sdcSensorData::lanePosition = 0;

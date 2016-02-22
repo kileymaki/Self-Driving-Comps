@@ -86,16 +86,21 @@ void sdcCar::Drive()
     // in front of us. If following is done, kick out to default state
     if(this->currentState != avoidance){
         if (this->ObjectDirectlyAhead()){
-            this->currentState = follow;
+            // this->currentState = follow;
         }else if(this->currentState == follow && !this->isTrackingObject){
-            this->currentState = DEFAULT_STATE;;
+            // this->currentState = DEFAULT_STATE;;
         }
 
         // Look for objects in danger of colliding with us, react appropriately
         if (this->ObjectOnCollisionCourse()){
-            this->currentState = avoidance;
+            // this->currentState = avoidance;
         }
     }
+
+    if(this->ignoreStopSignsCounter == 0 && sdcSensorData::stopSignFrameCount > 5){
+        this->currentState = intersection;
+    }
+    this->ignoreStopSignsCounter = this->ignoreStopSignsCounter > 0 ? this->ignoreStopSignsCounter - 1 : 0;
 
 
     // Possible states: stop, waypoint, intersection, follow, avoidance
@@ -117,6 +122,17 @@ void sdcCar::Drive()
 
         // At a stop sign, performing a turn
         case intersection:
+        if(this->stoppedAtSign && this->stationaryCount > 2000){
+            this->currentState = DEFAULT_STATE;
+            this->ignoreStopSignsCounter = 3000;
+        }else if(this->stoppedAtSign && this->GetSpeed() < 0.5){
+            this->stationaryCount++;
+        }else if(!this->stoppedAtSign && sdcSensorData::sizeOfStopSign > 6000){
+            this->Stop();
+            this->stoppedAtSign = true;
+            this->stationaryCount = 0;
+        }
+
         break;
 
         // Follows object that is going in same direction/towards same target
@@ -1844,6 +1860,9 @@ sdcCar::sdcCar(){
     // Variables for waypoint driving
     this->waypointProgress = 0;
 
+    // Variables for intersections
+    this->stoppedAtSign = false;
+    this->ignoreStopSignsCounter = 0;
     this->atIntersection = 0;
 
     // Variables for following

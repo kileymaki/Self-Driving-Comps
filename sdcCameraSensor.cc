@@ -59,6 +59,9 @@ void sdcCameraSensor::Load(sensors::SensorPtr _sensor, sdf::ElementPtr /*_sdf*/)
 		// Make sure the parent sensor is active.
 		this->parentSensor->SetActive(true);
 		//std::cout << this->parentSensor->GetNoise() << std::endl;
+		if(!cpu_stop_sign.load(cascade_file_path)) {
+			std::cout << "Unable to load cascade classifier xml file!" << std::endl;
+		}
 }
 
 // Called by the world update start event
@@ -141,7 +144,7 @@ void sdcCameraSensor::OnUpdate() {
 	// std::cout << leftp1 << "\t" << leftp2 << "\t" << rightp1 << "\t" << rightp2 << "\t" << std::endl;
 /*
 	//BEGIN HAAR CASCADE OBJECT DETECTION
-	if(!cpu_stop_sign.load(cascade_file_path)){ printf("--(!)Error loading cascade\n");};
+	//if(!cpu_stop_sign.load(cascade_file_path)){ printf("--(!)Error loading cascade\n");};
 	std::vector<Rect> stopSigns;
 	cpu_stop_sign.detectMultiScale( image, stopSigns, 1.1, 2, 0|CASCADE_SCALE_IMAGE, Size(30, 30) );
 	if(stopSigns.size() > 0){

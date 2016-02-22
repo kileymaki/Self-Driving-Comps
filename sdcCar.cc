@@ -63,9 +63,6 @@ std::vector<sdcIntersection> intersections;
 const int size = 5;
 const std::pair<double,double> destination = {0,0};
 
-
-// const math::Vector2d WAYPOINT_POS = {10,10};
-// const std::vector<math::Vector2d> WAYPOINT_POS_VEC = {{150,100},{150,150}};
 const sdcWaypoint WAYPOINT = sdcWaypoint(1,{150,0});
 std::vector<sdcWaypoint> WAYPOINT_VEC;
 
@@ -162,12 +159,6 @@ void sdcCar::Drive()
     this->MatchTargetDirection();
     // Attempts to match the target speed
     this->MatchTargetSpeed();
-
-    //if (sdcSensorData::stopSignInLeftCamera && sdcSensorData::stopSignInRightCamera) {
-    //  this->Stop();
-    //} else {
-    //  this->SetTargetSpeed(4);
-    //}
 }
 
 /*
@@ -178,10 +169,6 @@ void sdcCar::MatchTargetDirection(){
     sdcAngle directionAngleChange = this->GetDirection() - this->targetDirection;
     // If the car needs to turn, set the target steering amount
     if (!directionAngleChange.WithinMargin(DIRECTION_MARGIN_OF_ERROR)) {
-        // Possible different approach to steering:
-        // 1.67 is the distance between wheels in the sdf
-        // double proposedSteeringAmount = asin(1.67/steeringRadius);
-
         // The steering amount scales based on how far we have to turn, with upper and lower limits
         double proposedSteeringAmount = fmax(fmin(-this->turningLimit*tan(directionAngleChange.angle/-2), this->turningLimit), -this->turningLimit);
 
@@ -235,19 +222,14 @@ void sdcCar::MatchTargetSpeed(){
  */
 void sdcCar::WaypointDriving(std::vector<sdcWaypoint> WAYPOINT_VEC) {
     int progress = this->waypointProgress;
-    //std::vector<math::Vector2d> WAYPOINT_VEC = WAYPOINT_VEC;
-    // std::cout << progress << " / " << WAYPOINT_VEC.size() << " " << (progress < WAYPOINT_VEC.size()) << std::endl;
     if(progress < WAYPOINT_VEC.size()){
         // Pull the next waypoint and set the car to drive towards it
         math::Vector2d nextTarget = {WAYPOINT_VEC[progress].pos.first,WAYPOINT_VEC[progress].pos.second};
         sdcAngle targetAngle = AngleToTarget(nextTarget);
         this->SetTargetDirection(targetAngle);
 
-        // std::cout << targetAngle << std::endl;
-
         this->Accelerate();
 
-        //sdcSensorData::GetCurrentCoord().Distance(nextTarget);
         // Check if the car is close enough to the target to move on
         double distance = sqrt(pow(WAYPOINT_VEC[progress].pos.first - this->x,2) + pow(WAYPOINT_VEC[progress].pos.second - this->y,2));
         if (distance < 5) {
@@ -255,12 +237,10 @@ void sdcCar::WaypointDriving(std::vector<sdcWaypoint> WAYPOINT_VEC) {
             ++progress;
         }
     } else if(this->isFixingParking){
-        std::cout << "exiting waypoint from parking" << std::endl;
         this->isFixingParking = false;
         this->currentState = parking;
         this->currentPerpendicularState = straightPark;
     } else {
-        std::cout << "exiting waypoint then stop" << std::endl;
         this->currentState = stop;
     }
     this->waypointProgress = progress;
@@ -327,8 +307,6 @@ void sdcCar::Follow() {
 
     // After the above loops, if not following anything just return
     if(!this->isTrackingObject) return;
-
-    std::cout << "Follow" << std::endl;
 
     math::Vector2d objCenter = tracked.GetCenterPoint();
     double objSpeed = tracked.GetEstimatedYSpeed();
@@ -428,7 +406,7 @@ void sdcCar::Avoidance(){
     switch(this->currentAvoidanceState){
         // Stop, hard.
         case emergencyStop:
-        //std::cout << "stop" << std::endl;
+
         this->Stop();
         this->SetBrakeRate(10);
         break;
@@ -436,7 +414,7 @@ void sdcCar::Avoidance(){
         // Make an emergency turn and attempt to accelerate past
         // the incoming danger
         case emergencySwerve:
-        //std::cout << "swerve" << std::endl;
+
         this->SetTargetDirection(this->GetOrientation() + PI/2);
         this->SetTargetSpeed(6);
         this->SetAccelRate(10);
@@ -461,7 +439,6 @@ void sdcCar::Avoidance(){
                 if(sqrt(pow(this->navWaypoint.x - this->x,2) + pow(this->navWaypoint.y - this->y,2)) < 1) {
                     this->trackingNavWaypoint = false;
                     this->SetTurningLimit(10.0);
-                    std::cout << "Found waypoint" << std::endl;
                 }
             } else {
                 // At this point, need to find a gap in the objects presented ahead of the car and
@@ -471,44 +448,52 @@ void sdcCar::Avoidance(){
                 double prevDist = 0;
                 sdcAngle targetAngle = this->GetOrientation();
 
-                // Check if the right-most object is on our left. If so, turn right
-                if (this->frontObjects[0].right.angle < PI) {
-                    targetAngle = this->GetOrientation() + this->frontObjects[0].right.angle.GetMidAngle(sdcAngle(3*PI/2));
-                    this->navWaypoint = math::Vector2d(this->x + cos(targetAngle.angle) * this->frontObjects[0].dist, this->y + sin(targetAngle.angle) * this->frontObjects[0].dist);
+                // If there isn't an object directly in front of us, we can safely drive forward
+                if (!this->ObjectDirectlyAhead()) {
+                    this->navWaypoint = math::Vector2d(this->x + cos(this->GetOrientation().angle) * 4, this->y + sin(this->GetOrientation().angle) * 4);
                     this->trackingNavWaypoint = true;
-                    std::cout << "edge case 1, set waypoint\t" << this->navWaypoint.x << "\t" << this->navWaypoint.y << std::endl;
                     break;
                 }
 
                 // Loop through all objects in front of the car, find the space with the largest width
                 // and store the point between them
-                math::Vector2d prevPoint = math::Vector2d(this->frontObjects[0].right.GetLateralDist(), 0);
-                sdcAngle prevAngle = sdcAngle(3*PI/2);
-                prevDist = prevPoint.x;
-                for(int i = 0; i < this->frontObjects.size(); i++){
-                    math::Vector2d curPoint = this->frontObjects[i].right.GetAsPoint();
-                    sdcAngle curAngle = this->frontObjects[i].right.angle;
-                    double curDist = this->frontObjects[i].dist;
-                    if(curPoint.Distance(prevPoint) > fmax(maxWidth, FRONT_OBJECT_COLLISION_WIDTH)){
-                        dist = fmin(prevDist, curDist);
-                        maxWidth = curPoint.Distance(prevPoint);
-                        targetAngle = this->GetOrientation() + curAngle.GetMidAngle(prevAngle);
+                math::Vector2d prevPoint = math::Vector2d(this->frontObjects[0].right.GetLateralDist() + FRONT_OBJECT_COLLISION_WIDTH + 0.2, this->frontObjects[0].right.GetLongitudinalDist());
+                // Angle closest to 0 that it's safe to drive through
+                double bestMargin = 2 * PI;
+                math::Vector2d curPoint;
+                for (int i = 0; i < this->frontObjects.size(); i++) {
+                    curPoint = this->frontObjects[i].right.GetAsPoint();
+                    if (curPoint.Distance(prevPoint) > FRONT_OBJECT_COLLISION_WIDTH) {
+                        // Point is on our left
+                        if (curPoint.x < 0) {
+                            math::Vector2d newPoint = math::Vector2d(prevPoint.x - FRONT_OBJECT_COLLISION_WIDTH/2., prevPoint.y);
+                            sdcAngle newAngle = atan2(newPoint.x, newPoint.y);
+                            if (newAngle.FindMargin(sdcAngle(0)) < bestMargin) {
+                                bestMargin = newAngle.FindMargin(sdcAngle(0)).angle;
+                                this->navWaypoint = math::Vector2d(this->x + cos((newAngle + this->GetOrientation()).angle)*newPoint.Distance(math::Vector2d(0,0)), this->y + sin((newAngle + this->GetOrientation()).angle)*newPoint.Distance(math::Vector2d(0,0)));
+                            }
+                        }
+                        // Point is on our right
+                        else {
+                            math::Vector2d newPoint = math::Vector2d(curPoint.x + FRONT_OBJECT_COLLISION_WIDTH/2., curPoint.y);
+                            sdcAngle newAngle = atan2(newPoint.x, newPoint.y);
+                            if (newAngle.FindMargin(sdcAngle(0)) < bestMargin) {
+                                bestMargin = newAngle.FindMargin(sdcAngle(0)).angle;
+                                this->navWaypoint = math::Vector2d(this->x + cos((newAngle + this->GetOrientation()).angle)*newPoint.Distance(math::Vector2d(0,0)), this->y + sin((newAngle + this->GetOrientation()).angle)*newPoint.Distance(math::Vector2d(0,0)));
+                            }
+                        }
                     }
                     prevPoint = this->frontObjects[i].left.GetAsPoint();
-                    prevAngle = this->frontObjects[i].left.angle;
-                    prevDist = curDist;
+                }
+                curPoint = math::Vector2d(prevPoint.x, 0);
+                if (curPoint.Distance(prevPoint) > FRONT_OBJECT_COLLISION_WIDTH + 0.2){
+                    math::Vector2d newPoint = math::Vector2d(prevPoint.x - FRONT_OBJECT_COLLISION_WIDTH/2., prevPoint.y);
+                    sdcAngle newAngle = atan2(newPoint.x, newPoint.y);
+                    if (newAngle.FindMargin(sdcAngle(0)) < bestMargin) {
+                        this->navWaypoint = math::Vector2d(this->x + cos((newAngle + this->GetOrientation()).angle)*newPoint.Distance(math::Vector2d(0,0)), this->y + sin((newAngle + this->GetOrientation()).angle)*newPoint.Distance(math::Vector2d(0,0)));
+                    }
                 }
 
-                // Check if left-most object is on our right. If so, turn left
-                if(prevAngle > PI || prevPoint.y > fmax(maxWidth, FRONT_OBJECT_COLLISION_WIDTH)){
-                    targetAngle = this->GetOrientation() + prevAngle.GetMidAngle(sdcAngle(PI/2));
-                    dist = prevDist;
-                    std::cout << "edge case 2, set waypoint\t";
-                }
-
-                // Set the waypoint to aim for and the flag to follow it
-                this->navWaypoint = math::Vector2d(this->x + cos(targetAngle.angle) * dist, this->y + sin(targetAngle.angle) * dist);
-                std::cout << this->navWaypoint.x << "\t" << this->navWaypoint.y << std::endl;
                 this->trackingNavWaypoint = true;
             }
             break;
@@ -523,7 +508,7 @@ void sdcCar::Avoidance(){
 }
 
 /*
- * TODO
+ * Executes a turn at an intersection
  */
 void sdcCar::GridTurning(int turn){
     int progress = this->waypointProgress;
@@ -924,25 +909,6 @@ void sdcCar::ParallelPark(){
     }
 }
 
-/*
- * Uses the front LIDAR sensor to detect an intersection.
- * Based off of how many fields of view we have an what we can see we try to turn.
- * When we are almost at an intersection slow down.
- */
-void sdcCar::DetectIntersection(){
-    /*if(this->atIntersection == 0 && this->flViews.size() == 4 && this->flSideRight == 0 && this->flSideLeft == 0){
-        this->SetTargetSpeed(2);
-        this->atIntersection = 1;
-    }else*/ if (this->atIntersection == 0 /*&& this->flViews.size() > 1 && this->flViews.size() < 4 && (this->flSideLeft != 0 && this->flSideRight != 0)*/){
-        this->SetTargetSpeed(1);
-        this->atIntersection = 1;
-    } else if (this->atIntersection == 1 && (this->GetDirection() - this->targetDirection).WithinMargin(PI/16)){
-        this->SetTargetSpeed(5);
-        this->atIntersection = 0;
-    }
-}
-
-
 //////////////////////
 // DIJKSTRA METHODS //
 //////////////////////
@@ -963,9 +929,6 @@ void sdcCar::GenerateWaypoints(){
     insertWaypointTypes(path, this->currentDir);
     for (int i = path.size()-1; i >=0; --i)
         WAYPOINT_VEC.push_back(intersections[path[i]].waypoint);
-
-    for (int i =0; i < WAYPOINT_VEC.size(); ++i)
-        std::cout << WAYPOINT_VEC[i].pos.first << " " << WAYPOINT_VEC[i].pos.second << " " << WAYPOINT_VEC[i].waypointType << std::endl;
 }
 
 std::vector<int> sdcCar::dijkstras(int start, int dest) {
@@ -1263,7 +1226,6 @@ int sdcCar::getFirstIntersection(){
             break;
     }
     for(int i = 0; i < intersections.size();i++){
-        // std::cout << "i : " << i << std::endl;
         if(firstIntr.first == intersections[i].waypoint.pos.first && firstIntr.second == intersections[i].waypoint.pos.second){
             firstIntersection = i;
             break;

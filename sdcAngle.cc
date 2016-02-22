@@ -1,5 +1,5 @@
 /*
- * sdcAngle is a custom class used to wrap doubles as angle objects that are 
+ * sdcAngle is a custom class used to wrap doubles as angle objects that are
  * easier to mathematically manipulate. The class sets a range for values from 0 to 2PI,
  * ensuring we have a concrete range of values to expect. The class also features quality
  * of life methods, both adding new methods as well as overloading basic functions.
@@ -48,6 +48,13 @@ bool sdcAngle::WithinMargin(double x){
  * angle
  */
 sdcAngle sdcAngle::FindMargin(sdcAngle a){
+    if (fabs(this->angle - a.angle) > PI) {
+        if (this->angle > a.angle) {
+            return sdcAngle(fabs((this->angle - 2*PI) - a.angle));
+        } else {
+            return sdcAngle(fabs(this->angle - (a.angle - 2*PI)));
+        }
+    }
     return sdcAngle(fabs(this->angle - a.angle));
 }
 

@@ -235,14 +235,11 @@ void sdcCar::MatchTargetSpeed(){
 void sdcCar::WaypointDriving(std::vector<sdcWaypoint> WAYPOINT_VEC) {
     int progress = this->waypointProgress;
     //std::vector<math::Vector2d> WAYPOINT_VEC = WAYPOINT_VEC;
-    // std::cout << progress << " / " << WAYPOINT_VEC.size() << " " << (progress < WAYPOINT_VEC.size()) << std::endl;
     if(progress < WAYPOINT_VEC.size()){
         // Pull the next waypoint and set the car to drive towards it
         math::Vector2d nextTarget = {WAYPOINT_VEC[progress].pos.first,WAYPOINT_VEC[progress].pos.second};
         sdcAngle targetAngle = AngleToTarget(nextTarget);
         this->SetTargetDirection(targetAngle);
-
-        // std::cout << targetAngle << std::endl;
 
         this->Accelerate();
 
@@ -254,12 +251,10 @@ void sdcCar::WaypointDriving(std::vector<sdcWaypoint> WAYPOINT_VEC) {
             ++progress;
         }
     } else if(this->isFixingParking){
-        std::cout << "exiting waypoint from parking" << std::endl;
         this->isFixingParking = false;
         this->currentState = parking;
         this->currentPerpendicularState = straightPark;
     } else {
-        std::cout << "exiting waypoint then stop" << std::endl;
         this->currentState = stop;
     }
     this->waypointProgress = progress;
@@ -324,8 +319,6 @@ void sdcCar::Follow() {
 
     // After the above loops, if not following anything just return
     if(!this->isTrackingObject) return;
-
-    //std::cout << "Follow" << std::endl;
 
     math::Vector2d objCenter = tracked.GetCenterPoint();
     double objSpeed = tracked.GetEstimatedYSpeed();
@@ -496,7 +489,6 @@ void sdcCar::Avoidance(){
                             sdcAngle newAngle = atan2(newPoint.x, newPoint.y);
                             if (newAngle.FindMargin(sdcAngle(0)) < bestMargin) {
                                 bestMargin = newAngle.FindMargin(sdcAngle(0)).angle;
-                                std::cout << newAngle << "\t" << cos(newAngle.angle) << "\t" << cos(newAngle.angle)*newPoint.x << std::endl;
                                 this->navWaypoint = math::Vector2d(this->x + cos((newAngle + this->GetOrientation()).angle)*newPoint.Distance(math::Vector2d(0,0)), this->y + sin((newAngle + this->GetOrientation()).angle)*newPoint.Distance(math::Vector2d(0,0)));
                             }
                         }
@@ -513,48 +505,6 @@ void sdcCar::Avoidance(){
                 }
 
                 this->trackingNavWaypoint = true;
-
-
-                ///////////////////
-
-                // if (this->frontObjects[0].right.angle < PI) {
-                //     targetAngle = this->GetOrientation() + this->frontObjects[0].right.angle.GetMidAngle(sdcAngle(3*PI/2));
-                //     this->navWaypoint = math::Vector2d(this->x + cos(targetAngle.angle) * this->frontObjects[0].dist, this->y + sin(targetAngle.angle) * this->frontObjects[0].dist);
-                //     this->trackingNavWaypoint = true;
-                //     std::cout << "edge case 1, set waypoint\t" << this->navWaypoint.x << "\t" << this->navWaypoint.y << std::endl;
-                //     break;
-                // }
-                //
-                // // Loop through all objects in front of the car, find the space with the largest width
-                // // and store the point between them
-                // math::Vector2d prevPoint = math::Vector2d(this->frontObjects[0].right.GetLateralDist(), 0);
-                // sdcAngle prevAngle = sdcAngle(3*PI/2);
-                // prevDist = prevPoint.x;
-                // for(int i = 0; i < this->frontObjects.size(); i++){
-                //     math::Vector2d curPoint = this->frontObjects[i].right.GetAsPoint();
-                //     sdcAngle curAngle = this->frontObjects[i].right.angle;
-                //     double curDist = this->frontObjects[i].dist;
-                //     if(curPoint.Distance(prevPoint) > fmax(maxWidth, FRONT_OBJECT_COLLISION_WIDTH)){
-                //         dist = fmin(prevDist, curDist);
-                //         maxWidth = curPoint.Distance(prevPoint);
-                //         targetAngle = this->GetOrientation() + curAngle.GetMidAngle(prevAngle);
-                //     }
-                //     prevPoint = this->frontObjects[i].left.GetAsPoint();
-                //     prevAngle = this->frontObjects[i].left.angle;
-                //     prevDist = curDist;
-                // }
-                //
-                // // Check if left-most object is on our right. If so, turn left
-                // if(prevAngle > PI || prevPoint.y > fmax(maxWidth, FRONT_OBJECT_COLLISION_WIDTH)){
-                //     targetAngle = this->GetOrientation() + prevAngle.GetMidAngle(sdcAngle(PI/2));
-                //     dist = prevDist;
-                //     std::cout << "edge case 2, set waypoint\t";
-                // }
-                //
-                // // Set the waypoint to aim for and the flag to follow it
-                // this->navWaypoint = math::Vector2d(this->x + cos(targetAngle.angle) * dist, this->y + sin(targetAngle.angle) * dist);
-                // std::cout << this->navWaypoint.x << "\t" << this->navWaypoint.y << std::endl;
-
             }
             break;
         }
@@ -1008,9 +958,6 @@ void sdcCar::GenerateWaypoints(){
     insertWaypointTypes(path, this->currentDir);
     for (int i = path.size()-1; i >=0; --i)
         WAYPOINT_VEC.push_back(intersections[path[i]].waypoint);
-
-    for (int i =0; i < WAYPOINT_VEC.size(); ++i)
-        std::cout << WAYPOINT_VEC[i].pos.first << " " << WAYPOINT_VEC[i].pos.second << " " << WAYPOINT_VEC[i].waypointType << std::endl;
 }
 
 std::vector<int> sdcCar::dijkstras(int start, int dest) {
@@ -1308,7 +1255,6 @@ int sdcCar::getFirstIntersection(){
             break;
     }
     for(int i = 0; i < intersections.size();i++){
-        // std::cout << "i : " << i << std::endl;
         if(firstIntr.first == intersections[i].waypoint.pos.first && firstIntr.second == intersections[i].waypoint.pos.second){
             firstIntersection = i;
             break;

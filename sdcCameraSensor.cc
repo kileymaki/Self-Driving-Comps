@@ -54,7 +54,7 @@ void sdcCameraSensor::Load(sensors::SensorPtr _sensor, sdf::ElementPtr /*_sdf*/)
 		}
 
 		// Connect to the sensor update event.
-		// this->updateConnection = this->parentSensor->ConnectUpdated(boost::bind(&sdcCameraSensor::OnUpdate, this));
+		this->updateConnection = this->parentSensor->ConnectUpdated(boost::bind(&sdcCameraSensor::OnUpdate, this));
 
 		// Make sure the parent sensor is active.
 		this->parentSensor->SetActive(true);
@@ -81,18 +81,21 @@ void sdcCameraSensor::OnUpdate() {
 	Mat contours;
 	Canny(imageROI,contours,50,150);
 	//Mat contoursInv;
-	//threshold(contours,contoursInv,128,255,THRESH_BINARY_INV);
+	//Mat imageInv,imageGray;
+	//cvtColor(imageROI,imageGray,CV_BGR2GRAY);
+	//adaptiveThreshold(imageGray,imageInv, 255,CV_ADAPTIVE_THRESH_MEAN_C,CV_THRESH_BINARY,501, 1 );
+
+	//threshold(imageGray,imageInv, 0, 255, CV_THRESH_BINARY | CV_THRESH_OTSU);
+	//adaptiveThreshold(image,imageInv,255,ADAPTIVE_THRESH_GAUSSIAN_C,THRESH_BINARY,3,128);
 	// Hough Transform detects lines within the edge map, stores result in lines.
 	float PI = 3.14159;
 	std::vector<Vec2f> lines;
 	HoughLines(contours,lines,1,PI/180, 75);
-	//HoughLinesP(contours,lines,1,PI/180,80, 30, 10 );
-
+	
 	//print out line angles
 	// for (std::vector<Vec2f>::const_iterator i = lines.begin(); i != lines.end(); ++i)
 	// std::cout << *i << ' ' << std::endl;
 	// std::cout << "=====================================\n";
-
 
 	std::vector<Vec2f>::const_iterator it = lines.begin();
 
@@ -127,6 +130,7 @@ void sdcCameraSensor::OnUpdate() {
 	// Changed things so the lines are drawn on the image, not the region of interest. hopefully
 	// this will make some of the issues easier to debug
 	//std::cout << "left theta angle: " << left_lane_marker[1] << "| right theta angle: " << right_lane_marker[1] << std::endl;
+	
 	double angle_average = (left_lane_marker[1]+right_lane_marker[1])/2;
 	double newSteeringAmount = -20*PI*(fabs(angle_average - PI/2))+50;
 	sdcSensorData::UpdateSteeringMagnitude(newSteeringAmount);
@@ -142,7 +146,7 @@ void sdcCameraSensor::OnUpdate() {
 	line(image, rightp1, rightp2, Scalar(255), 3);
 
 	// std::cout << leftp1 << "\t" << leftp2 << "\t" << rightp1 << "\t" << rightp2 << "\t" << std::endl;
-/*
+
 	//BEGIN HAAR CASCADE OBJECT DETECTION
 	//if(!cpu_stop_sign.load(cascade_file_path)){ printf("--(!)Error loading cascade\n");};
 	std::vector<Rect> stopSigns;
@@ -166,7 +170,7 @@ void sdcCameraSensor::OnUpdate() {
 	}else{
 		sdcSensorData::sizeOfStopSign = 0;
 	}
-*/
+
 
 	// BEGIN LCF LANE DETECTION
 	// This algorithm was decribed in the paper "A lane-curve detection based on an LCF"
@@ -182,8 +186,6 @@ void sdcCameraSensor::OnUpdate() {
 	//TBH THIS STUFF SHOULD NOT BE SET EVERY UPDATE NEEDS TO BE MOVED ~~~~~~~
 	std::vector<double> vec_of_i_vals(100);
 	std::iota(std::begin(vec_of_i_vals), std::end(vec_of_i_vals), -50.);
-
-
 
 	// Using the two lane markers
 	Point vanishingPoint;
@@ -228,7 +230,7 @@ void sdcCameraSensor::OnUpdate() {
 
 	line(image, Point(lane_midpoint, 480), Point(lane_midpoint, 0), Scalar(0, 255, 0), 1);
 	Point nfa_p1, nfa_p2, ffa_p1, ffa_p2;
-
+	
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -258,7 +260,7 @@ void sdcCameraSensor::OnUpdate() {
 	line(image, ffa_p1, ffa_p2, Scalar(255,255,0), 1, CV_AA);
 	//std::cout << "ASYMPTOTES: " << nfa_p1 << "\t" << nfa_p2 << "\t" << ffa_p1 << "\t" << ffa_p2 << "\t" << std::endl;
 	// std::cout << "VARIABLES: " << a << "\t" << b << "\t" << c << "\t" << d << "\t" << std::endl;
-	int left_max_score = 0, left_optimal_i = 1000;
+	int left_max_score = 0, left_optimal_i = 0;
 
 	//generate curvature list
 	for (std::vector<double>::const_iterator q = vec_of_i_vals.begin(); q != vec_of_i_vals.end(); q++) {
@@ -328,11 +330,10 @@ void sdcCameraSensor::OnUpdate() {
 		// }
 		// std::cout << " | " << left_score << " | " << left_optimal_i << " | \n";
 	}
-	std::vector<Point> left_curve_points_top, left_curve_points_bot;
-	if(left_optimal_i != 1000) {
+
 	//DISPLAY LEFT LANE CURVE WITH OPTIMAL CURVATURE VALUE
 	e = pow((b-v),2) + (eps * a * left_optimal_i);
-
+	std::vector<Point> left_curve_points_top, left_curve_points_bot;
 
 	for (float x = 0.; x < 640.; x++ ) {
 		float left_y_top = (a * x) + b - sqrt( c*pow(x,2) + (d * x) + e);
@@ -348,7 +349,7 @@ void sdcCameraSensor::OnUpdate() {
 				left_curve_points_bot.push_back(left_curve_point_bot);
 		}
 	}
-	}
+
 	// if(left_curve_points_top.size() > 1) {
 	// 	for (int i = 0; i < left_curve_points_top.size() - 1; i++){
 	// 		line(image, left_curve_points_top[i], left_curve_points_top[i + 1], Scalar(0,255,0), 3, CV_AA);
@@ -391,7 +392,7 @@ void sdcCameraSensor::OnUpdate() {
 
 	//std::cout << "ASYMPTOTES: " << nfa_p1 << "\t" << nfa_p2 << "\t" << ffa_p1 << "\t" << ffa_p2 << "\t" << std::endl;
 	// std::cout << "VARIABLES: " << a << "\t" << b << "\t" << c << "\t" << d << "\t" << std::endl;
-	double right_max_score = 0, right_optimal_i = 1000;
+	double right_max_score = 0, right_optimal_i = 0;
 
 	//generate curvature list
 	for (std::vector<double>::const_iterator q = vec_of_i_vals.begin(); q != vec_of_i_vals.end(); q++) {
@@ -457,10 +458,9 @@ void sdcCameraSensor::OnUpdate() {
 	//std::cout << right_optimal_i << std::endl;
 
 	//DISPLAY RIGHT LANE CURVE WITH OPTIMAL CURVATURE VALUE
-	std::vector<Point> right_curve_points_top, right_curve_points_bot;
-	if(right_optimal_i != 1000) {
-	e = pow((b-v),2) + (eps * a * right_optimal_i);
 
+	e = pow((b-v),2) + (eps * a * right_optimal_i);
+	std::vector<Point> right_curve_points_top, right_curve_points_bot;
 
 	for (float x = 0.; x < 640. ; x++ ) {
 		float right_y_top = (a * x) + b - sqrt( c*pow(x,2) + (d * x) + e);
@@ -476,7 +476,7 @@ void sdcCameraSensor::OnUpdate() {
 				right_curve_points_bot.push_back(right_curve_point_bot);
 		}
 	}
-	}
+
 	// if(right_curve_points_top.size() > 1) {
 	// 	for (int i = 0; i < right_curve_points_top.size() - 1; i++){
 	// 		line(image, right_curve_points_top[i], right_curve_points_top[i + 1], Scalar(0,255,0), 3, CV_AA);
@@ -491,8 +491,8 @@ void sdcCameraSensor::OnUpdate() {
 
 ///////// END LCF LANE DETECTION
 
-	namedWindow("Lane Detection", WINDOW_AUTOSIZE);
-	imshow("Lane Detection", contours);
+	//namedWindow("Lane Detection", WINDOW_AUTOSIZE);
+	//imshow("Lane Detection", imageInv);
 	namedWindow("Camera View", WINDOW_AUTOSIZE);
 	imshow("Camera View", image);
 	waitKey(4);

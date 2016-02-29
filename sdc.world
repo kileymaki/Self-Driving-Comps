@@ -20,13 +20,13 @@
             </camera>
         </gui>
 
-        <!-- <model name="box1">
-            <pose>22 0.5 0.5 0.0 0.0 1.57</pose>
+        <model name="box1">
+            <pose>0 -1.5 0.5 0 0 0</pose>
             <link name="link">
                 <collision name="collision">
                     <geometry>
                         <box>
-                            <size>1 2 1</size>
+                            <size>2 1 1</size>
                         </box>
                     </geometry>
                 </collision>
@@ -34,7 +34,7 @@
                 <visual name="visual">
                     <geometry>
                         <box>
-                            <size>1 2 1</size>
+                            <size>2 1 1</size>
                         </box>
                     </geometry>
                 </visual>
@@ -44,12 +44,12 @@
         </model>
 
         <model name="box2">
-            <pose>-1 -2 0.5 0 0 0</pose>
+            <pose>-5.5 -1.5 0.5 0 0 0</pose>
             <link name="link">
                 <collision name="collision">
                     <geometry>
                         <box>
-                            <size>1 2 1</size>
+                            <size>2 1 1</size>
                         </box>
                     </geometry>
                 </collision>
@@ -57,15 +57,15 @@
                 <visual name="visual">
                     <geometry>
                         <box>
-                            <size>1 2 1</size>
+                            <size>2 1 1</size>
                         </box>
                     </geometry>
                 </visual>
             </link>
 
-            <plugin name="model_pull" filename="build/libsdcBox.so"/>
+            <!-- <plugin name="model_pull" filename="build/libsdcBox.so"/> -->
         </model>
-
+<!--
         <model name="box3">
             <pose>-4 -2 0.5 0 0 0</pose>
             <link name="link">

@@ -78,7 +78,7 @@ std::vector<sdcWaypoint> WAYPOINT_VEC;
  */
 void sdcCar::Drive()
 {
-    /*
+
     // If not in avoidance, check if we should start following the thing
     // in front of us. If following is done, kick out to default state
     if(this->currentState != intersection && this->currentState != avoidance){
@@ -101,7 +101,7 @@ void sdcCar::Drive()
     }
 
     this->ignoreStopSignsCounter = fmax(this->ignoreStopSignsCounter - 1, 0);
-    */
+
 
     // Possible states: stop, waypoint, intersection, follow, avoidance
     switch(this->currentState)
@@ -115,9 +115,9 @@ void sdcCar::Drive()
         case waypoint:
         // Handle lane driving
 
-        // this->Accelerate();
+        this->Accelerate();
         // this->Stop();
-        this->WaypointDriving(WAYPOINT_VEC);
+        //this->WaypointDriving(WAYPOINT_VEC);
         break;
 
         // At a stop sign, performing a turn
@@ -149,8 +149,8 @@ void sdcCar::Drive()
 
         // Parks the car
         case parking:
-        this->PerpendicularPark();
-        // this->ParallelPark();
+        // this->PerpendicularPark();
+        this->ParallelPark();
         break;
     }
 
@@ -186,7 +186,6 @@ void sdcCar::MatchTargetDirection(){
         }else{
             this->steeringAmount = this->steeringAmount - STEERING_ADJUSTMENT_RATE;
         }
-    } else {
     }
 }
 
@@ -396,7 +395,7 @@ void sdcCar::Avoidance(){
         // There are objects very close to the car, but not necessarily in danger of running into
         // it. Try and navigate around them
         this->currentAvoidanceState = navigation;
-    }else if(this->currentAvoidanceState != navigation){
+    }else if(this->currentAvoidanceState != navigation && this->currentAvoidanceState != emergencyStop){
         // No dangerous objects were found, and the car is not in the middle of navigating around
         // objects in front of it. Exit to default state
         this->currentAvoidanceState = notAvoiding;
@@ -416,8 +415,8 @@ void sdcCar::Avoidance(){
         // the incoming danger
         case emergencySwerve:
 
-        this->SetTargetDirection(this->GetOrientation() + PI/2);
-        this->SetTargetSpeed(6);
+        this->SetTargetDirection(this->GetOrientation() + PI/4);
+        this->SetTargetSpeed(10);
         this->SetAccelRate(10);
         break;
 
@@ -1811,7 +1810,7 @@ sdcCar::sdcCar(){
     this->brakeRate = 1.0;
 
     // Limits on the car's speed
-    this->maxCarSpeed = 2;
+    this->maxCarSpeed = 10;
     this->maxCarReverseSpeed = -10;
 
     // Initialize state enums
@@ -1823,7 +1822,7 @@ sdcCar::sdcCar(){
     this->currentAvoidanceState = notAvoiding;
 
     // Set starting speed parameters
-    this->targetSpeed = 2;
+    this->targetSpeed = 6;
 
     // Set starting turning parameters
     this->steeringAmount = 0.0;

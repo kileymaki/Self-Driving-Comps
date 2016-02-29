@@ -289,7 +289,7 @@
                   <plugin name="sdcFrontLidarSensor" filename="build/libsdcFrontLidarSensor.so" />
                   <always_on>1</always_on>
                   <update_rate>30</update_rate>
-                  <visualize>true</visualize>
+                  <visualize>1</visualize>
               </sensor>
             </link>
 
@@ -353,7 +353,7 @@
                 <plugin name="sdcBackLidarSensor" filename="build/libsdcBackLidarSensor.so" />
                 <always_on>1</always_on>
                 <update_rate>30</update_rate>
-                <visualize>true</visualize>
+                <visualize>0</visualize>
             </sensor>
           </link>
 
@@ -372,7 +372,7 @@
 
         <!-- TOP LASER SENSOR -->
         <link name="top_laser">
-            <pose>0.0 0 1.0 0.0 0.0 0.0</pose>
+            <pose>0.0 0 1.1 0.0 0.0 0.0</pose>
             <visual name="top_laser_visual">
                 <geometry>
                     <mesh>
@@ -549,7 +549,7 @@
                 <plugin name="sdcSideLidarSensor" filename="build/libsdcSideLidarSensor.so" />
                 <always_on>1</always_on>
                 <update_rate>30</update_rate>
-                <visualize>true</visualize>
+                <visualize>0</visualize>
             </sensor>
             <sensor name="side_right_back_laser" type="ray">
                 <pose>-0.6 -0.02 0.0 0 0.0 -1.5708</pose>
@@ -571,7 +571,7 @@
                 <plugin name="sdcSideLidarSensor" filename="build/libsdcSideLidarSensor.so" />
                 <always_on>1</always_on>
                 <update_rate>30</update_rate>
-                <visualize>true</visualize>
+                <visualize>0</visualize>
             </sensor>
         </link>
 
@@ -633,7 +633,7 @@
                 <plugin name="sdcSideLidarSensor" filename="build/libsdcSideLidarSensor.so" />
                 <always_on>1</always_on>
                 <update_rate>30</update_rate>
-                <visualize>true</visualize>
+                <visualize>0</visualize>
             </sensor>
             <sensor name="side_left_back_laser" type="ray">
                 <pose>-0.6 0.02 0.0 0 0.0 1.5708</pose>
@@ -655,7 +655,7 @@
                 <plugin name="sdcSideLidarSensor" filename="build/libsdcSideLidarSensor.so" />
                 <always_on>1</always_on>
                 <update_rate>30</update_rate>
-                <visualize>true</visualize>
+                <visualize>0</visualize>
             </sensor>
         </link>
 

@@ -30,7 +30,7 @@ namespace gazebo
             //     this->model->SetLinearVel(math::Vector3(0, 0, 0));
             // } else {
             if(this->model->GetName() == "box1"){
-                this->model->SetLinearVel(math::Vector3(3, 3, 0));
+                this->model->SetLinearVel(math::Vector3(-7, 0, 0));
             }else if(this->model->GetName() == "box2"){
                 this->model->SetLinearVel(math::Vector3(11, 0, 0));
             }else if(this->model->GetName() == "box3"){

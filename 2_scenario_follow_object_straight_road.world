@@ -25,6 +25,29 @@
         <!-- <pose>2 9 0.5 0 0 0</pose> -->
     </include>
 
+    <model name="box1">
+        <pose>0 -1.5 0.5 0 0 0</pose>
+        <link name="link">
+            <collision name="collision">
+                <geometry>
+                    <box>
+                        <size>2 1 1</size>
+                    </box>
+                </geometry>
+            </collision>
+
+            <visual name="visual">
+                <geometry>
+                    <box>
+                        <size>2 1 1</size>
+                    </box>
+                </geometry>
+            </visual>
+        </link>
+
+        <plugin name="model_pull" filename="build/libsdcBox.so"/>
+    </model>
+
     <model name='ground_plane'>
       <static>1</static>
       <link name='link'>

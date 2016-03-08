@@ -20,7 +20,6 @@
 #include <opencv2/opencv.hpp>
 #include "sdcCameraSensor.hh"
 #include "fadiff.h"
-#include <typeinfo>
 
 using namespace fadbad;
 using namespace gazebo;
@@ -37,6 +36,7 @@ sensors::MultiCameraSensorPtr parentSensor;
 CascadeClassifier cpu_stop_sign;
 String cascade_file_path = "OpenCV/haarcascade_stop.xml";
 
+//FADBAD-wrapped forward differentiation for gradient calculations
 F<double> delG(const F<double>& x, const F<double>& y) {
 	F<double> dG = sqrt(pow(x,2)+pow(y,2));
 	return dG;
@@ -55,7 +55,7 @@ void sdcCameraSensor::Load(sensors::SensorPtr _sensor, sdf::ElementPtr /*_sdf*/)
 		}
 
 		// Connect to the sensor update event.
-		//this->updateConnection = this->parentSensor->ConnectUpdated(boost::bind(&sdcCameraSensor::OnUpdate, this));
+		this->updateConnection = this->parentSensor->ConnectUpdated(boost::bind(&sdcCameraSensor::OnUpdate, this));
 
 		// Make sure the parent sensor is active.
 		this->parentSensor->SetActive(true);
@@ -67,18 +67,19 @@ void sdcCameraSensor::Load(sensors::SensorPtr _sensor, sdf::ElementPtr /*_sdf*/)
 
 // Called by the world update start event
 void sdcCameraSensor::OnUpdate() {
-	// pull raw data from camera sensor object
+
+	// Pull raw data from camera sensor object as an unsigned character array with 3 channels.
 	const unsigned char* img = this->parentSensor->GetImageData(0);
 	Mat image = Mat(this->parentSensor->GetImageHeight(0), this->parentSensor->GetImageWidth(0), CV_8UC3, const_cast<unsigned char*>(img));
-	Mat raw_image = Mat(image);
+	
 	//Select Region of Interest (ROI) for lane detection - currently this is the bottom half of the image.
 	//set area for ROI as a rectangle
-	//Rect ROI = cv::Rect(0, (4*image.rows)/5, image.cols, image.rows/5);
+
 	Rect ROI = cv::Rect(0, image.rows/2, image.cols, image.rows/2);
 	Mat imageROI = image(ROI);
 
 	// Canny algorithm for edge dectection
-	Mat contours,contours_thresh;
+	Mat contours, contours_thresh;
 	Canny(imageROI,contours,50,150);
 	threshold(contours,contours_thresh,127,255, THRESH_BINARY);
 
@@ -87,6 +88,7 @@ void sdcCameraSensor::OnUpdate() {
 	cvtColor(imageROI,imageGray,CV_BGR2GRAY);
 	adaptiveThreshold(imageGray,imageInv, 255,CV_ADAPTIVE_THRESH_MEAN_C,CV_THRESH_BINARY,201, -20 );
 
+// BEGIN STRAIGHT LANE DETECTION
 	// Hough Transform detects lines within the edge map, stores result in lines.
 	float PI = 3.14159;
 	std::vector<Vec2f> lines;
@@ -100,23 +102,25 @@ void sdcCameraSensor::OnUpdate() {
 	while (it!=lines.end()) {
 			float rho= (*it)[0];   // first element is distance rho
 			float theta= (*it)[1]; // second element is angle theta
-				//std::cout << "rho: " << rho << "| theta: " << theta << std::endl;
+
 				if ( 0 < theta < (PI/2 - 0.1) && theta < left_lane_marker[1]) {
 					left_lane_marker = Vec2f(rho,theta);
 				}
 				if ((PI/2 + 0.1) < theta < (PI - 0.1) && theta > right_lane_marker[1]) {
 					right_lane_marker = Vec2f(rho,theta);
 				}
+
+			// This code can be uncommented to display all of the lines found with the Hough Line Transform
 			// Point pt1(rho/cos(theta),0);
 			// Point pt2((rho-imageROI.rows*sin(theta))/cos(theta),imageROI.rows);
-			// line(contours_colorized, pt1, pt2, Scalar(0,0,255), 1);
+			// line(image, pt1, pt2, Scalar(0,0,255), 1);
 			++it;
 	}
-	// ATTN: need to have ROI.rows in numerator because of trig stuff. It isnt an oversight!
-	// Changed things so the lines are drawn on the image, not the region of interest. hopefully
-	// this will make some of the issues easier to debug
 
-	//std::cout << "left theta angle: " << left_lane_marker[1] << "| right theta angle: " << right_lane_marker[1] << std::endl;
+	// ATTN: need to have imageROI.rows in numerator because of trig. It isnt an oversight!
+	// Lines are drawn on the image, not the region of interest.
+
+	// Update our steering based on the lane markers
 	double angle_average = (left_lane_marker[1]+right_lane_marker[1])/2;
 	double newSteeringAmount = -20*PI*(fabs(angle_average - PI/2))+50;
 	sdcSensorData::UpdateSteeringMagnitude(newSteeringAmount);
@@ -130,11 +134,14 @@ void sdcCameraSensor::OnUpdate() {
 	Point rightp1 = Point(right_lane_marker[0]/cos(right_lane_marker[1]),0.5*image.rows);
 	Point rightp2 = Point((right_lane_marker[0] - (imageROI.rows) * sin(right_lane_marker[1])) / cos(right_lane_marker[1]), (image.rows));
 	line(image, rightp1, rightp2, Scalar(255), 3);
-
-	/*
-	//BEGIN HAAR CASCADE OBJECT DETECTION
+// END STRAIGHT LANE DETECTION
+	
+// BEGIN HAAR CASCADE OBJECT DETECTION
 	std::vector<Rect> stopSigns;
+	//This is the OpenCV built in detector for objects decribed by a cascade xml file
 	cpu_stop_sign.detectMultiScale( image, stopSigns, 1.1, 2, 0|CASCADE_SCALE_IMAGE, Size(30, 30) );
+
+	//Make sure stop sign is detected across multiple consecutive frames
 	if(stopSigns.size() > 0){
 		sdcSensorData::stopSignFrameCount++;
 	}else{
@@ -144,9 +151,9 @@ void sdcCameraSensor::OnUpdate() {
 	double avgSize = 0;
 	if(stopSigns.size() > 0){
 		for( int i = 0; i < stopSigns.size(); i++ ){
+			
 			//check if area of detected stop sign contains any red or not
 		   cv::rectangle(image, stopSigns[i], Scalar(0,0,255),3,LINE_8,0);
-
 		   avgSize += stopSigns[i].width * stopSigns[i].height;
 		}
 		avgSize = avgSize / stopSigns.size();
@@ -156,20 +163,15 @@ void sdcCameraSensor::OnUpdate() {
 	}else{
 		sdcSensorData::sizeOfStopSign = 0;
 	}
-	*/
+// END HAAR CASCADE OBJECT DETECTION
 
-	// BEGIN LCF LANE DETECTION
+// BEGIN LCF LANE DETECTION
 	// This algorithm was decribed in the paper "A lane-curve detection based on an LCF"
-	// Each step that corresponds to an equation will be labelled accordingly.
+	// Where possible, we have kept the variables named the same as described by the paper.
+
 	double leftNearLaneSlope, rightNearLaneSlope, leftLaneIntercept, rightLaneIntercept;
 	double a, b, c, d, e, n, u, v, k, lane_midpoint, eps = 200.0;
-	float FOCAL_LENGTH = 554.382; //lambda in Park et. al.
-	float Tz = 0.85; // in meters
-	// float xf = leftp1.x;
-	// A = eps * i / lambda^2 * Tz
-	// A = 25 * i / 471.2247
 
-	//TBH THIS STUFF SHOULD NOT BE SET EVERY UPDATE NEEDS TO BE MOVED ~~~~~~~
 	std::vector<double> vec_of_i_vals(50);
 	std::iota(std::begin(vec_of_i_vals), std::end(vec_of_i_vals), -25);
 
@@ -190,9 +192,7 @@ void sdcCameraSensor::OnUpdate() {
 	//b = y - mx
 	leftLaneIntercept = leftp1.y - leftNearLaneSlope*leftp1.x;
 	rightLaneIntercept = rightp1.y - rightNearLaneSlope*rightp1.x;
-	// std::cout << "left intercept: " << leftLaneIntercept << "\t|\t" << "right intecept: "<< rightLaneIntercept << std::endl;
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// SOLVE VANISHING POINT (u,v), which is intersection of two lines
 	//v is the height component of the vanishing point, described as vp = (u,v)
 
@@ -206,20 +206,19 @@ void sdcCameraSensor::OnUpdate() {
 	// n is our position relative to the center of the lane directly in front of us.
 	n = (image.cols/2) - lane_midpoint;
 
-	// Naive lane detection is better than no lane detection
+	// Push data to brain
 	sdcSensorData::UpdateCameraData(n);
 
+	// Display midpoint of current lane
 	line(image, Point(lane_midpoint, 480), Point(lane_midpoint, 0), Scalar(0, 255, 0), 1);
 	line(image, Point(lane_midpoint, 480), vp, Scalar(0, 255, 0), 1);
-	Point nfa_p1, nfa_p2, ffa_p1, ffa_p2;
+	
 
-
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/////////////////////////////////////LEFT LANE MARKER CALCULATION////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// std::cout << "n: " << n << "\tlane midpoint: " << lane_midpoint << std::endl;
+	
+	Point nfa_p1, nfa_p2, ffa_p1, ffa_p2;
 
 	a = leftNearLaneSlope/2;
 	b = (v+leftLaneIntercept)/2;
@@ -229,7 +228,7 @@ void sdcCameraSensor::OnUpdate() {
 	//DRAW LEFT NEAR FIELD AND FAR FIELD ASYMPTOTES
 
 	ffa_p1.x = 0.;
-	ffa_p2.x = u; //320.; //u; // or Cx, center of computer image
+	ffa_p2.x = u; // Cx, center of computer image
 	ffa_p1.y = v; //Cy, center of computer image
 	ffa_p2.y = v;
 
@@ -240,16 +239,13 @@ void sdcCameraSensor::OnUpdate() {
 
 	line(image, nfa_p1, nfa_p2, Scalar(255,255,0), 1, CV_AA);
 	line(image, ffa_p1, ffa_p2, Scalar(255,255,0), 1, CV_AA);
-	//std::cout << "ASYMPTOTES: " << nfa_p1 << "\t" << nfa_p2 << "\t" << ffa_p1 << "\t" << ffa_p2 << "\t" << std::endl;
-	// std::cout << "VARIABLES: " << a << "\t" << b << "\t" << c << "\t" << d << "\t" << std::endl;
 	double left_max_score = 0, left_optimal_i = 0;
 
 	//generate curvature list
 	for (std::vector<double>::const_iterator q = vec_of_i_vals.begin(); q != vec_of_i_vals.end(); q++) {
-		//std::cout << "left current curve is: " << *q << std::endl;
+		// calculate e as decribed in Park et al. 2001
 		e = pow((b-v),2) + (eps * a * *q);
 
-		//std::vector<int> left_Histogram(31);
 		std::vector<Point> left_curve_points_top, left_curve_points_bot;
 
 		for (int x = 0; x < u; x++ ) {
@@ -267,6 +263,9 @@ void sdcCameraSensor::OnUpdate() {
 			}
 		}
 
+		// Not necessarily needed since we examine the bottom half of the LCF
+		// but this is the section that Park et al. 2001 uses for scoring
+
 		// if(left_curve_points_top.size() > 1) {
 		// 	for (int j = 0; j < left_curve_points_top.size() - 1; j++) {
 		// 		line(image, left_curve_points_top[j], left_curve_points_top[j + 1], Scalar(0,0,255), 1, CV_AA);
@@ -279,30 +278,28 @@ void sdcCameraSensor::OnUpdate() {
 				//This is where we would do LROI calculations
 				//LROI is a triangle, the top point is height of vanishing point.
 				//LROI is only calculated for the bottom half of the LCF
+
+				//Uncomment to show all of the parabolic paths considered
 				//line(image, left_curve_points_bot[j], left_curve_points_bot[j + 1], Scalar(0,0,255), 1, CV_AA);
 				int xf,yf;
 				int g;
 				xf = left_curve_points_bot[j].x;
 				yf = left_curve_points_bot[j].y;
-				// std::cout << xf << "\t" << yf << std::endl;
+
 				g = contours_thresh.at<unsigned char>(yf-240,xf);
 				double bin_g = g/255.;
-				// //std::cout <<"left value at ("<< xf << "," << yf << ") is:  "<< g << "|" << bin_g << std::endl;
-				// //std::cout << g << "|" << bin_g << std::endl;
 				left_curve_magnitude += bin_g;
 
 			}
 		}
 
-		//double left_curve_magnitude_total = ((1.*left_curve_points_bot.size()) - left_curve_magnitude)/(1.*left_curve_points_bot.size());
+		// Make sure to update the optimal i value if the current curve's score is higher
+		// than the current high score 
+
 		double left_curve_magnitude_total = (left_curve_points_bot.size() - left_curve_magnitude);
 		if (left_curve_magnitude_total > left_max_score) {
-			//std::cout << left_curve_magnitude_total << " should be greater than " << left_max_score;
 			left_max_score = left_curve_magnitude_total;
-			//std::cout << ". our new high score is : " << left_max_score;
 			left_optimal_i = *q;
-			//std::cout << ", which is given by curve number: " << left_optimal_i << std::endl;
-			//std::cout << left_optimal_i << std::endl;
 		}
 	}
 
@@ -325,34 +322,28 @@ void sdcCameraSensor::OnUpdate() {
 		}
 	}
 
-	// if(left_curve_points_top.size() > 1) {
-	// 	for (int i = 0; i < left_curve_points_top.size() - 1; i++){
-	// 		line(image, left_curve_points_top[i], left_curve_points_top[i + 1], Scalar(0,255,0), 3, CV_AA);
-	// 	}
-	// }
+	if(left_curve_points_top.size() > 1) {
+		for (int i = 0; i < left_curve_points_top.size() - 1; i++){
+			line(image, left_curve_points_top[i], left_curve_points_top[i + 1], Scalar(0,255,0), 3, CV_AA);
+		}
+	}
 
-	// if(left_curve_points_bot.size() > 1) {
-	// 	for (int i = 0; i < left_curve_points_bot.size(); i++){
-	// 		line(image, left_curve_points_bot[i], left_curve_points_bot[i + 1], Scalar(0,255,0), 3, CV_AA);
-	// 		//line(imageInv, left_curve_points_bot[i], left_curve_points_bot[i + 1], Scalar(0), 3, CV_AA);
-	// 	}
-	// }
+	if(left_curve_points_bot.size() > 1) {
+		for (int i = 0; i < left_curve_points_bot.size(); i++){
+			line(image, left_curve_points_bot[i], left_curve_points_bot[i + 1], Scalar(0,255,0), 3, CV_AA);
+		}
+	}
 
-//std::cout << "==============================================================================" << std::endl;
-
-/*
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 	////////////////////////////////////RIGHT LANE MARKER CALCULATION////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
 	a = rightNearLaneSlope/2;
 	b = (v+rightLaneIntercept)/2;
 	c = pow(rightNearLaneSlope,2)/4;
 	d = a * (rightLaneIntercept-v);
 
 	//DRAW RIGHT NEAR FIELD AND FAR FIELD ASYMPTOTES
-	//Point nfa_p1, nfa_p2, ffa_p1, ffa_p2;
 	ffa_p1.x = 639.;
 	ffa_p2.x = u;
 	ffa_p1.y = v; //Cy, center of computer image
@@ -360,22 +351,19 @@ void sdcCameraSensor::OnUpdate() {
 
 	nfa_p1.x = 639.;
 	nfa_p2.x = u;
-	nfa_p1.y = (rightNearLaneSlope)*(nfa_p1.x) + rightLaneIntercept;//(b + (d/(2*sqrt(c))));
-	nfa_p2.y = (rightNearLaneSlope)*(nfa_p2.x) + rightLaneIntercept;//(b + (d/(2*sqrt(c))));
-	// std::cout << (b + (d/(2*sqrt(c)))) << "\t" << leftLaneIntercept << std::endl;
+	nfa_p1.y = (rightNearLaneSlope)*(nfa_p1.x) + rightLaneIntercept;
+	nfa_p2.y = (rightNearLaneSlope)*(nfa_p2.x) + rightLaneIntercept;
+
 	line(image, nfa_p1, nfa_p2, Scalar(255,255,0), 1, CV_AA);
 	line(image, ffa_p1, ffa_p2, Scalar(255,255,0), 1, CV_AA);
 
-	//std::cout << "ASYMPTOTES: " << nfa_p1 << "\t" << nfa_p2 << "\t" << ffa_p1 << "\t" << ffa_p2 << "\t" << std::endl;
-	// std::cout << "VARIABLES: " << a << "\t" << b << "\t" << c << "\t" << d << "\t" << std::endl;
 	double right_max_score = 0, right_optimal_i = 0;
 
 	//generate curvature list
 	for (std::vector<double>::const_iterator q = vec_of_i_vals.begin(); q != vec_of_i_vals.end(); q++) {
-		//std::cout << " right current curve is: " << *q;
+		// calculate e as decribed in Park et al. 2001
 		e = pow((b-v),2) + (eps * a * *q);
 
-		std::vector<int> right_Histogram(31);
 		std::vector<Point> right_curve_points_top, right_curve_points_bot;
 
 		for (float x = u+1; x < 640; x++ ) {
@@ -393,6 +381,9 @@ void sdcCameraSensor::OnUpdate() {
 			}
 		}
 
+		// Not necessarily needed since we examine the bottom half of the LCF
+		// but this is the section that Park et al. 2001 uses for scoring
+
 		// if(right_curve_points_top.size() > 1) {
 		// 	for (int j = 0; j < right_curve_points_top.size() - 1; j++){
 		// 		line(image, right_curve_points_top[j], right_curve_points_top[j + 1], Scalar(0,0,255), 1, CV_AA);
@@ -400,45 +391,37 @@ void sdcCameraSensor::OnUpdate() {
 		// }
 
 		double right_curve_magnitude = 0;
-		//std::cout << right_curve_points_bot.size() << std::endl;
 		if(right_curve_points_bot.size() > 1) {
-			//std::cout << right_curve_points_bot.size() << std::endl;
 			for (int j = 0; j < right_curve_points_bot.size(); j++) {
 				//This is where we would do LROI calculations
 				//LROI is a triangle, the top point is height of vanishing point.
 				//LROI is only calculated for the bottom half of the LCF
+
+				//Uncomment to show all of the parabolic paths considered
 				//line(image, right_curve_points_bot[j], right_curve_points_bot[j + 1], Scalar(0,0,255), 1, CV_AA);
+				
 				int xf,yf;
 				int dg;
 				xf = right_curve_points_bot[j].x;
 				yf = right_curve_points_bot[j].y;
-				//std::cout << xf << "\t" << yf << std::endl;
 				dg = contours_thresh.at<unsigned char>(yf-240,xf);
 				int bin_dg = dg/255;
-				//std::cout <<"right value at ("<< xf << "," << yf << ") is:  "<< dg << "|" << bin_dg << std::endl;
 				right_curve_magnitude += bin_dg;
 
 			}
 		}
 
-		//double curve_magnitude_total = ((1.*right_curve_points_bot.size()) - curve_magnitude)/(1.*right_curve_points_bot.size());
 		double right_curve_magnitude_total = ((1.*right_curve_points_bot.size()) - right_curve_magnitude);
-		// std::cout << "Curve " << *q << " score is: " << curve_magnitude_total << std::endl;
-		//int right_score = std::accumulate(right_Histogram.begin(), right_Histogram.end(), 0);
+		
+		// Make sure to update the optimal i value if the current curve's score is higher
+		// than the current high score 
 		if (right_curve_magnitude_total > right_max_score) {
 			right_max_score = right_curve_magnitude_total;
-			// std::cout << curve_magnitude_total << " should be greater than " << right_max_score;
-			// std::cout << ". our new high score is : " << curve_magnitude_total;
 			right_optimal_i = *q;
-			//std::cout << ", which is given by curve number: " << right_optimal_i << std::endl;
-			//std::cout << right_optimal_i << std::endl;
 		}
 	}
 
-	//std::cout << right_optimal_i << std::endl;
-
 	//DISPLAY RIGHT LANE CURVE WITH OPTIMAL CURVATURE VALUE
-
 	e = pow((b-v),2) + (eps * a * right_optimal_i);
 	std::vector<Point> right_curve_points_top, right_curve_points_bot;
 
@@ -457,27 +440,21 @@ void sdcCameraSensor::OnUpdate() {
 		}
 	}
 
-	// if(right_curve_points_top.size() > 1) {
-	// 	for (int i = 0; i < right_curve_points_top.size() - 1; i++){
-	// 		line(image, right_curve_points_top[i], right_curve_points_top[i + 1], Scalar(0,255,0), 3, CV_AA);
-	// 	}
-	// }
+	if(right_curve_points_top.size() > 1) {
+		for (int i = 0; i < right_curve_points_top.size() - 1; i++){
+			line(image, right_curve_points_top[i], right_curve_points_top[i + 1], Scalar(0,255,0), 3, CV_AA);
+		}
+	}
 
-	// if(right_curve_points_bot.size() > 1) {
-	// 	for (int i = 0; i < right_curve_points_bot.size(); i++){
-	// 		line(image, right_curve_points_bot[i], right_curve_points_bot[i + 1], Scalar(0,255,0), 3, CV_AA);
-	// 	}
-	// }
-*/
-///////// END LCF LANE DETECTION
+	if(right_curve_points_bot.size() > 1) {
+		for (int i = 0; i < right_curve_points_bot.size(); i++){
+			line(image, right_curve_points_bot[i], right_curve_points_bot[i + 1], Scalar(0,255,0), 3, CV_AA);
+		}
+	}
 
-	// namedWindow("Canny", WINDOW_AUTOSIZE);
-	// imshow("Canny", contours);
-	// // namedWindow("Hough Line Transform", WINDOW_AUTOSIZE);
-	// // imshow("Hough Line Transform", contours_colorized);
-	// namedWindow("Threshold Image", WINDOW_AUTOSIZE);
-	// imshow("Threshold Image", imageInv);
+// END LCF LANE DETECTION /////////////////////////////
+	// Display results to GUI
 	namedWindow("Camera View", WINDOW_AUTOSIZE);
 	imshow("Camera View", image);
-	waitKey(10);
+	waitKey(4);
 }

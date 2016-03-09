@@ -1,3 +1,11 @@
+/*
+ * This was an older version of the camera sensor that offloaded the
+ * image processing to the dedicated GPU. We determined that this caused
+ * more trouble than it was worth since the data transfer overhead between 
+ * the CPU and GPU resulted in an overall decrease in performace. Had our 
+ * camera been higher resolution this most likely would not have been the case
+ */
+
 #include <boost/bind.hpp>
 #include <gazebo/gazebo.hh>
 #include <gazebo/physics/physics.hh>

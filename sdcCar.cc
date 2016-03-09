@@ -149,8 +149,8 @@ void sdcCar::Drive()
 
         // Parks the car
         case parking:
-        // this->PerpendicularPark();
-        this->ParallelPark();
+        this->PerpendicularPark();
+        // this->ParallelPark();
         break;
     }
 
@@ -371,6 +371,10 @@ void sdcCar::Avoidance(){
         }
     }
 
+    // For emergency swerve, check which side the object is coming from so
+    // we can go away from it
+    bool isObjectOnRight = true;
+
     // Objects moving relatively quickly towards the car are the highest priority. If any
     // of these exist, react accordingly
     if(fastObjects.size() > 0){
@@ -381,6 +385,9 @@ void sdcCar::Avoidance(){
             double objSpeed = sqrt(pow(fastObjects[i].GetEstimatedXSpeed(),2) + pow(fastObjects[i].GetEstimatedYSpeed() - this->GetSpeed(),2));
             if(objSpeed > this->GetSpeed() || this->GetSpeed() > objSpeed + 4){
                 this->currentAvoidanceState = emergencySwerve;
+                if(fastObjects[i].GetCenterPoint().x < 0){
+                  isObjectOnRight = false;
+                }
                 setState = true;
                 break;
             }
@@ -415,7 +422,11 @@ void sdcCar::Avoidance(){
         // the incoming danger
         case emergencySwerve:
 
-        this->SetTargetDirection(this->GetOrientation() + PI/4);
+        if(isObjectOnRight){
+          this->SetTargetDirection(this->GetOrientation() + PI/4);
+        }else{
+          this->SetTargetDirection(this->GetOrientation() - PI/4);
+        }
         this->SetTargetSpeed(10);
         this->SetAccelRate(10);
         break;
